@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C5 · Estructura y protocolo de tránsitos</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --bg2: #f7f7f5;
+      --bg3: #f0efe9;
+      --text: #1a1a18;
+      --text2: #4a4a46;
+      --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1);
+      --border2: rgba(0,0,0,0.18);
+      --radius: 8px;
+      --radius-lg: 12px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a18;
+        --bg2: #242422;
+        --bg3: #2e2e2a;
+        --text: #e8e6de;
+        --text2: #a8a6a0;
+        --text3: #68665e;
+        --border: rgba(255,255,255,0.1);
+        --border2: rgba(255,255,255,0.18);
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg3);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+    }
+
+    .page {
+      max-width: 720px;
+      margin: 0 auto;
+      background: var(--bg);
+      border-radius: var(--radius-lg);
+      border: 0.5px solid var(--border);
+      padding: 2rem;
+    }
+
+    /* HEADER */
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .curso-badge {
+      display: inline-block; font-size: 11px; font-weight: 500;
+      background: #e6f1fb; color: #185FA5;
+      padding: 3px 10px; border-radius: 20px; margin-bottom: 10px;
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); }
+
+    /* SECTION LABEL */
+    .section-label {
+      font-size: 11px; font-weight: 500; color: var(--text3);
+      text-transform: uppercase; letter-spacing: 0.07em;
+      margin-bottom: 10px; margin-top: 2rem;
+    }
+
+    /* LENTE */
+    .lente { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+    .lente-header { padding: 10px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .lente-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lente-subtitulo { font-size: 12px; color: var(--text2); }
+    .lente-body { display: grid; grid-template-columns: 1fr 1fr; }
+    .lente-col { padding: 12px 16px; }
+    .lente-col.ego { border-right: 0.5px solid var(--border); background: #fef6f4; }
+    .lente-col.alma { background: #f2faf6; }
+    @media (prefers-color-scheme: dark) {
+      .lente-col.ego { background: #2a1e1a; }
+      .lente-col.alma { background: #1a2a22; }
+    }
+    .lente-col-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+    .lc-ego { color: #993C1D; }
+    .lc-alma { color: #0F6E56; }
+    .lente-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; margin-bottom: 2px; }
+    .lente-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .lente-footer { padding: 10px 16px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lente-footer strong { font-weight: 500; color: var(--text); }
+
+    /* ASPECTOS GRID */
+    .aspectos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    @media (max-width: 560px) { .aspectos-grid { grid-template-columns: repeat(2, 1fr); } }
+    .aspecto-card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 10px 12px; }
+    .aspecto-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .aspecto-simbolo { font-size: 18px; line-height: 1; }
+    .aspecto-nombre { font-size: 13px; font-weight: 500; color: var(--text); }
+    .aspecto-efecto { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 20px; margin-bottom: 6px; }
+    .aspecto-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+    .e-impacto  { background: #FAECE7; color: #993C1D; }
+    .e-estimulo { background: #E6F1FB; color: #185FA5; }
+    .e-desafio  { background: #FAEEDA; color: #854F0B; }
+    .e-ciego    { background: #EEEDFE; color: #534AB7; }
+    .e-talent   { background: #EAF3DE; color: #3B6D11; }
+    .e-maduro   { background: #E1F5EE; color: #0F6E56; }
+
+    /* ALERT */
+    .alert { display: flex; gap: 10px; background: #faeeda; border: 0.5px solid #fac775; border-radius: var(--radius); padding: 10px 14px; margin-top: 8px; }
+    @media (prefers-color-scheme: dark) { .alert { background: #2a2010; border-color: #5a4010; } }
+    .alert-text { font-size: 12px; color: #633806; line-height: 1.5; }
+    @media (prefers-color-scheme: dark) { .alert-text { color: #c89040; } }
+
+    /* EXCELENCIAS */
+    .exc-list { display: flex; flex-direction: column; gap: 7px; }
+    .exc-row { display: flex; gap: 12px; align-items: flex-start; padding: 10px 14px; background: var(--bg2); border-radius: var(--radius); border: 0.5px solid var(--border); }
+    .exc-icono { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+    .exc-i1 { background: #EEEDFE; color: #534AB7; }
+    .exc-i2 { background: #FAEEDA; color: #854F0B; }
+    .exc-i3 { background: #E6F1FB; color: #185FA5; }
+    .exc-key { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+    .exc-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+    /* DIGNIDADES */
+    .dig-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .dig-bloque { border: 0.5px solid var(--border); border-radius: var(--radius); padding: 10px 12px; display: flex; gap: 10px; align-items: flex-start; }
+    .dig-icono { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+    .dig-dom { background: #EAF3DE; color: #3B6D11; }
+    .dig-exal { background: #FAEEDA; color: #854F0B; }
+    .dig-exil { background: #E6F1FB; color: #185FA5; }
+    .dig-caid { background: #FCEBEB; color: #A32D2D; }
+    .dig-nombre { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+    .dig-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+    .combo { border-radius: var(--radius); padding: 10px 14px; background: #FAEEDA; border: 0.5px solid #FAC775; margin-top: 8px; }
+    @media (prefers-color-scheme: dark) { .combo { background: #2a2010; border-color: #5a4010; } }
+    .combo-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: #854F0B; margin-bottom: 5px; }
+    .combo-text { font-size: 12px; color: #633806; line-height: 1.6; }
+    @media (prefers-color-scheme: dark) { .combo-text { color: #c89040; } }
+    .combo-text strong { font-weight: 500; color: #412402; }
+    @media (prefers-color-scheme: dark) { .combo-text strong { color: #e8b060; } }
+
+    /* CASAS */
+    .casas-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    @media (max-width: 560px) { .casas-grid { grid-template-columns: 1fr; } }
+    .casa-card { border: 0.5px solid var(--border); border-radius: var(--radius); padding: 10px 12px; }
+    .casa-top { display: flex; gap: 8px; align-items: center; margin-bottom: 5px; }
+    .casa-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .dot-r { background: #E24B4A; }
+    .dot-b { background: #378ADD; }
+    .dot-g { background: #639922; }
+    .casa-tipo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .casa-nums { font-size: 11px; color: var(--text3); margin-bottom: 5px; }
+    .casa-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .casa-pregunta { font-size: 11px; color: var(--text3); font-style: italic; margin-top: 5px; line-height: 1.4; }
+
+    /* EJEMPLOS */
+    .ej-list { display: flex; flex-direction: column; gap: 8px; }
+    .ej-card { border-radius: var(--radius); border: 0.5px solid var(--border); overflow: hidden; }
+    .ej-header { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .ej-planeta { font-size: 12px; font-weight: 500; padding: 2px 8px; border-radius: 20px; }
+    .p-marte   { background: #FAECE7; color: #993C1D; }
+    .p-jupiter { background: #FAEEDA; color: #854F0B; }
+    .p-sol     { background: #FAEEDA; color: #854F0B; }
+    .ej-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .ej-body { padding: 10px 12px; }
+    .ej-fila { display: grid; grid-template-columns: 90px 1fr; gap: 6px; margin-bottom: 6px; }
+    .ej-fila:last-child { margin-bottom: 0; }
+    .ej-key { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .ej-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .ej-val strong { font-weight: 500; color: var(--text); }
+
+    /* SIGNO PILLS */
+    .s-agua   { background:#E6F1FB; color:#185FA5; padding:1px 6px; border-radius:20px; font-size:11px; font-weight:500; }
+    .s-fuego  { background:#FAECE7; color:#993C1D; padding:1px 6px; border-radius:20px; font-size:11px; font-weight:500; }
+    .s-aire   { background:#FAEEDA; color:#854F0B; padding:1px 6px; border-radius:20px; font-size:11px; font-weight:500; }
+    .s-tierra { background:#EAF3DE; color:#3B6D11; padding:1px 6px; border-radius:20px; font-size:11px; font-weight:500; }
+
+    /* SOL */
+    .datos-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+    .dato { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 5px 10px; font-size: 12px; color: var(--text2); }
+    .dato strong { font-weight: 500; color: var(--text); }
+    .sol-intro { font-size: 12px; color: var(--text2); margin-bottom: 10px; line-height: 1.6; }
+    .sol-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; }
+    @media (max-width: 480px) { .sol-grid { grid-template-columns: 1fr; } }
+    .sol-row { display: flex; border-radius: var(--radius); border: 0.5px solid; overflow: hidden; }
+    .sol-signo-col { padding: 7px 10px; min-width: 76px; display: flex; flex-direction: column; justify-content: center; }
+    .sol-signo { font-size: 12px; font-weight: 500; }
+    .sol-elem  { font-size: 10px; opacity: 0.75; }
+    .sol-efecto-col { padding: 7px 10px; flex: 1; border-left: 0.5px solid; }
+    .sol-efecto { font-size: 12px; line-height: 1.4; }
+    .sol-nota { font-size: 11px; font-style: italic; line-height: 1.4; margin-top: 2px; }
+
+    .ef { border-color: #F5C4B3; }
+    .ef .sol-signo-col { background: #FAECE7; } .ef .sol-signo { color: #993C1D; } .ef .sol-elem { color: #993C1D; }
+    .ef .sol-efecto-col { background: #FEF6F4; border-color: #F5C4B3; } .ef .sol-efecto { color: #712B13; } .ef .sol-nota { color: #993C1D; }
+    .et { border-color: #C0DD97; }
+    .et .sol-signo-col { background: #EAF3DE; } .et .sol-signo { color: #3B6D11; } .et .sol-elem { color: #3B6D11; }
+    .et .sol-efecto-col { background: #F5FAF0; border-color: #C0DD97; } .et .sol-efecto { color: #27500A; }
+    .ea { border-color: #FAC775; }
+    .ea .sol-signo-col { background: #FAEEDA; } .ea .sol-signo { color: #854F0B; } .ea .sol-elem { color: #854F0B; }
+    .ea .sol-efecto-col { background: #FEFAF3; border-color: #FAC775; } .ea .sol-efecto { color: #633806; }
+    .ew { border-color: #B5D4F4; }
+    .ew .sol-signo-col { background: #E6F1FB; } .ew .sol-signo { color: #185FA5; } .ew .sol-elem { color: #185FA5; }
+    .ew .sol-efecto-col { background: #F4F9FE; border-color: #B5D4F4; } .ew .sol-efecto { color: #0C447C; } .ew .sol-nota { color: #185FA5; }
+
+    /* PUNTOS A RETENER */
+    .retener-list { display: flex; flex-direction: column; gap: 6px; }
+    .retener-item { display: flex; gap: 12px; align-items: flex-start; padding: 11px 14px; border-radius: var(--radius); border: 0.5px solid var(--border); background: var(--bg); }
+    .retener-num { font-size: 12px; font-weight: 500; color: #185FA5; min-width: 20px; padding-top: 2px; }
+    .retener-texto { font-size: 13px; color: var(--text); line-height: 1.6; }
+    .retener-texto span { font-weight: 500; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="curso-badge">Curso 4 · C5</div>
+    <div class="titulo">Estructura y protocolo de tránsitos</div>
+    <div class="meta">3 de diciembre de 2025 &nbsp;·&nbsp; Tránsitos · Aspectos · Dignidades · Casas</div>
+  </div>
+
+  <!-- LENTE -->
+  <div class="section-label">Lente de lectura — cómo recibir un tránsito</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">Personalidad vs alma</div>
+      <div class="lente-subtitulo">Todo lo que sigue se lee desde aquí</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-col ego">
+        <div class="lente-col-label lc-ego">Personalidad (ego)</div>
+        <div class="lente-item">Reacciona sin reflexión</div>
+        <div class="lente-item">Juzga y culpa al exterior</div>
+        <div class="lente-item">Persigue deseos sin cuestionar</div>
+        <div class="lente-item">La caída/exilio se vive como conflicto</div>
+      </div>
+      <div class="lente-col alma">
+        <div class="lente-col-label lc-alma">Alma (conciencia)</div>
+        <div class="lente-item">Observa antes de actuar</div>
+        <div class="lente-item">Ve perspectivas, no enjuicia</div>
+        <div class="lente-item">Da distancia antes de actuar</div>
+        <div class="lente-item">Redirige la energía del planeta</div>
+      </div>
+    </div>
+    <div class="lente-footer">
+      <strong>La astrología no determina.</strong> El mismo tránsito puede vivirse desde el conflicto o desde el aprendizaje — depende del nivel de conciencia. Anticiparse permite prepararse.
+    </div>
+  </div>
+
+  <!-- ASPECTOS -->
+  <div class="section-label">Qué hace cada aspecto en tránsito</div>
+  <div class="aspectos-grid">
+    <div class="aspecto-card">
+      <div class="aspecto-top"><span class="aspecto-simbolo">☌</span><span class="aspecto-nombre">Conjunción</span></div>
+      <span class="aspecto-efecto e-impacto">Impacto</span>
+      <div class="aspecto-desc">El aspecto más potente. Encuentro directo en el mismo grado. Se siente unos grados antes.</div>
+    </div>
+    <div class="aspecto-card">
+      <div class="aspecto-top"><span class="aspecto-simbolo">☍</span><span class="aspecto-nombre">Oposición</span></div>
+      <span class="aspecto-efecto e-estimulo">Estímulo</span>
+      <div class="aspecto-desc">Trae dinámica desde la polaridad. Similar al eje nodal: genera movimiento entre dos fuerzas.</div>
+    </div>
+    <div class="aspecto-card">
+      <div class="aspecto-top"><span class="aspecto-simbolo">□</span><span class="aspecto-nombre">Cuadratura</span></div>
+      <span class="aspecto-efecto e-desafio">Desafío y reto</span>
+      <div class="aspecto-desc">Informa de un reto inminente. Se puede anticipar y preparar. Resolverla es la mayor satisfacción.</div>
+    </div>
+    <div class="aspecto-card">
+      <div class="aspecto-top"><span class="aspecto-simbolo">⊼</span><span class="aspecto-nombre">Quincuncio</span></div>
+      <span class="aspecto-efecto e-ciego">Punto ciego</span>
+      <div class="aspecto-desc">Temporal: energía y estrés mental. Pide cambiar el ángulo de mirada. Muy mental, exige reestructurarse.</div>
+    </div>
+    <div class="aspecto-card">
+      <div class="aspecto-top"><span class="aspecto-simbolo">✶</span><span class="aspecto-nombre">Sextil</span></div>
+      <span class="aspecto-efecto e-talent">Talento emergente</span>
+      <div class="aspecto-desc">Aporta equilibrio y armonía. Sensación de que algo nuevo está floreciendo o aprendiéndose.</div>
+    </div>
+    <div class="aspecto-card">
+      <div class="aspecto-top"><span class="aspecto-simbolo">△</span><span class="aspecto-nombre">Trígono</span></div>
+      <span class="aspecto-efecto e-maduro">Talento maduro</span>
+      <div class="aspecto-desc">Fluidez. Cuidado con la acomodación — especialmente si lo hace un transpersonal (dura mucho).</div>
+    </div>
+  </div>
+
+  <div class="alert">
+    <div class="alert-text">Lo natal está fijo. El tránsito siempre trae cambio. Si el cambio es favorable, mejora lo natal; si es desafiante, lo tensiona. Los tránsitos sorprenden cuando nos hemos normalizado a hacer las cosas de una misma manera.</div>
+  </div>
+
+  <!-- EXCELENCIAS -->
+  <div class="section-label">Excelencias — factores que amplifican o modulan el tránsito</div>
+  <div class="exc-list">
+    <div class="exc-row">
+      <div class="exc-icono exc-i1">⊕</div>
+      <div>
+        <div class="exc-key">Signos interceptados</div>
+        <div class="exc-val">Si el tránsito pasa por un signo interceptado, lo desintercepta temporalmente — la persona puede integrar una energía que antes era difícil de expresar. Al terminar el período vuelve a quedar interceptado, pero deja un aprendizaje.</div>
+      </div>
+    </div>
+    <div class="exc-row">
+      <div class="exc-icono exc-i2">★</div>
+      <div>
+        <div class="exc-key">Dignidades</div>
+        <div class="exc-val">Domicilio · exaltación · exilio · caída. Modulan si la energía llega cómoda, amplificada, mermada o tensa. Aplican tanto en tránsito como en carta natal.</div>
+      </div>
+    </div>
+    <div class="exc-row">
+      <div class="exc-icono exc-i3">⌂</div>
+      <div>
+        <div class="exc-key">Casas angulares, cadentes y sucedentes</div>
+        <div class="exc-val">La casa indica la fase del ciclo: angular = inicio · sucedente = consolidación · cadente = revisión.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIGNIDADES -->
+  <div class="section-label">Dignidades — cómo el signo modula la energía del tránsito</div>
+  <div class="dig-grid">
+    <div class="dig-bloque">
+      <div class="dig-icono dig-dom">⌂</div>
+      <div><div class="dig-nombre">Domicilio</div><div class="dig-desc">En su signo regente. Como en casa: cómodo, en plenas facultades.</div></div>
+    </div>
+    <div class="dig-bloque">
+      <div class="dig-icono dig-exal">↑</div>
+      <div><div class="dig-nombre">Exaltación</div><div class="dig-desc">Mejor que en casa. Energía amplificada — riesgo de expectativas excesivas si no hay atención plena.</div></div>
+    </div>
+    <div class="dig-bloque">
+      <div class="dig-icono dig-exil">→</div>
+      <div><div class="dig-nombre">Exilio</div><div class="dig-desc">Signo opuesto al domicilio. La energía queda mermada e incómoda.</div></div>
+    </div>
+    <div class="dig-bloque">
+      <div class="dig-icono dig-caid">↓</div>
+      <div><div class="dig-nombre">Caída</div><div class="dig-desc">Signo opuesto a la exaltación. Mayor riesgo de vivirlo reactivamente desde la personalidad.</div></div>
+    </div>
+  </div>
+
+  <div class="combo">
+    <div class="combo-label">Interacción dignidad + aspecto</div>
+    <div class="combo-text">Aspecto desafiante + dignidad en caída o exilio = <strong>doble señal de alerta</strong>. Aspecto favorable + exaltación = <strong>momento de máximo aprovechamiento</strong> si se usa con conciencia.</div>
+  </div>
+
+  <!-- CASAS -->
+  <div class="section-label">Tipo de casa — en qué fase del ciclo llega el tránsito</div>
+  <div class="casas-grid">
+    <div class="casa-card">
+      <div class="casa-top"><div class="casa-dot dot-r"></div><div class="casa-tipo">Angulares</div></div>
+      <div class="casa-nums">Casas 1 · 4 · 7 · 10 (cardinales)</div>
+      <div class="casa-desc">Impulso de inicio. Activa una nueva dirección o acción.</div>
+      <div class="casa-pregunta">¿Qué estoy empezando?</div>
+    </div>
+    <div class="casa-card">
+      <div class="casa-top"><div class="casa-dot dot-b"></div><div class="casa-tipo">Sucedentes</div></div>
+      <div class="casa-nums">Casas 2 · 5 · 8 · 11 (fijas)</div>
+      <div class="casa-desc">Consolidación. Se da forma a lo iniciado. Energía pasiva, receptiva.</div>
+      <div class="casa-pregunta">¿Qué inicié antes? Ahora le doy forma.</div>
+    </div>
+    <div class="casa-card">
+      <div class="casa-top"><div class="casa-dot dot-g"></div><div class="casa-tipo">Cadentes</div></div>
+      <div class="casa-nums">Casas 3 · 6 · 9 · 12 (mutables)</div>
+      <div class="casa-desc">Revisión y cambio. Modificar, corregir, adaptar.</div>
+      <div class="casa-pregunta">¿Qué necesito revisar o soltar?</div>
+    </div>
+  </div>
+
+  <div class="alert" style="margin-top:8px;">
+    <div class="alert-text">Ejemplo de secuencia — Júpiter transitando: <span class="s-agua">Cáncer</span> (angular) → inicio de expansión emocional familiar · Leo (sucedente) → dar forma, vivir la alegría · <span class="s-tierra">Virgo</span> (cadente) → revisar si me pasé con el optimismo.</div>
+  </div>
+
+  <!-- EJEMPLOS -->
+  <div class="section-label">Ejemplos de la clase</div>
+  <div class="ej-list">
+
+    <div class="ej-card">
+      <div class="ej-header">
+        <span class="ej-planeta p-marte">Marte</span>
+        <span class="ej-titulo">Marte en Cáncer — planeta en caída</span>
+      </div>
+      <div class="ej-body">
+        <div class="ej-fila"><div class="ej-key">Situación</div><div class="ej-val">Marte transita por <span class="s-agua">Cáncer</span>, signo donde está en caída.</div></div>
+        <div class="ej-fila"><div class="ej-key">Desde personalidad</div><div class="ej-val"><strong>Conflicto familiar.</strong> Autoafirmación excesiva, tensión en casa.</div></div>
+        <div class="ej-fila"><div class="ej-key">Desde conciencia</div><div class="ej-val"><strong>Redirigir hacia el apoyo emocional.</strong> Usar el impulso de Marte para acompañar y sostener, no para imponer.</div></div>
+      </div>
+    </div>
+
+    <div class="ej-card">
+      <div class="ej-header">
+        <span class="ej-planeta p-marte">Marte</span>
+        <span class="ej-titulo">Marte en Libra — planeta en exilio</span>
+      </div>
+      <div class="ej-body">
+        <div class="ej-fila"><div class="ej-key">Situación</div><div class="ej-val">Marte transita por <span class="s-aire">Libra</span>, signo opuesto a su domicilio en Aries.</div></div>
+        <div class="ej-fila"><div class="ej-key">Desde personalidad</div><div class="ej-val"><strong>La autoafirmación queda frenada.</strong> Puede acumularse y estallar.</div></div>
+        <div class="ej-fila"><div class="ej-key">Desde conciencia</div><div class="ej-val"><strong>Autoafirmarse desde la diplomacia.</strong> "Si no te sabe mal, yo prefería hacerlo hoy porque me voy de viaje. ¿Cómo lo ves?"</div></div>
+      </div>
+    </div>
+
+    <div class="ej-card">
+      <div class="ej-header">
+        <span class="ej-planeta p-jupiter">Júpiter</span>
+        <span class="ej-titulo">Júpiter en Cáncer — planeta en exaltación</span>
+      </div>
+      <div class="ej-body">
+        <div class="ej-fila"><div class="ej-key">Situación</div><div class="ej-val">Júpiter transita <span class="s-agua">Cáncer</span> exaltado (activo dic. 2025, además retrógrado).</div></div>
+        <div class="ej-fila"><div class="ej-key">Desde personalidad</div><div class="ej-val"><strong>Exceso de optimismo familiar.</strong> Navidades idealizadas, expectativas que decepcionan.</div></div>
+        <div class="ej-fila"><div class="ej-key">Desde conciencia</div><div class="ej-val"><strong>Disfrutar la abundancia emocional del presente</strong> sin confundir la tregua con la resolución de problemas de fondo.</div></div>
+      </div>
+    </div>
+
+    <div class="ej-card">
+      <div class="ej-header">
+        <span class="ej-planeta p-sol">Sol</span>
+        <span class="ej-titulo">Sol en Sagitario — práctica con cartas reales</span>
+      </div>
+      <div class="ej-body">
+        <div class="ej-fila"><div class="ej-key">Dato práctico</div><div class="ej-val">El Sol se mueve 1°/día. <span class="s-fuego">Sagitario</span> empezó el 22/11 → el 3/12 está en grado 11. Así se calcula sin efemérides.</div></div>
+        <div class="ej-fila"><div class="ej-key">Carta Nelda</div><div class="ej-val">Sol en grado 11 de <span class="s-fuego">Sagitario</span> en casa 8 → reorientación interna. "Siento que respiro, quiero hacer muchas cosas, pero desde dentro."</div></div>
+        <div class="ej-fila"><div class="ej-key">Carta Jimena</div><div class="ej-val">Sol en <span class="s-fuego">Sagitario</span> en casa 11 → poner luz en el verdadero compañerismo, revisar con quién se siente libre y auténtica.</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SOL POR SIGNOS -->
+  <div class="section-label">El Sol en tránsito — efectos por signo</div>
+  <div class="datos-row">
+    <div class="dato">1° por día</div>
+    <div class="dato">~30 días por signo</div>
+    <div class="dato">Orbe sobre un planeta: <strong>hasta 10 días</strong></div>
+  </div>
+  <div class="sol-intro">Actúa como una linterna: ilumina la zona de la carta por donde pasa. Sutil pero observable. Al tocar un planeta natal puede hacer consciente algo relacionado con ese arquetipo.</div>
+  <div class="sol-grid">
+    <div class="sol-row ef"><div class="sol-signo-col"><div class="sol-signo">Aries</div><div class="sol-elem">Fuego</div></div><div class="sol-efecto-col"><div class="sol-efecto">Energía para iniciar, acción, impulso.</div></div></div>
+    <div class="sol-row et"><div class="sol-signo-col"><div class="sol-signo">Tauro</div><div class="sol-elem">Tierra</div></div><div class="sol-efecto-col"><div class="sol-efecto">Revalorar, sentido de propiedad, recursos.</div></div></div>
+    <div class="sol-row ea"><div class="sol-signo-col"><div class="sol-signo">Géminis</div><div class="sol-elem">Aire</div></div><div class="sol-efecto-col"><div class="sol-efecto">Más comunicativos, lectura, cursos, intercambios.</div></div></div>
+    <div class="sol-row ew"><div class="sol-signo-col"><div class="sol-signo">Cáncer</div><div class="sol-elem">Agua</div></div><div class="sol-efecto-col"><div class="sol-efecto">Anhelo familiar, memoria, pasado, raíces.</div></div></div>
+    <div class="sol-row ef"><div class="sol-signo-col"><div class="sol-signo">Leo</div><div class="sol-elem">Fuego</div></div><div class="sol-efecto-col"><div class="sol-efecto">Juego, alegría, expresión personal, vacacional.</div></div></div>
+    <div class="sol-row et"><div class="sol-signo-col"><div class="sol-signo">Virgo</div><div class="sol-elem">Tierra</div></div><div class="sol-efecto-col"><div class="sol-efecto">Atención al detalle, rutinas, alimentación, cuerpo.</div></div></div>
+    <div class="sol-row ea"><div class="sol-signo-col"><div class="sol-signo">Libra</div><div class="sol-elem">Aire</div></div><div class="sol-efecto-col"><div class="sol-efecto">Relaciones, equilibrio, inicio de acuerdos o pareja.</div></div></div>
+    <div class="sol-row ew"><div class="sol-signo-col"><div class="sol-signo">Escorpio</div><div class="sol-elem">Agua</div></div><div class="sol-efecto-col"><div class="sol-efecto">Introversión, profundidad, créditos, transformación.</div></div></div>
+    <div class="sol-row ef"><div class="sol-signo-col"><div class="sol-signo">Sagitario</div><div class="sol-elem">Fuego</div></div><div class="sol-efecto-col"><div><div class="sol-efecto">Optimismo, objetivos a futuro, ideales, viajes, estudio.</div><div class="sol-nota">Nelda (casa 8): reorientación interna · Jimena (casa 11): revisar el verdadero compañerismo.</div></div></div></div>
+    <div class="sol-row et"><div class="sol-signo-col"><div class="sol-signo">Capricornio</div><div class="sol-elem">Tierra</div></div><div class="sol-efecto-col"><div class="sol-efecto">Responsabilidades, organización, estructura.</div></div></div>
+    <div class="sol-row ea"><div class="sol-signo-col"><div class="sol-signo">Acuario</div><div class="sol-elem">Aire</div></div><div class="sol-efecto-col"><div class="sol-efecto">Conciencia grupal, amistades, visibilidad social.</div></div></div>
+    <div class="sol-row ew"><div class="sol-signo-col"><div class="sol-signo">Piscis</div><div class="sol-elem">Agua</div></div><div class="sol-efecto-col"><div class="sol-efecto">Compasión, ayuda al otro, amor incondicional.</div></div></div>
+  </div>
+
+  <!-- PUNTOS A RETENER -->
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item"><div class="retener-num">1</div><div class="retener-texto"><span>Los tránsitos no determinan — informan.</span> El mismo tránsito puede vivirse como conflicto o como aprendizaje. La conciencia es el único factor que cambia el resultado.</div></div>
+    <div class="retener-item"><div class="retener-num">2</div><div class="retener-texto"><span>Cada aspecto tiene una cualidad específica en tránsito.</span> Conjunción = impacto · oposición = estímulo · cuadratura = reto · quincuncio = punto ciego · sextil = talento que emerge · trígono = talento maduro (cuidado con acomodarse).</div></div>
+    <div class="retener-item"><div class="retener-num">3</div><div class="retener-texto"><span>Siempre leer dignidad + aspecto juntos.</span> Un aspecto favorable con planeta en exaltación es la máxima oportunidad. Un aspecto desafiante con planeta en caída o exilio es doble señal de alerta.</div></div>
+    <div class="retener-item"><div class="retener-num">4</div><div class="retener-texto"><span>La casa indica la fase del ciclo, no solo el área temática.</span> Angular = algo empieza · sucedente = se consolida · cadente = se revisa. Preguntar siempre: ¿en qué fase estoy con esto?</div></div>
+    <div class="retener-item"><div class="retener-num">5</div><div class="retener-texto"><span>El Sol en tránsito es sutil pero real.</span> Se mueve 1°/día — 30 días por signo, hasta 10 días de orbe sobre un planeta. Actúa como linterna: ilumina, no sacude. Vale la pena observarlo cada mes.</div></div>
+    <div class="retener-item"><div class="retener-num">6</div><div class="retener-texto"><span>La astrología permite anticiparse.</span> Si sé que viene una cuadratura, puedo prepararme. No para evitarla — para recibirla desde la conciencia y no desde la reacción.</div></div>
+  </div>
+
+</div>
+</body>
+</html>
