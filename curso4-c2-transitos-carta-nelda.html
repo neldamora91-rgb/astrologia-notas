@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C2 · Iniciamos tránsitos con carta de Nelda</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9;
+      --text: #1a1a18; --text2: #4a4a46; --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+      --radius: 8px; --radius-lg: 12px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2a; --text: #e8e6de; --text2: #a8a6a0; --text3: #68665e; --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18); }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; padding: 2rem 1rem; }
+    .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; }
+
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .curso-badge { display: inline-block; font-size: 11px; font-weight: 500; background: #e6f1fb; color: #185FA5; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tipo-badge { display: inline-block; font-size: 11px; font-weight: 500; background: #EAF3DE; color: #3B6D11; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); margin-bottom: 10px; }
+    .practica-aviso { display: flex; gap: 10px; background: #EAF3DE; border: 0.5px solid #C0DD97; border-radius: var(--radius); padding: 10px 14px; }
+    .practica-aviso-text { font-size: 12px; color: #3B6D11; line-height: 1.5; }
+
+    .section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 2rem; }
+
+    .lente { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+    .lente-header { padding: 10px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .lente-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lente-subtitulo { font-size: 12px; color: var(--text2); }
+    .lente-body { padding: 12px 16px; }
+    .lente-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; margin-bottom: 2px; }
+    .lente-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .lente-footer { padding: 10px 16px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lente-footer strong { font-weight: 500; color: var(--text); }
+
+    .efem-grid { display: flex; flex-direction: column; gap: 6px; }
+    .efem-row { display: flex; gap: 12px; align-items: flex-start; padding: 9px 14px; background: var(--bg2); border-radius: var(--radius); border: 0.5px solid var(--border); }
+    .efem-icono { font-size: 13px; flex-shrink: 0; width: 22px; color: var(--text3); font-weight: 500; }
+    .efem-key { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+    .efem-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+    .badge { display: inline-block; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .b-clave { background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text2); }
+
+    .concepto-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .concepto-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .concepto-nombre { font-size: 14px; font-weight: 500; color: var(--text); flex: 1; }
+    .concepto-body { display: grid; grid-template-columns: 1fr 1fr; }
+    @media (max-width: 560px) { .concepto-body { grid-template-columns: 1fr; } }
+    .concepto-def { padding: 12px 14px; border-right: 0.5px solid var(--border); }
+    @media (max-width: 560px) { .concepto-def { border-right: none; border-bottom: 0.5px solid var(--border); } }
+    .concepto-ej  { padding: 12px 14px; background: var(--bg2); }
+    .concepto-def-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .concepto-def-text strong { font-weight: 500; color: var(--text); }
+    .ej-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); margin-bottom: 6px; }
+    .ej-text { font-size: 12px; color: var(--text2); line-height: 1.6; }
+    .ej-text strong { font-weight: 500; color: var(--text); }
+
+    .ej-card { border-radius: var(--radius); border: 0.5px solid var(--border); overflow: hidden; margin-bottom: 8px; }
+    .ej-header { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .ej-tag { font-size: 12px; font-weight: 500; padding: 2px 8px; border-radius: 20px; }
+    .t-urano  { background: #FAEEDA; color: #854F0B; }
+    .t-marte  { background: #FAECE7; color: #993C1D; }
+    .t-venus  { background: #FBEAF0; color: #993556; }
+    .t-jupiter { background: #E6F1FB; color: #185FA5; }
+    .t-quiron { background: #EEEDFE; color: #534AB7; }
+    .ej-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .ej-body { padding: 10px 12px; }
+    .ej-fila { display: grid; grid-template-columns: 100px 1fr; gap: 6px; margin-bottom: 6px; }
+    .ej-fila:last-child { margin-bottom: 0; }
+    .ej-key { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .ej-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .ej-val strong { font-weight: 500; color: var(--text); }
+
+    .s-fuego  { background:#FAECE7; color:#993C1D; padding:1px 6px; border-radius:20px; font-size:11px; font-weight:500; }
+    .s-agua   { background:#E6F1FB; color:#185FA5; padding:1px 6px; border-radius:20px; font-size:11px; font-weight:500; }
+
+    .prediccion-card { border-radius: var(--radius); border: 0.5px solid #B5D4F4; background: #E6F1FB; padding: 10px 14px; margin-bottom: 6px; }
+    @media (prefers-color-scheme: dark) { .prediccion-card { background: #0c2a44; border-color: #0c447c; } }
+    .pred-header { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; flex-wrap: wrap; }
+    .pred-titulo { font-size: 13px; font-weight: 500; color: #0C447C; }
+    @media (prefers-color-scheme: dark) { .pred-titulo { color: #85b7eb; } }
+    .pred-texto { font-size: 12px; color: #185FA5; line-height: 1.5; }
+    @media (prefers-color-scheme: dark) { .pred-texto { color: #b5d4f4; } }
+    .pred-fecha { font-size: 11px; color: #378ADD; font-weight: 500; margin-top: 4px; }
+
+    .retener-list { display: flex; flex-direction: column; gap: 6px; }
+    .retener-item { display: flex; gap: 12px; align-items: flex-start; padding: 11px 14px; border-radius: var(--radius); border: 0.5px solid var(--border); background: var(--bg); }
+    .retener-num { font-size: 12px; font-weight: 500; color: #185FA5; min-width: 20px; padding-top: 2px; }
+    .retener-texto { font-size: 13px; color: var(--text); line-height: 1.6; }
+    .retener-texto span { font-weight: 500; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-top">
+      <div class="curso-badge">Curso 4 · C2</div>
+      <div class="tipo-badge">Práctica</div>
+    </div>
+    <div class="titulo">Iniciamos tránsitos con carta de Nelda</div>
+    <div class="meta">5 de noviembre de 2025 &nbsp;·&nbsp; Tránsitos · Efemérides · Retrogradación</div>
+    <div class="practica-aviso">
+      <div class="practica-aviso-text">Clase casi enteramente práctica — se leen los tránsitos del día sobre la carta de Nelda. Los conceptos teóricos emergen durante la práctica. Los ejemplos <em>son</em> la clase.</div>
+    </div>
+  </div>
+
+  <div class="section-label">Para qué sirven los tránsitos</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">Los tránsitos explican qué está pasando ahora</div>
+      <div class="lente-subtitulo">No solo predicción — también comprensión del momento presente</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">Ver la disposición planetaria del cielo hoy y superponerla sobre la carta natal</div>
+      <div class="lente-item">Identificar qué planetas en tránsito tocan por aspecto algún planeta natal</div>
+      <div class="lente-item">Leer el "clima actual" de la persona — incluso la pregunta que trae el consultante suele verse en los tránsitos</div>
+      <div class="lente-item">También se pueden leer sin carta natal — solo para saber qué está pasando en el cielo</div>
+      <div class="lente-item">Los tránsitos permiten anticipar tendencias: saber cuándo un planeta llegará a tocar un planeta natal</div>
+    </div>
+    <div class="lente-footer"><strong>Siempre buscar el hilo conductor.</strong> Un tránsito no se lee aislado — se relaciona con lo que la persona está viviendo y con otros tránsitos activos.</div>
+  </div>
+
+  <div class="section-label">La efemérides — cómo leerla</div>
+  <div class="efem-grid">
+    <div class="efem-row"><div class="efem-icono">↔</div><div><div class="efem-key">Estructura de la tabla</div><div class="efem-val">Columna izquierda = día · Siguiente = hora (sideral time) · Luego cada planeta con su grado y minutos · Los segundos solo aparecen para el Sol y la Luna.</div></div></div>
+    <div class="efem-row"><div class="efem-icono">R</div><div><div class="efem-key">Retrogradación — cómo se marca</div><div class="efem-val">La letra "R" junto a un planeta indica que ese día se pone retrógrado. La "D" o "T" indica que se pone directo. Noviembre 2025: Mercurio retrógrado el día 10, Júpiter el día 12, Saturno directo el día 29.</div></div></div>
+    <div class="efem-row"><div class="efem-icono">↻</div><div><div class="efem-key">Estacionario — dos días previos a retrogradar</div><div class="efem-val">Antes de ponerse retrógrado, el planeta pasa dos días en estado estacionario: reduce velocidad hasta casi detenerse y luego invierte. En esos días ya empiezan a notarse los efectos de la retrogradación.</div></div></div>
+    <div class="efem-row"><div class="efem-icono">♒</div><div><div class="efem-key">Cambios de signo</div><div class="efem-val">Cuando hay un cambio de signo, la efemérides lo indica con el símbolo del nuevo signo. La hora exacta permite saber cuándo ocurre el cambio.</div></div></div>
+  </div>
+
+  <div class="section-label">Conceptos clave de la clase</div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">Retrogradación — qué es realmente</span><span class="badge b-clave">óptica geocéntrica</span></div>
+    <div class="concepto-body">
+      <div class="concepto-def"><div class="concepto-def-text">Los planetas nunca van hacia atrás — es una ilusión óptica desde la Tierra. Cuando la Tierra adelanta a un planeta exterior en su órbita, desde nuestra perspectiva parece que ese planeta retrocede. Es la <strong>mirada geocéntrica</strong>: nuestra realidad desde la Tierra, no la realidad del sistema solar.</div></div>
+      <div class="concepto-ej"><div class="ej-label">Imagen de clase</div><div class="ej-text">Como cuando adelantas a un coche en la autopista — el otro no va hacia atrás, pero desde tu perspectiva parece retroceder. Los efectos de la retrogradación son reales aunque el movimiento sea aparente.</div></div>
+    </div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">Los tres toques de un tránsito</span><span class="badge b-clave">retrogradación</span></div>
+    <div class="concepto-body">
+      <div class="concepto-def"><div class="concepto-def-text">Cuando un planeta se pone retrógrado, <strong>vuelve a pasar por los mismos grados</strong> que ya transitó. Esto genera tres contactos con el mismo planeta natal: 1) directo (ida) · 2) retrógrado (vuelta) · 3) directo (cierre). Los tres toques son parte de la misma historia.</div></div>
+      <div class="concepto-ej"><div class="ej-label">Cómo leerlo</div><div class="ej-text">El primer toque siembra la semilla. El segundo (retrógrado) es introspección, tomar conciencia. El tercero (directo) es la expresión o resolución. <strong>No son tres eventos distintos — son el mismo tema en tres momentos.</strong></div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Tránsitos del 5/11/2025 sobre carta de Nelda</div>
+
+  <div class="ej-card">
+    <div class="ej-header"><span class="ej-tag t-urano">Urano retrógrado en Géminis</span><span class="ej-titulo">Cuadratura a Luna natal en Piscis · Casa 11</span></div>
+    <div class="ej-body">
+      <div class="ej-fila"><div class="ej-key">Energía</div><div class="ej-val">Urano retrógrado da permiso a la Luna de expresar su sentimiento. La sensibilidad emocional fluye hacia dentro. Al ponerse directo en abril 2026 volverá a "cortar" esa sensibilidad.</div></div>
+      <div class="ej-fila"><div class="ej-key">Urano en Géminis</div><div class="ej-val">Quiere desvelar algo que se querría comunicar pero no sale. Nuevas formas de comunicar — no con palabras, sino con gestos, acciones, presencia.</div></div>
+      <div class="ej-fila"><div class="ej-key">Vivencia</div><div class="ej-val">"Tengo todo el sentimiento pero no logro comunicarlo todavía." Su madre le ve la distancia aunque sabe que es muy emocional — eso es Urano/Luna.</div></div>
+      <div class="ej-fila"><div class="ej-key">3 toques</div><div class="ej-val">1º junio (más distante con la madre, en Tauro) · 2º noviembre retrógrado (siente todo intensamente, deja que la cuiden) · 3º abril 2026 directo (resolución o expresión).</div></div>
+    </div>
+  </div>
+
+  <div class="ej-card">
+    <div class="ej-header"><span class="ej-tag t-marte">Marte en Sagitario grado 0</span><span class="ej-titulo">Cuadratura a Luna natal · Oposición a Urano</span></div>
+    <div class="ej-body">
+      <div class="ej-fila"><div class="ej-key">Energía</div><div class="ej-val">Marte en <span class="s-fuego">Sagitario</span> añade idealización a la sensibilidad lunar. El sentimiento actual es genuino y auténtico, pero tiene un ingrediente de ilusión que se irá cuando Marte avance.</div></div>
+      <div class="ej-fila"><div class="ej-key">Vivencia</div><div class="ej-val">La intensidad emocional hacia la madre está amplificada. Cuando pase, el sentimiento seguirá pero más tranquilo y "saboreado" — igual de amoroso, sin la tensión actual.</div></div>
+      <div class="ej-fila"><div class="ej-key">Irá hacia</div><div class="ej-val">Marte avanzará hacia cuadratura con Júpiter natal (grado 7) y Venus (grado 9) en casa 5 — resonancia con el rol de hija y también de madre.</div></div>
+    </div>
+  </div>
+
+  <div class="ej-card">
+    <div class="ej-header"><span class="ej-tag t-venus">Venus en Libra pasando al Sol natal</span><span class="ej-titulo">Conjunción Sol natal · Casa 6</span></div>
+    <div class="ej-body">
+      <div class="ej-fila"><div class="ej-key">Período</div><div class="ej-val">Venus cerca del Sol natal (grado 25) desde el 31 octubre hasta el 5 noviembre cuando entra en <span class="s-agua">Escorpio</span>.</div></div>
+      <div class="ej-fila"><div class="ej-key">Casa 6</div><div class="ej-val">Sol en casa 6 = rutinas. Venus pasando → búsqueda de armonía (Libra) en la rutina. "Cada día un poco más de armonía con la bebé, pero muy flexible todavía."</div></div>
+    </div>
+  </div>
+
+  <div class="ej-card">
+    <div class="ej-header"><span class="ej-tag t-quiron">Quirón en Aries en tránsito</span><span class="ej-titulo">Oposición al Sol natal · Casa 12</span></div>
+    <div class="ej-body">
+      <div class="ej-fila"><div class="ej-key">Lectura</div><div class="ej-val">Quirón en <span class="s-fuego">Aries</span> en oposición al Sol (casa 6) desde la 12 → tensión entre las rutinas y el espacio propio (casa 12).</div></div>
+      <div class="ej-fila"><div class="ej-key">Vivencia</div><div class="ej-val">"No tengo espacio propio. Cuando lo tengo es para descansar, no para hacer mis cosas." Eso es exactamente Quirón casa 12 oponiéndose a las rutinas (casa 6).</div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Predicciones que surgieron de los tránsitos</div>
+
+  <div class="prediccion-card">
+    <div class="pred-header"><span class="ej-tag t-jupiter" style="font-size:11px; padding:1px 7px;">Júpiter · Casa 4</span><span class="pred-titulo">Viaje familiar</span></div>
+    <div class="pred-texto">Júpiter directo en marzo 2026 llegará al grado de la casa 4 el 21 de junio. Casa 4 + Júpiter = familia, viaje, reunión, aumento de personas.</div>
+    <div class="pred-fecha">Confirmado en clase: boda en Francia en junio 2026, con la bebé y posiblemente con los suegros.</div>
+  </div>
+
+  <div class="prediccion-card">
+    <div class="pred-header"><span class="ej-tag t-jupiter" style="font-size:11px; padding:1px 7px;">Júpiter entrando en Leo</span><span class="pred-titulo">Cambio de piso / casa más grande</span></div>
+    <div class="pred-texto">Júpiter en Leo en julio 2026 estará en la casa 5 de Nelda durante un año. Júpiter en Leo = expansión, majestuosidad, algo más grande y luminoso.</div>
+    <div class="pred-fecha">Confirmado en clase: ya están pensando en cambiar de piso por las escaleras y la llegada de Ema.</div>
+  </div>
+
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item"><div class="retener-num">1</div><div class="retener-texto"><span>Los tránsitos explican el presente, no solo el futuro.</span> Superponiendo los planetas de hoy sobre la carta natal se puede leer el clima actual de la persona — incluso la pregunta que trae.</div></div>
+    <div class="retener-item"><div class="retener-num">2</div><div class="retener-texto"><span>Todo planeta que retrograde toca un punto tres veces.</span> Ida directa · retrógrado (introspección) · directo (resolución). Los tres son parte de la misma historia — hay que buscar el hilo conductor entre ellos.</div></div>
+  </div>
+
+</div>
+</body>
+</html>
