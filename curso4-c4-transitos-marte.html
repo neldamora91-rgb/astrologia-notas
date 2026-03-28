@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C4 · Tránsitos con Marte</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9;
+      --text: #1a1a18; --text2: #4a4a46; --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+      --radius: 8px; --radius-lg: 12px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2a; --text: #e8e6de; --text2: #a8a6a0; --text3: #68665e; --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18); }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; padding: 2rem 1rem; }
+    .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; }
+
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .curso-badge { display: inline-block; font-size: 11px; font-weight: 500; background: #e6f1fb; color: #185FA5; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tipo-badge { display: inline-block; font-size: 11px; font-weight: 500; background: #EEEDFE; color: #534AB7; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); margin-bottom: 10px; }
+    .practica-aviso { display: flex; gap: 10px; background: #EEEDFE; border: 0.5px solid #AFA9EC; border-radius: var(--radius); padding: 10px 14px; }
+    .practica-aviso-text { font-size: 12px; color: #534AB7; line-height: 1.5; }
+
+    .section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 2rem; }
+
+    .lente { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+    .lente-header { padding: 10px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .lente-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lente-subtitulo { font-size: 12px; color: var(--text2); }
+    .lente-body { padding: 12px 16px; }
+    .lente-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; margin-bottom: 2px; }
+    .lente-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .lente-footer { padding: 10px 16px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lente-footer strong { font-weight: 500; color: var(--text); }
+
+    /* MARTE */
+    .marte-bloque { border-radius: var(--radius-lg); border: 1.5px solid #D4503A; overflow: hidden; }
+    .marte-header { padding: 14px 20px; background: #FAECE7; display: flex; align-items: center; gap: 14px; }
+    .marte-icono { font-size: 28px; flex-shrink: 0; }
+    .marte-titulo { font-size: 16px; font-weight: 600; color: #7A2510; }
+    .marte-subtitulo { font-size: 12px; color: #993C1D; margin-top: 2px; }
+
+    .marte-datos { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid #F0C4BA; }
+    .marte-dato-col { padding: 10px 14px; }
+    .marte-dato-col:first-child { border-right: 1px solid #F0C4BA; }
+    .dato-titulo { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #993C1D; margin-bottom: 6px; }
+    .dato-fila { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; gap: 8px; }
+    .dato-key { font-size: 11px; color: #993C1D; font-weight: 500; flex-shrink: 0; }
+    .dato-val { font-size: 12px; color: #5C2010; }
+    .dato-val.destacado { font-weight: 600; color: #7A2510; }
+    .pill { display: inline-block; padding: 1px 6px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+    .p-fuego { background: #FAECE7; color: #993C1D; }
+    .p-tierra { background: #EAF3DE; color: #3B6D11; }
+    .p-aire { background: #FAEEDA; color: #854F0B; }
+    .p-agua { background: #E6F1FB; color: #185FA5; }
+    .dato-nota { font-size: 10px; color: #C07060; font-style: italic; }
+
+    .marte-grid { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid #F0C4BA; }
+    .marte-col { padding: 14px 16px; }
+    .marte-col:first-child { border-right: 1px solid #F0C4BA; }
+    .marte-col-titulo { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: #993C1D; margin-bottom: 8px; }
+    .marte-item { display: flex; gap: 8px; margin-bottom: 7px; align-items: flex-start; }
+    .marte-dot { width: 5px; height: 5px; background: #D4503A; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .marte-text { font-size: 12px; color: #5C2010; line-height: 1.5; }
+    .marte-text strong { font-weight: 600; color: #7A2510; }
+
+    .marte-signos { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; padding: 12px 16px; background: #FDF4F2; border-top: 1px solid #F0C4BA; }
+    .signo-box { border-radius: var(--radius); padding: 10px 14px; }
+    .signo-sag { background: #FAECE7; border: 0.5px solid #D4503A; }
+    .signo-cap { background: #EAF3DE; border: 0.5px solid #7CB95A; }
+    .signo-nombre-sag { font-size: 12px; font-weight: 600; color: #993C1D; margin-bottom: 3px; }
+    .signo-nombre-cap { font-size: 12px; font-weight: 600; color: #3B6D11; margin-bottom: 3px; }
+    .signo-desc-sag { font-size: 11px; color: #7A2510; line-height: 1.4; }
+    .signo-desc-cap { font-size: 11px; color: #3B6D11; line-height: 1.4; }
+    .flecha { font-size: 18px; color: var(--text3); }
+
+    .marte-interactua { padding: 12px 16px; background: #FDF4F2; border-top: 1px solid #F0C4BA; }
+    .int-titulo { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: #993C1D; margin-bottom: 8px; }
+    .int-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .int-item { background: #FAECE7; border: 0.5px solid #EBC4BA; border-radius: 6px; padding: 8px 10px; }
+    .int-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #993C1D; margin-bottom: 2px; }
+    .int-text { font-size: 11px; color: #5C2010; line-height: 1.4; }
+    .int-fuente { font-size: 9px; color: #C07060; margin-top: 3px; font-style: italic; }
+
+    .marte-footer { padding: 12px 16px; background: #FDF4F2; border-top: 1px solid #F0C4BA; font-size: 12px; color: #7A2510; line-height: 1.6; }
+    .marte-footer strong { font-weight: 600; }
+
+    @media (max-width: 560px) {
+      .marte-datos, .marte-grid, .int-grid { grid-template-columns: 1fr; }
+      .marte-dato-col:first-child, .marte-col:first-child { border-right: none; border-bottom: 1px solid #F0C4BA; }
+    }
+
+    .badge { display: inline-block; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .b-clave { background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text2); }
+    .b-nuevo { background: #EEEDFE; color: #534AB7; }
+    .concepto-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .concepto-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .concepto-nombre { font-size: 14px; font-weight: 500; color: var(--text); flex: 1; }
+    .concepto-def { padding: 12px 14px; }
+    .concepto-def-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .concepto-def-text strong { font-weight: 500; color: var(--text); }
+
+    .retener-list { display: flex; flex-direction: column; gap: 6px; }
+    .retener-item { display: flex; gap: 12px; align-items: flex-start; padding: 11px 14px; border-radius: var(--radius); border: 0.5px solid var(--border); background: var(--bg); }
+    .retener-num { font-size: 12px; font-weight: 500; color: #185FA5; min-width: 20px; padding-top: 2px; }
+    .retener-texto { font-size: 13px; color: var(--text); line-height: 1.6; }
+    .retener-texto span { font-weight: 500; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-top">
+      <div class="curso-badge">Curso 4 · C4</div>
+      <div class="tipo-badge">Teoría + Práctica</div>
+    </div>
+    <div class="titulo">Tránsitos con Marte</div>
+    <div class="meta">26 de noviembre de 2025 &nbsp;·&nbsp; Tránsitos · Marte · Grado 29 · Partil</div>
+    <div class="practica-aviso">
+      <div class="practica-aviso-text">Clase mixta — teoría sobre Marte en tránsito, el grado 29 y el concepto de partil. Práctica con efemérides en vivo y cartas de Ximena y Nelda.</div>
+    </div>
+  </div>
+
+  <div class="section-label">Lente de lectura</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">El tránsito como clima presente, no como predicción</div>
+      <div class="lente-subtitulo">Primero situar qué está pasando — luego, si la persona lo confirma, anticipar</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">El tránsito describe el clima actual — lo que está ocurriendo ahora o venía de ayer</div>
+      <div class="lente-item">Cuando la persona confirma lo que ves, eso da confianza para anticipar qué traerá el planeta cuando avance</div>
+      <div class="lente-item">Cada planeta tiene una energía base en tránsito — aprenderla y luego matizarla con signo y casa</div>
+      <div class="lente-item">Acompañar a la persona hacia un cambio de dirección cuando el tránsito muestra que el camino no lleva a ningún lado</div>
+    </div>
+    <div class="lente-footer"><strong>La pregunta siempre es:</strong> ¿cómo puedo aprovechar esta energía? No solo qué va a pasar, sino qué puedo hacer con lo que está pasando.</div>
+  </div>
+
+  <div class="section-label">Marte en tránsito</div>
+  <div class="marte-bloque">
+
+    <div class="marte-header">
+      <div class="marte-icono">♂</div>
+      <div>
+        <div class="marte-titulo">Marte — necesidad de respuesta y autoafirmación</div>
+        <div class="marte-subtitulo">Planeta personal · Rige Aries y Escorpio · Exaltado en Capricornio · Caída en Cáncer · Exilio en Tauro y Libra</div>
+      </div>
+    </div>
+
+    <div class="marte-datos">
+      <div class="marte-dato-col">
+        <div class="dato-titulo">Dignidades</div>
+        <div class="dato-fila"><span class="dato-key">Domicilio</span><span class="dato-val"><span class="pill p-fuego">Aries</span> · <span class="pill p-agua">Escorpio</span></span></div>
+        <div class="dato-fila"><span class="dato-key">Exaltado</span><span class="dato-val"><span class="pill p-tierra">Capricornio</span></span></div>
+        <div class="dato-fila"><span class="dato-key">Caída</span><span class="dato-val"><span class="pill p-agua">Cáncer</span></span></div>
+        <div class="dato-fila"><span class="dato-key">Exilio</span><span class="dato-val"><span class="pill p-tierra">Tauro</span> · <span class="pill p-aire">Libra</span></span></div>
+      </div>
+      <div class="marte-dato-col">
+        <div class="dato-titulo">Velocidad</div>
+        <div class="dato-fila"><span class="dato-key">Por signo</span><span class="dato-val destacado">~1 mes y 3 semanas</span></div>
+        <div class="dato-fila"><span class="dato-key">Vuelta completa</span><span class="dato-val destacado">~1 año 322 días</span></div>
+        <div class="dato-fila" style="margin-top:6px;"><span class="dato-nota">Con retrogradación puede alargarse hasta ~6 meses por signo</span></div>
+      </div>
+    </div>
+
+    <div class="marte-grid">
+      <div class="marte-col">
+        <div class="marte-col-titulo">Qué trae</div>
+        <div class="marte-item"><div class="marte-dot"></div><div class="marte-text"><strong>Necesidad de respuesta</strong> — siempre busca una reacción o respuesta ante algo</div></div>
+        <div class="marte-item"><div class="marte-dot"></div><div class="marte-text"><strong>Autoafirmación</strong> — impulso de marcar la propia posición e identidad</div></div>
+        <div class="marte-item"><div class="marte-dot"></div><div class="marte-text"><strong>Acción</strong> — energía para moverse, decidir, tomar iniciativa</div></div>
+        <div class="marte-item"><div class="marte-dot"></div><div class="marte-text"><strong>Posibles conflictos</strong> — luchas de poder, reacciones instintivas si no hay conciencia</div></div>
+      </div>
+      <div class="marte-col">
+        <div class="marte-col-titulo">El reto</div>
+        <div class="marte-item"><div class="marte-dot"></div><div class="marte-text">Marte tiende a la <strong>reacción instintiva</strong> — el trabajo es convertirla en respuesta elegida</div></div>
+        <div class="marte-item"><div class="marte-dot"></div><div class="marte-text">La acción que fluye <strong>no fuerza</strong> — como el agua que erosiona la piedra sin luchar (el Way)</div></div>
+        <div class="marte-item"><div class="marte-dot"></div><div class="marte-text">Autoafirmarse <strong>desde el conocimiento</strong>, no desde el ego — esa es la integración</div></div>
+      </div>
+    </div>
+
+    <div class="marte-signos">
+      <div class="signo-box signo-sag">
+        <div class="signo-nombre-sag">♂ en Sagitario</div>
+        <div class="signo-desc-sag">Acciones idealistas, optimistas. Búsqueda de respuestas desde las creencias. Riesgo: evasión, fanatismo, aferrarse a "mi verdad".</div>
+      </div>
+      <div class="flecha">→</div>
+      <div class="signo-box signo-cap">
+        <div class="signo-nombre-cap">♂ en Capricornio</div>
+        <div class="signo-desc-cap">Aterrizaje y toque de realidad. Acción responsable y estructurada. Marte exaltado aquí — muy bien posicionado.</div>
+      </div>
+    </div>
+
+    <div class="marte-interactua">
+      <div class="int-titulo">Cómo interactúa con otros planetas</div>
+      <div class="int-grid">
+        <div class="int-item"><div class="int-label">♂ + ☿ Mercurio</div><div class="int-text">Comunicación impulsiva y directa. Energía para decir lo que se piensa — riesgo de precipitarse o de aferrarse a la propia verdad.</div><div class="int-fuente">✦ En clase: Mercurio/Marte en Sagitario como tensión entre querer comunicar y no poder (retrógrado)</div></div>
+        <div class="int-item"><div class="int-label">♂ + ♀ Venus</div><div class="int-text">Tensión entre acción y armonía. Puede traer atracción intensa o roces — el impulso de Marte choca con la búsqueda de equilibrio de Venus.</div><div class="int-fuente">☐ Completado — no en clase</div></div>
+        <div class="int-item"><div class="int-label">♂ + ♃ Júpiter</div><div class="int-text">Acción expansiva y optimista. Gran energía para proyectos. Riesgo de exceso — mucha fuerza sin dirección clara puede dispersarse.</div><div class="int-fuente">☐ Completado — no en clase</div></div>
+        <div class="int-item"><div class="int-label">♂ + ♄ Saturno</div><div class="int-text">Acción frenada o estructurada. Puede traer frustración pero también disciplina y resultados sólidos si se trabaja con constancia.</div><div class="int-fuente">☐ Completado — no en clase</div></div>
+        <div class="int-item"><div class="int-label">♂ + ♅ Urano</div><div class="int-text">Acción disruptiva e inesperada. Cambios bruscos, accidentes posibles. Energía revolucionaria — puede romper dinámicas de golpe.</div><div class="int-fuente">✦ En clase: Urano/Marte como combinación de accidentes o cambios inesperados</div></div>
+        <div class="int-item"><div class="int-label">♂ + ♆ Neptuno</div><div class="int-text">Acción confusa o idealizada. La dirección no está clara — puede traer motivaciones poco definidas o acción desde la compasión.</div><div class="int-fuente">☐ Completado — no en clase</div></div>
+        <div class="int-item"><div class="int-label">♂ + ♇ Plutón</div><div class="int-text">Acción transformadora e intensa. Gran poder pero también riesgo de destrucción o de control. Puede iniciar procesos de cambio profundo.</div><div class="int-fuente">✦ En clase: Marte/Plutón como energía muy potente en carta práctica</div></div>
+        <div class="int-item"><div class="int-label">♂ + 🌙 Luna</div><div class="int-text">Acción emocional e instintiva. Las reacciones vienen del cuerpo y el sentimiento. Puede traer irritabilidad o acción protectora.</div><div class="int-fuente">✦ En clase: Marte cuadratura Luna de Nelda — sensibilidad activada + acción idealizada</div></div>
+      </div>
+    </div>
+
+    <div class="marte-footer"><strong>Clave práctica:</strong> el signo dice el estilo de la acción; la casa dice el área de vida donde ocurre. Las interacciones con ✦ vienen de las clases — las con ☐ son conocimiento estándar de astrología.</div>
+  </div>
+
+  <div class="section-label">Conceptos clave de la clase</div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">El grado 29 — máxima comprensión del signo</span><span class="badge b-nuevo">grado sabiano</span></div>
+    <div class="concepto-def"><div class="concepto-def-text">El grado 29 de cualquier signo es el <strong>último aprendizaje</strong> antes del cambio — el planeta ha recorrido todo el signo y llega a su máxima comprensión. El <strong>grado 0</strong> es el más principiante: empieza a recoger esa energía desde cero.</div></div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">Partil — aspecto exacto en grado y minuto</span><span class="badge b-clave">aspecto</span></div>
+    <div class="concepto-def"><div class="concepto-def-text">Se llama <strong>partil</strong> cuando dos planetas coinciden exactamente en el mismo grado y el mismo minuto. Es la máxima intensidad posible de un aspecto.</div></div>
+  </div>
+
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item"><div class="retener-num">1</div><div class="retener-texto"><span>Marte en tránsito trae necesidad de respuesta y autoafirmación.</span></div></div>
+    <div class="retener-item"><div class="retener-num">2</div><div class="retener-texto"><span>El grado 29 es el último aprendizaje de un signo. El grado 0 el más principiante.</span></div></div>
+    <div class="retener-item"><div class="retener-num">3</div><div class="retener-texto"><span>Partil = aspecto exacto en grado y minuto.</span> Máxima intensidad de un aspecto.</div></div>
+  </div>
+
+</div>
+</body>
+</html>
