@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C1 · Puesta a punto: interpretación de carta natal</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9;
+      --text: #1a1a18; --text2: #4a4a46; --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+      --radius: 8px; --radius-lg: 12px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2a; --text: #e8e6de; --text2: #a8a6a0; --text3: #68665e; --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18); }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; padding: 2rem 1rem; }
+    .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; }
+
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .curso-badge { display: inline-block; font-size: 11px; font-weight: 500; background: #e6f1fb; color: #185FA5; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tipo-badge { display: inline-block; font-size: 11px; font-weight: 500; background: #EEEDFE; color: #534AB7; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); margin-bottom: 10px; }
+    .practica-aviso { display: flex; gap: 10px; background: #EEEDFE; border: 0.5px solid #AFA9EC; border-radius: var(--radius); padding: 10px 14px; }
+    .practica-aviso-text { font-size: 12px; color: #534AB7; line-height: 1.5; }
+
+    .section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 2rem; }
+
+    .lente { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+    .lente-header { padding: 10px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .lente-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lente-subtitulo { font-size: 12px; color: var(--text2); }
+    .lente-body { padding: 12px 16px; }
+    .lente-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; margin-bottom: 2px; }
+    .lente-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .lente-footer { padding: 10px 16px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lente-footer strong { font-weight: 500; color: var(--text); }
+
+    .paso-grid { display: flex; flex-direction: column; gap: 7px; }
+    .paso-row { display: flex; gap: 12px; align-items: flex-start; padding: 10px 14px; background: var(--bg2); border-radius: var(--radius); border: 0.5px solid var(--border); }
+    .paso-num { font-size: 12px; font-weight: 500; color: #185FA5; min-width: 20px; padding-top: 1px; flex-shrink: 0; }
+    .paso-key { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+    .paso-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+    .badge { display: inline-block; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .b-clave { background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text2); }
+    .b-nuevo { background: #EEEDFE; color: #534AB7; }
+
+    .concepto-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .concepto-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .concepto-nombre { font-size: 14px; font-weight: 500; color: var(--text); flex: 1; }
+    .concepto-body { display: grid; grid-template-columns: 1fr 1fr; }
+    @media (max-width: 560px) { .concepto-body { grid-template-columns: 1fr; } }
+    .concepto-def { padding: 12px 14px; border-right: 0.5px solid var(--border); }
+    @media (max-width: 560px) { .concepto-def { border-right: none; border-bottom: 0.5px solid var(--border); } }
+    .concepto-ej  { padding: 12px 14px; background: var(--bg2); }
+    .concepto-def-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .concepto-def-text strong { font-weight: 500; color: var(--text); }
+    .ej-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); margin-bottom: 6px; }
+    .ej-text { font-size: 12px; color: var(--text2); line-height: 1.6; }
+    .ej-text strong { font-weight: 500; color: var(--text); }
+
+    .alert { display: flex; gap: 10px; background: #faeeda; border: 0.5px solid #fac775; border-radius: var(--radius); padding: 10px 14px; margin-top: 8px; }
+    @media (prefers-color-scheme: dark) { .alert { background: #2a2010; border-color: #5a4010; } }
+    .alert-text { font-size: 12px; color: #633806; line-height: 1.5; }
+    @media (prefers-color-scheme: dark) { .alert-text { color: #c89040; } }
+
+    .ej-card { border-radius: var(--radius); border: 0.5px solid var(--border); overflow: hidden; margin-bottom: 8px; }
+    .ej-header { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .ej-tag { font-size: 12px; font-weight: 500; padding: 2px 8px; border-radius: 20px; }
+    .t-aries   { background: #FAECE7; color: #993C1D; }
+    .t-tauro   { background: #EAF3DE; color: #3B6D11; }
+    .t-acuario { background: #FAEEDA; color: #854F0B; }
+    .t-cancer  { background: #E6F1FB; color: #185FA5; }
+    .t-capri   { background: #EAF3DE; color: #3B6D11; }
+    .ej-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .ej-body { padding: 10px 12px; }
+    .ej-fila { display: grid; grid-template-columns: 100px 1fr; gap: 6px; margin-bottom: 6px; }
+    .ej-fila:last-child { margin-bottom: 0; }
+    .ej-key { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .ej-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .ej-val strong { font-weight: 500; color: var(--text); }
+
+    .s-fuego  { background:#FAECE7; color:#993C1D; padding:1px 6px; border-radius:20px; font-size:11px; font-weight:500; }
+    .s-tierra { background:#EAF3DE; color:#3B6D11; padding:1px 6px; border-radius:20px; font-size:11px; font-weight:500; }
+    .s-aire   { background:#FAEEDA; color:#854F0B; padding:1px 6px; border-radius:20px; font-size:11px; font-weight:500; }
+    .s-agua   { background:#E6F1FB; color:#185FA5; padding:1px 6px; border-radius:20px; font-size:11px; font-weight:500; }
+
+    .retener-list { display: flex; flex-direction: column; gap: 6px; }
+    .retener-item { display: flex; gap: 12px; align-items: flex-start; padding: 11px 14px; border-radius: var(--radius); border: 0.5px solid var(--border); background: var(--bg); }
+    .retener-num { font-size: 12px; font-weight: 500; color: #185FA5; min-width: 20px; padding-top: 2px; }
+    .retener-texto { font-size: 13px; color: var(--text); line-height: 1.6; }
+    .retener-texto span { font-weight: 500; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-top">
+      <div class="curso-badge">Curso 4 · C1</div>
+      <div class="tipo-badge">Teoría + Práctica</div>
+    </div>
+    <div class="titulo">Puesta a punto: interpretación de carta natal</div>
+    <div class="meta">29 de octubre de 2025 &nbsp;·&nbsp; Carta natal · Aspectos · Configuraciones · Astrogenealogía</div>
+    <div class="practica-aviso">
+      <div class="practica-aviso-text">Clase con carta práctica — la teoría se construye a partir de la interpretación en vivo de la carta de Ren (rapero). Los ejemplos muestran cómo aplicar los conceptos, no son solo ilustrativos.</div>
+    </div>
+  </div>
+
+  <div class="section-label">Lente de lectura — cómo entrar en una carta</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">La carta como relación</div>
+      <div class="lente-subtitulo">Entrar en una carta es como iniciar una relación — acercarse poco a poco</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">Empezar por lo que llama la atención — no hay un orden rígido obligatorio</div>
+      <div class="lente-item">Triada principal: Sol · Ascendente · Luna — pero si el Sol te lleva a Quirón, síguelo</div>
+      <div class="lente-item">Buscar siempre un hilo conductor: los planetas que se tocan deben narrar algo coherente</div>
+      <div class="lente-item">No saltar de tema en tema sin relación — todo lo que está conectado debe contarse junto</div>
+      <div class="lente-item">La interpretación son letras → palabras → frases. El reto no es saber los significados sino construir la frase</div>
+    </div>
+    <div class="lente-footer"><strong>Para la consulta:</strong> anotar hipótesis, luego preguntar. No afirmar — formular como pregunta abierta y dejar que la persona confirme. La carta orienta; la persona sabe.</div>
+  </div>
+
+  <div class="section-label">Protocolo de lectura — pasos en orden</div>
+  <div class="paso-grid">
+    <div class="paso-row"><div class="paso-num">1</div><div><div class="paso-key">Distribución general</div><div class="paso-val">¿Más planetas arriba (consciente) o abajo (inconsciente)? ¿Más yo (izquierda) o tú (derecha)? ¿Qué color domina en la figura de aspectos?</div></div></div>
+    <div class="paso-row"><div class="paso-num">2</div><div><div class="paso-key">Figura de aspectos: interior vs exterior</div><div class="paso-val">Aspectos al exterior (sextil/trígono) = áreas cómodas. Rojo/verde al interior = tensión interna. Una persona puede parecer tranquila por fuera y tener mucha tensión dentro.</div></div></div>
+    <div class="paso-row"><div class="paso-num">3</div><div><div class="paso-key">Triada Sol · Ascendente · Luna</div><div class="paso-val">Sol = identidad y propósito. Ascendente = cómo llega al mundo, propósito del alma. Luna = necesidades emocionales y seguridad. Para cada uno: signo + casa + aspectos.</div></div></div>
+    <div class="paso-row"><div class="paso-num">4</div><div><div class="paso-key">Nodos lunares</div><div class="paso-val">Nodo sur = patrones heredados, inercias. Nodo norte = desafío evolutivo. Mirar si hay planetas en el mismo grado y qué aportan al eje.</div></div></div>
+    <div class="paso-row"><div class="paso-num">5</div><div><div class="paso-key">Configuraciones (T cuadradas)</div><div class="paso-val">Identificar qué planeta recibe la tensión (vértice). Si varios hacen cuadratura al mismo planeta, buscar la relación narrativa entre todos — no leerlos por separado.</div></div></div>
+    <div class="paso-row"><div class="paso-num">6</div><div><div class="paso-key">Detalles que suman</div><div class="paso-val">Quirón · Lilit · retrógrados · interceptados · decanatos. Usar los decanatos para afinar de qué tipo específico es la energía de un planeta.</div></div></div>
+  </div>
+
+  <div class="section-label">Conceptos clave de la clase</div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">Distribución de planetas</span><span class="badge b-clave">primer vistazo</span></div>
+    <div class="concepto-body">
+      <div class="concepto-def"><div class="concepto-def-text">Arriba = hemisferio consciente. Abajo = inconsciente (experiencias no registradas, posibles traumas). Izquierda = yo. Derecha = tú. La distribución da el <strong>tono general</strong> de la carta antes de leer ningún planeta.</div></div>
+      <div class="concepto-ej"><div class="ej-label">Ejemplo de clase</div><div class="ej-text">Carta de Ren: más planetas arriba y más a la derecha → mayor conciencia, orientado al tú. Color rojo dominante → persona que vive con mucha intensidad y energía cardinal.</div></div>
+    </div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">Figura de aspectos: interior vs exterior</span></div>
+    <div class="concepto-body">
+      <div class="concepto-def"><div class="concepto-def-text">Los aspectos más al exterior (sextil, trígono en la periferia) indican <strong>áreas de disfrute y comodidad</strong>. Los rojos y verdes al interior indican tensión interna. Una persona puede parecer tranquila por fuera y tener mucha tensión dentro.</div></div>
+      <div class="concepto-ej"><div class="ej-label">Ejemplo de clase</div><div class="ej-text">Ren tiene un sextil en casas 5 y 6 → parece cómodo en lo cotidiano. Pero detrás está todo el rojo de las T cuadradas → tensión interna muy intensa que no se ve desde fuera.</div></div>
+    </div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">T cuadrada — cómo leerla</span><span class="badge b-clave">configuración</span></div>
+    <div class="concepto-body">
+      <div class="concepto-def"><div class="concepto-def-text">El planeta que recibe la tensión (vértice) gestiona el conflicto entre los otros dos. Cuanto más exactos los grados, más fuerte la configuración. Si <strong>varios planetas hacen cuadratura al mismo punto</strong>, buscar coherencia narrativa entre todos.</div></div>
+      <div class="concepto-ej"><div class="ej-label">Ejemplo de clase</div><div class="ej-text">Sol en <span class="s-fuego">Aries</span> recibe T cuadradas de Urano, Quirón, Neptuno y Júpiter en <span class="s-agua">Cáncer</span>. Aunque son planetas distintos, todos narran lo mismo: la tensión viene del árbol genealógico.</div></div>
+    </div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">Decanatos — para qué sirven</span></div>
+    <div class="concepto-body">
+      <div class="concepto-def"><div class="concepto-def-text">Los decanatos afinan la interpretación dentro de un signo. Cada signo se divide en <strong>tres tramos de 10°</strong> regidos por otros signos del mismo elemento. Permiten saber de qué tipo específico es la energía.</div></div>
+      <div class="concepto-ej"><div class="ej-label">Regla práctica</div><div class="ej-text"><span class="s-agua">Cáncer</span> decanato <span class="s-aire">Acuario</span> = inercias familiares. <span class="s-agua">Cáncer</span> decanato <span class="s-tierra">Capricornio</span> = estructuras y creencias del árbol. El eje Cáncer–Capricornio siempre remite al árbol genealógico.</div></div>
+    </div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">Quirón en casa 12</span><span class="badge b-clave">herida y salud</span></div>
+    <div class="concepto-body">
+      <div class="concepto-def"><div class="concepto-def-text">Casa 12 puede indicar <strong>enfermedad crónica o heredada</strong>. No necesariamente la enfermedad en sí, sino el patrón emocional no resuelto que viene de generaciones anteriores. Quirón = herida, sanación y terapeutas.</div></div>
+      <div class="concepto-ej"><div class="ej-label">Ejemplo de clase</div><div class="ej-text">Ren: Quirón en <span class="s-agua">Cáncer</span> casa 12, decanato <span class="s-aire">Acuario</span> → inercias familiares emocionales. Coincide con sus enfermedades crónicas y su activismo sobre personas vulnerables.</div></div>
+    </div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">Astrogenealogía — claves de linaje</span><span class="badge b-nuevo">nuevo en curso 4</span></div>
+    <div class="concepto-body">
+      <div class="concepto-def"><div class="concepto-def-text">Venus y Luna → patrones del <strong>linaje femenino</strong>. Marte → cómo se ha gestionado el <strong>conflicto familiar</strong>. Mercurio → niños o hermanos. Lilit → vacío (pérdida, ausencia). Plutón → lo que secuestra, lo que no puede transformarse.</div></div>
+      <div class="concepto-ej"><div class="ej-label">Cómo preguntar en consulta</div><div class="ej-text">Con Lilit + Plutón en casa 5 interceptados → "¿Ha habido pérdidas de niños o abortos en la familia?" Nunca afirmar — preguntar y esperar confirmación. La carta orienta; la persona sabe.</div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Carta práctica — Ren (músico rapero)</div>
+
+  <div class="ej-card">
+    <div class="ej-header"><span class="ej-tag t-aries">Sol en Aries · Casa 10</span><span class="ej-titulo">Identidad y propósito</span></div>
+    <div class="ej-body">
+      <div class="ej-fila"><div class="ej-key">Lectura base</div><div class="ej-val">Pionero, superviviente, destaca en su carrera con energía e iniciativa. Mercurio en <span class="s-fuego">Aries</span> → comunicación a golpes, chispa inmediata. Encaja con el rap.</div></div>
+      <div class="ej-fila"><div class="ej-key">T cuadradas</div><div class="ej-val">Recibe tensión de Urano (revolución), Quirón (herida), Neptuno (confusión/padre) y Júpiter en <span class="s-agua">Cáncer</span> (creencias familiares). Todo converge: la tensión viene del árbol.</div></div>
+      <div class="ej-fila"><div class="ej-key">Coherencia</div><div class="ej-val">No leerlos por separado — narran una sola historia: la necesidad de diferenciarse del linaje para poder expresarse.</div></div>
+    </div>
+  </div>
+
+  <div class="ej-card">
+    <div class="ej-header"><span class="ej-tag t-tauro">Luna en Tauro · Casa 11</span><span class="ej-titulo">Necesidades emocionales</span></div>
+    <div class="ej-body">
+      <div class="ej-fila"><div class="ej-key">Lectura base</div><div class="ej-val">Busca nutrición y seguridad a través del grupo social. Trígono a Urano → su originalidad es lo que le permite conectar con otros. El público le nutre y él retroalimenta al público.</div></div>
+      <div class="ej-fila"><div class="ej-key">Oposición Lilit/Plutón</div><div class="ej-val">Lilit interceptada en casa 5 = vacío que no puede expresar. Plutón retrógrado = se siente atrapado. La luna no encuentra seguridad hasta resolver la tensión Leo (yo) / Acuario (nosotros).</div></div>
+    </div>
+  </div>
+
+  <div class="ej-card">
+    <div class="ej-header"><span class="ej-tag t-acuario">Nodo Norte Acuario · Casa 8 · Marte Acuario</span><span class="ej-titulo">Eje nodal y dirección evolutiva</span></div>
+    <div class="ej-body">
+      <div class="ej-fila"><div class="ej-key">Nodo Sur Leo</div><div class="ej-val">Viene del protagonismo individual y del peso del orgullo genealógico. El reto: pasar del yo al nosotros.</div></div>
+      <div class="ej-fila"><div class="ej-key">Marte en Acuario</div><div class="ej-val">Mismo grado que el nodo. Acción revolucionaria, quiere hacer lo que le da la gana. Refuerza el impulso hacia la diferenciación.</div></div>
+      <div class="ej-fila"><div class="ej-key">Doble cúspide</div><div class="ej-val">Eje nodal en cúspide doble (casas 5/11) → eje de compensación. Facilita el movimiento entre yo y nosotros.</div></div>
+    </div>
+  </div>
+
+  <div class="ej-card">
+    <div class="ej-header"><span class="ej-tag t-cancer">Ascendente en Cáncer · Decanato Piscis</span><span class="ej-titulo">Propósito del alma</span></div>
+    <div class="ej-body">
+      <div class="ej-fila"><div class="ej-key">Propósito</div><div class="ej-val">Aprender a expresar la sensibilidad interior. Desidentificarse de la psique familiar — el alma quiere liberarse de las inercias y mostrar su sensibilidad al mundo.</div></div>
+    </div>
+  </div>
+
+  <div class="ej-card">
+    <div class="ej-header"><span class="ej-tag t-capri">Saturno en Capricornio · Casa 7</span><span class="ej-titulo">Relación con el mundo externo</span></div>
+    <div class="ej-body">
+      <div class="ej-fila"><div class="ej-key">Lectura base</div><div class="ej-val">Muro por defecto con el mundo externo. Control en las relaciones. En domicilio → madura muy rápido, vida profesional desde joven.</div></div>
+      <div class="ej-fila"><div class="ej-key">Cuadratura Mercurio</div><div class="ej-val">Mercurio en <span class="s-fuego">Aries</span> (el niño, la chispa) vs Saturno en <span class="s-tierra">Capricornio</span> (el adulto, lo conservador). Conflicto interno entre el niño y el adulto. Tendencia al pesimismo.</div></div>
+    </div>
+  </div>
+
+  <div class="alert">
+    <div class="alert-text">Nota de consulta: con Quirón + Lilit + Plutón en casa 5 interceptados → preguntar "¿Ha habido pérdidas de niños o abortos en la familia?" Mercurio = niños/hermanos. Nunca afirmar — esperar confirmación de la persona.</div>
+  </div>
+
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item"><div class="retener-num">1</div><div class="retener-texto"><span>Al interpretar una carta, empezar siempre por la distribución general.</span> Arriba/abajo, yo/tú y color dominante en los aspectos dan el tono antes de leer ningún planeta.</div></div>
+    <div class="retener-item"><div class="retener-num">2</div><div class="retener-texto"><span>Los planetas conectados entre sí cuentan una sola historia.</span> Buscar la coherencia narrativa entre todos los que se tocan — no interpretarlos por separado.</div></div>
+    <div class="retener-item"><div class="retener-num">3</div><div class="retener-texto"><span>Los decanatos afinan la interpretación cuando el signo solo no explica bien.</span> Cáncer decanato Acuario = inercias familiares. Cáncer decanato Capricornio = estructuras y creencias del árbol.</div></div>
+    <div class="retener-item"><div class="retener-num">4</div><div class="retener-texto"><span>Venus y Luna hablan del linaje femenino. Marte del conflicto familiar. Mercurio de niños y hermanos.</span> Claves de astrogenealogía para orientar las preguntas en consulta.</div></div>
+    <div class="retener-item"><div class="retener-num">5</div><div class="retener-texto"><span>Lilit interceptada = vacío que no puede expresarse.</span> Con Plutón cerca, la persona puede sentirse atrapada en algo que no puede nombrar.</div></div>
+    <div class="retener-item"><div class="retener-num">6</div><div class="retener-texto"><span>El ascendente se lee desde el propósito del alma, no solo desde las características físicas.</span> ¿Qué quiere aprender y expresar esta alma al llegar al mundo?</div></div>
+  </div>
+
+</div>
+</body>
+</html>
