@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C3 · Tránsitos de Ximena · Exploramos tránsitos</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9;
+      --text: #1a1a18; --text2: #4a4a46; --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+      --radius: 8px; --radius-lg: 12px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2a; --text: #e8e6de; --text2: #a8a6a0; --text3: #68665e; --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18); }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; padding: 2rem 1rem; }
+    .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; }
+
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .curso-badge { display: inline-block; font-size: 11px; font-weight: 500; background: #e6f1fb; color: #185FA5; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tipo-badge { display: inline-block; font-size: 11px; font-weight: 500; background: #EEEDFE; color: #534AB7; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); margin-bottom: 10px; }
+    .practica-aviso { display: flex; gap: 10px; background: #EEEDFE; border: 0.5px solid #AFA9EC; border-radius: var(--radius); padding: 10px 14px; }
+    .practica-aviso-text { font-size: 12px; color: #534AB7; line-height: 1.5; }
+
+    .section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 2rem; }
+
+    .lente { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+    .lente-header { padding: 10px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .lente-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lente-subtitulo { font-size: 12px; color: var(--text2); }
+    .lente-body { padding: 12px 16px; }
+    .lente-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; margin-bottom: 2px; }
+    .lente-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .lente-footer { padding: 10px 16px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lente-footer strong { font-weight: 500; color: var(--text); }
+
+    .vel-tabla { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .vel-row { display: grid; grid-template-columns: 28px 130px 1fr 90px; gap: 8px; padding: 8px 14px; align-items: center; border-bottom: 0.5px solid var(--border); font-size: 12px; }
+    .vel-row:last-child { border-bottom: none; }
+    .vel-row.header { background: var(--bg2); font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); }
+    .vel-row:nth-child(even) { background: var(--bg2); }
+    .vel-num { font-size: 11px; font-weight: 500; color: var(--text3); }
+    .vel-planeta { font-weight: 500; color: var(--text); }
+    .vel-tiempo { color: var(--text2); }
+    .vel-signo { color: var(--text3); font-size: 11px; }
+
+    .alert { display: flex; gap: 10px; background: #faeeda; border: 0.5px solid #fac775; border-radius: var(--radius); padding: 10px 14px; margin-top: 8px; }
+    @media (prefers-color-scheme: dark) { .alert { background: #2a2010; border-color: #5a4010; } }
+    .alert-text { font-size: 12px; color: #633806; line-height: 1.5; }
+    @media (prefers-color-scheme: dark) { .alert-text { color: #c89040; } }
+
+    .badge { display: inline-block; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .b-clave { background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text2); }
+
+    .concepto-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .concepto-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .concepto-nombre { font-size: 14px; font-weight: 500; color: var(--text); flex: 1; }
+    .concepto-body { display: grid; grid-template-columns: 1fr 1fr; }
+    @media (max-width: 560px) { .concepto-body { grid-template-columns: 1fr; } }
+    .concepto-def { padding: 12px 14px; border-right: 0.5px solid var(--border); }
+    @media (max-width: 560px) { .concepto-def { border-right: none; border-bottom: 0.5px solid var(--border); } }
+    .concepto-ej  { padding: 12px 14px; background: var(--bg2); }
+    .concepto-def-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .concepto-def-text strong { font-weight: 500; color: var(--text); }
+    .ej-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); margin-bottom: 6px; }
+    .ej-text { font-size: 12px; color: var(--text2); line-height: 1.6; }
+    .ej-text strong { font-weight: 500; color: var(--text); }
+
+    .s-fuego { background:#FAECE7; color:#993C1D; padding:1px 6px; border-radius:20px; font-size:11px; font-weight:500; }
+    .s-agua  { background:#E6F1FB; color:#185FA5; padding:1px 6px; border-radius:20px; font-size:11px; font-weight:500; }
+
+    .retener-list { display: flex; flex-direction: column; gap: 6px; }
+    .retener-item { display: flex; gap: 12px; align-items: flex-start; padding: 11px 14px; border-radius: var(--radius); border: 0.5px solid var(--border); background: var(--bg); }
+    .retener-num { font-size: 12px; font-weight: 500; color: #185FA5; min-width: 20px; padding-top: 2px; }
+    .retener-texto { font-size: 13px; color: var(--text); line-height: 1.6; }
+    .retener-texto span { font-weight: 500; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-top">
+      <div class="curso-badge">Curso 4 · C3</div>
+      <div class="tipo-badge">Teoría + Práctica</div>
+    </div>
+    <div class="titulo">Tránsitos de Ximena · Exploramos tránsitos</div>
+    <div class="meta">12 de noviembre de 2025 &nbsp;·&nbsp; Tránsitos · Fases lunares · Velocidades planetarias · Significadores</div>
+    <div class="practica-aviso">
+      <div class="practica-aviso-text">Clase mixta — teoría sobre velocidades, fases lunares y significadores, más práctica sobre cartas de Ximena y Nelda.</div>
+    </div>
+  </div>
+
+  <div class="section-label">Lente de lectura</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">Los tránsitos como mapa del clima actual</div>
+      <div class="lente-subtitulo">Antes de predecir, situar — los tránsitos describen perfectamente la situación presente</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">El tránsito te dice qué está pasando — y a veces la pregunta que trae la persona ya se ve ahí</div>
+      <div class="lente-item">Lo que diferencia a cada persona no es qué planetas hay en el cielo, sino en qué casa y sobre qué planeta natal caen</div>
+      <div class="lente-item">La intensidad de un tránsito depende de si hace aspecto exacto con algún planeta natal</div>
+      <div class="lente-item">Para predecir con seguridad, combinar siempre con otras técnicas: revolución solar, progresiones secundarias, direcciones primarias</div>
+      <div class="lente-item">Nunca hay un 100% de certeza — pero cuando varias técnicas confirman lo mismo, la garantía aumenta mucho</div>
+    </div>
+    <div class="lente-footer"><strong>El significador</strong> es lo que representa un planeta para esa persona en ese momento. No es fijo — se confirma hablando con ella. La experiencia repetida de ver que un planeta siempre representa lo mismo en casos similares es lo que lo construye.</div>
+  </div>
+
+  <div class="section-label">Velocidades planetarias — tiempo por signo</div>
+  <div class="vel-tabla">
+    <div class="vel-row header"><div></div><div>Planeta</div><div>Tiempo por signo</div><div>Vuelta completa</div></div>
+    <div class="vel-row"><div class="vel-num">1</div><div class="vel-planeta">🌙 Luna</div><div class="vel-tiempo">~2 días y medio</div><div class="vel-signo">~1 mes</div></div>
+    <div class="vel-row"><div class="vel-num">2</div><div class="vel-planeta">☿ Mercurio</div><div class="vel-tiempo">~1 semana</div><div class="vel-signo">~88 días</div></div>
+    <div class="vel-row"><div class="vel-num">3</div><div class="vel-planeta">♀ Venus</div><div class="vel-tiempo">~3 semanas</div><div class="vel-signo">~9 meses</div></div>
+    <div class="vel-row"><div class="vel-num">4</div><div class="vel-planeta">♂ Marte</div><div class="vel-tiempo">~1 mes y 3 semanas</div><div class="vel-signo">~1 año 9 meses</div></div>
+    <div class="vel-row"><div class="vel-num">5</div><div class="vel-planeta">♃ Júpiter</div><div class="vel-tiempo">~1 año</div><div class="vel-signo">~12 años</div></div>
+    <div class="vel-row"><div class="vel-num">6</div><div class="vel-planeta">♄ Saturno</div><div class="vel-tiempo">~2,5–3 años</div><div class="vel-signo">~29 años</div></div>
+    <div class="vel-row"><div class="vel-num">7</div><div class="vel-planeta">⚷ Quirón</div><div class="vel-tiempo">variable</div><div class="vel-signo">~50 años</div></div>
+    <div class="vel-row"><div class="vel-num">8</div><div class="vel-planeta">♅ Urano</div><div class="vel-tiempo">~7 años</div><div class="vel-signo">~84 años</div></div>
+    <div class="vel-row"><div class="vel-num">9</div><div class="vel-planeta">♆ Neptuno</div><div class="vel-tiempo">~12–13 años</div><div class="vel-signo">~165 años</div></div>
+    <div class="vel-row"><div class="vel-num">10</div><div class="vel-planeta">♇ Plutón</div><div class="vel-tiempo">11–23 años</div><div class="vel-signo">~248 años</div></div>
+  </div>
+  <div class="alert"><div class="alert-text">Todos los tiempos son aproximados — las retrogradaciones alargan los tránsitos. Plutón varía tanto porque cruza el plano del sistema solar: en Acuario estará 21 años, en otros signos puede ser solo 11.</div></div>
+
+  <div class="section-label">Conceptos clave de la clase</div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">Fases lunares — cómo identificarlas</span><span class="badge b-clave">luna en tránsito</span></div>
+    <div class="concepto-body">
+      <div class="concepto-def"><div class="concepto-def-text">La fase lunar se determina por la relación entre la Luna y el Sol. Como la Luna va más rápida, siempre se está acercando al Sol. <strong>Cuarto creciente y cuarto menguante son cuadraturas</strong> (90°). Luna nueva = conjunción. Luna llena = oposición. Si la Luna se aleja del Sol → menguante. Si se acerca → creciente.</div></div>
+      <div class="concepto-ej"><div class="ej-label">Ejemplo de clase</div><div class="ej-text">Luna en <span class="s-fuego">Leo</span> grado 28, Sol en <span class="s-agua">Escorpio</span> grado 20. Leo y Escorpio son signos fijos → cuadratura. La Luna va más rápida y se aleja del Sol → cuarto <strong>menguante</strong>. Se unirán en ~1 semana (luna nueva).</div></div>
+    </div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">El significador — cómo encontrarlo</span></div>
+    <div class="concepto-body">
+      <div class="concepto-def"><div class="concepto-def-text">El significador es lo que representa un planeta en una carta en un momento concreto. <strong>No se impone desde la carta — se confirma hablando con la persona</strong>. Ciertas combinaciones tienen etiquetas porque han sucedido millones de veces y se repiten con consistencia.</div></div>
+      <div class="concepto-ej"><div class="ej-label">Ejemplo de clase</div><div class="ej-text">Luna Plutón en conjunción → en la mayoría de casos documentados se vincula a la madre. Para confirmarlo: se pregunta qué pasó con la madre en las fechas de ese tránsito. Si la persona lo confirma, queda fijado como significador.</div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item"><div class="retener-num">1</div><div class="retener-texto"><span>Lo que diferencia los tránsitos entre personas es dónde caen, no qué hay en el cielo.</span> El mismo tránsito da experiencias completamente distintas según la casa y el planeta natal que toca.</div></div>
+    <div class="retener-item"><div class="retener-num">2</div><div class="retener-texto"><span>Las fases lunares se leen desde la relación Luna–Sol.</span> Cuarto creciente y menguante son cuadraturas. Si la Luna se aleja del Sol es menguante; si se acerca es creciente.</div></div>
+    <div class="retener-item"><div class="retener-num">3</div><div class="retener-texto"><span>El significador se confirma hablando con la persona, no se impone desde la carta.</span> Ciertas combinaciones tienen etiquetas por repetición histórica — pero siempre hay que cotejarlo con lo que la persona está viviendo.</div></div>
+  </div>
+
+</div>
+</body>
+</html>
