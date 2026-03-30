@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C6 · Luna nueva y solsticio de invierno</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9;
+      --text: #1a1a18; --text2: #4a4a46; --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+      --radius: 8px; --radius-lg: 12px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2a; --text: #e8e6de; --text2: #a8a6a0; --text3: #68665e; --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18); }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; padding: 2rem 1rem; }
+    .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; }
+
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .curso-badge { display: inline-block; font-size: 11px; font-weight: 500; background: #e6f1fb; color: #185FA5; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tipo-badge { display: inline-block; font-size: 11px; font-weight: 500; background: #EAF3DE; color: #3B6D11; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); margin-bottom: 10px; }
+    .practica-aviso { display: flex; gap: 10px; background: #EAF3DE; border: 0.5px solid #C0DD97; border-radius: var(--radius); padding: 10px 14px; }
+    .practica-aviso-text { font-size: 12px; color: #3B6D11; line-height: 1.5; }
+
+    .section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 2rem; }
+
+    .lente { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+    .lente-header { padding: 10px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .lente-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lente-subtitulo { font-size: 12px; color: var(--text2); }
+    .lente-body { padding: 12px 16px; }
+    .lente-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; margin-bottom: 2px; }
+    .lente-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .lente-footer { padding: 10px 16px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lente-footer strong { font-weight: 500; color: var(--text); }
+
+    /* LUNACIÓN */
+    .lunacion-bloque { border-radius: var(--radius-lg); border: 1.5px solid #6B4DC4; overflow: hidden; }
+    .lunacion-header { padding: 12px 18px; background: #F0EFFE; display: flex; align-items: center; gap: 12px; }
+    .lunacion-icono { font-size: 22px; flex-shrink: 0; }
+    .lunacion-titulo { font-size: 15px; font-weight: 600; color: #3D2A8A; }
+    .lunacion-subtitulo { font-size: 12px; color: #6B4DC4; margin-top: 1px; }
+    .lunacion-concepto { padding: 12px 16px; background: #FAF9FF; border-top: 1px solid #D8D0F5; }
+    .lunacion-concepto-texto { font-size: 12px; color: var(--text2); line-height: 1.6; }
+    .lunacion-concepto-texto strong { font-weight: 500; color: var(--text); }
+    .lunacion-fases { border-top: 1px solid #D8D0F5; }
+    .fase-row { display: grid; grid-template-columns: 90px 1fr; border-bottom: 1px solid #EDE8FA; }
+    .fase-row:last-child { border-bottom: none; }
+    .fase-icono-col { padding: 12px 14px; background: #F0EFFE; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border-right: 1px solid #D8D0F5; }
+    .fase-simbolo { font-size: 20px; }
+    .fase-nombre { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #6B4DC4; text-align: center; }
+    .fase-content { padding: 12px 14px; }
+    .fase-titulo { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .fase-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .fase-desc strong { font-weight: 500; color: var(--text); }
+    .fase-dias { font-size: 10px; color: #6B4DC4; font-weight: 500; margin-top: 4px; }
+    @media (max-width: 480px) { .fase-row { grid-template-columns: 70px 1fr; } }
+
+    /* MODALIDADES */
+    .modal-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+    @media (max-width: 520px) { .modal-grid { grid-template-columns: 1fr; } }
+    .modal-card { border-radius: var(--radius); padding: 10px 12px; border: 0.5px solid var(--border); }
+    .modal-cardinal { background: #FAECE7; border-color: #EBC4BA; }
+    .modal-fijo { background: #EAF3DE; border-color: #C0DD97; }
+    .modal-mutable { background: #FAEEDA; border-color: #EDD28A; }
+    .modal-nombre { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .modal-cardinal .modal-nombre { color: #993C1D; }
+    .modal-fijo .modal-nombre { color: #3B6D11; }
+    .modal-mutable .modal-nombre { color: #854F0B; }
+    .modal-desc { font-size: 11px; line-height: 1.4; }
+    .modal-cardinal .modal-desc { color: #7A2510; }
+    .modal-fijo .modal-desc { color: #3B6D11; }
+    .modal-mutable .modal-desc { color: #6B3800; }
+
+    /* CONCEPTOS */
+    .badge { display: inline-block; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .b-clave { background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text2); }
+    .b-nuevo { background: #EEEDFE; color: #534AB7; }
+    .concepto-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .concepto-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .concepto-nombre { font-size: 14px; font-weight: 500; color: var(--text); flex: 1; }
+    .concepto-body { display: grid; grid-template-columns: 1fr 1fr; }
+    @media (max-width: 560px) { .concepto-body { grid-template-columns: 1fr; } }
+    .concepto-def { padding: 12px 14px; border-right: 0.5px solid var(--border); }
+    @media (max-width: 560px) { .concepto-def { border-right: none; border-bottom: 0.5px solid var(--border); } }
+    .concepto-ej  { padding: 12px 14px; background: var(--bg2); }
+    .concepto-def-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .concepto-def-text strong { font-weight: 500; color: var(--text); }
+    .ej-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); margin-bottom: 6px; }
+    .ej-text { font-size: 12px; color: var(--text2); line-height: 1.7; }
+    .ej-text strong { font-weight: 500; color: var(--text); }
+
+    /* SOLSTICIO */
+    .solsticio-bloque { border-radius: var(--radius-lg); border: 1.5px solid #3B6D11; overflow: hidden; }
+    .solsticio-header { padding: 12px 18px; background: #EAF3DE; display: flex; align-items: center; gap: 12px; }
+    .solsticio-icono { font-size: 22px; flex-shrink: 0; }
+    .solsticio-titulo { font-size: 15px; font-weight: 600; color: #1E4A00; }
+    .solsticio-subtitulo { font-size: 12px; color: #3B6D11; margin-top: 1px; }
+    .solsticio-body { padding: 12px 16px; border-top: 1px solid #C0DD97; }
+    .solsticio-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; margin-bottom: 2px; }
+    .solsticio-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .solsticio-footer { padding: 10px 16px; background: #F2F9EC; border-top: 1px solid #C0DD97; font-size: 12px; color: #3B6D11; line-height: 1.5; }
+    .solsticio-footer strong { font-weight: 600; }
+
+    .s-fuego  { background:#FAECE7; color:#993C1D; padding:1px 6px; border-radius:20px; font-size:11px; font-weight:500; }
+    .s-tierra { background:#EAF3DE; color:#3B6D11; padding:1px 6px; border-radius:20px; font-size:11px; font-weight:500; }
+    .s-aire   { background:#FAEEDA; color:#854F0B; padding:1px 6px; border-radius:20px; font-size:11px; font-weight:500; }
+    .s-agua   { background:#E6F1FB; color:#185FA5; padding:1px 6px; border-radius:20px; font-size:11px; font-weight:500; }
+
+    .retener-list { display: flex; flex-direction: column; gap: 6px; }
+    .retener-item { display: flex; gap: 12px; align-items: flex-start; padding: 11px 14px; border-radius: var(--radius); border: 0.5px solid var(--border); background: var(--bg); }
+    .retener-num { font-size: 12px; font-weight: 500; color: #185FA5; min-width: 20px; padding-top: 2px; }
+    .retener-texto { font-size: 13px; color: var(--text); line-height: 1.6; }
+    .retener-texto span { font-weight: 500; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-top">
+      <div class="curso-badge">Curso 4 · C6</div>
+      <div class="tipo-badge">Práctica</div>
+    </div>
+    <div class="titulo">Luna nueva y solsticio de invierno</div>
+    <div class="meta">17 de diciembre de 2025 &nbsp;·&nbsp; Lunaciones · Tránsitos · Fases lunares · Solsticio</div>
+    <div class="practica-aviso">
+      <div class="practica-aviso-text">Clase práctica — se trabaja la lunación completa (luna nueva del 20 de diciembre en Sagitario) y la carta del solsticio del 21 de diciembre. Práctica con efemérides en vivo para calcular las cuatro fases sobre cartas de Ximena y Nelda.</div>
+    </div>
+  </div>
+
+  <div class="section-label">Lente de lectura</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">La lunación como semilla — todo el ciclo está en el inicio</div>
+      <div class="lente-subtitulo">La luna nueva no es solo el principio — es la información completa de lo que se va a desarrollar</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">La luna nueva contiene en sí misma todo: aspectos, cuadraturas, quincuncios — como una semilla que ya tiene el árbol completo dentro</div>
+      <div class="lente-item">Los aspectos de la luna nueva no son solo el inicio — marcarán el tono de toda la lunación de 28 días</div>
+      <div class="lente-item">Para ver cómo se desarrolla hay que seguir las cuatro fases: nueva, cuarto creciente, llena, cuarto menguante</div>
+      <div class="lente-item">Siempre mirar dónde cae la luna nueva en la carta natal — la casa determina qué área de vida se activa</div>
+    </div>
+    <div class="lente-footer"><strong>Sagitario + expectativas:</strong> la ilusión es el riesgo de Sagitario — como tirar una flecha sin apuntar a la diana. Si hay propósito claro, la flecha llega. Si solo hay ilusión, cae.</div>
+  </div>
+
+  <div class="section-label">La lunación — qué es y cómo funciona</div>
+  <div class="lunacion-bloque">
+    <div class="lunacion-header">
+      <div class="lunacion-icono">🌑</div>
+      <div>
+        <div class="lunacion-titulo">Lunación — el ciclo completo de 28 días</div>
+        <div class="lunacion-subtitulo">Desde la luna nueva hasta la siguiente luna nueva</div>
+      </div>
+    </div>
+    <div class="lunacion-concepto">
+      <div class="lunacion-concepto-texto">La <strong>lunación</strong> es el tiempo que tarda el ciclo lunar completo en desarrollarse — 28 días desde una conjunción Sol-Luna hasta la siguiente. Cada luna nueva siembra un principio que se irá manifestando a través de las cuatro fases. No basta con mirar la luna nueva aislada: hay que seguir todo el ciclo para ver cómo se desarrolla.</div>
+    </div>
+    <div class="lunacion-fases">
+      <div class="fase-row">
+        <div class="fase-icono-col"><div class="fase-simbolo">🌑</div><div class="fase-nombre">Luna nueva</div></div>
+        <div class="fase-content">
+          <div class="fase-titulo">Siembra — inicio del movimiento</div>
+          <div class="fase-desc">Sol y Luna en <strong>conjunción</strong>. Se siembra un principio. Lo que se inicia depende del signo y la casa donde cae en tu carta.</div>
+          <div class="fase-dias">Día 0</div>
+        </div>
+      </div>
+      <div class="fase-row">
+        <div class="fase-icono-col"><div class="fase-simbolo">🌓</div><div class="fase-nombre">Cuarto creciente</div></div>
+        <div class="fase-content">
+          <div class="fase-titulo">Decisión externa — se manifiesta</div>
+          <div class="fase-desc">Sol y Luna en <strong>cuadratura</strong> (90°). El Sol avanza 7° desde la luna nueva. Hay que tomar una decisión visible.</div>
+          <div class="fase-dias">~Día 7</div>
+        </div>
+      </div>
+      <div class="fase-row">
+        <div class="fase-icono-col"><div class="fase-simbolo">🌕</div><div class="fase-nombre">Luna llena</div></div>
+        <div class="fase-content">
+          <div class="fase-titulo">Culminación — máxima visibilidad</div>
+          <div class="fase-desc">Sol y Luna en <strong>oposición</strong> (180°). El Sol avanza 14° desde la luna nueva. Lo que se sembró se hace visible y se puede materializar.</div>
+          <div class="fase-dias">~Día 14</div>
+        </div>
+      </div>
+      <div class="fase-row">
+        <div class="fase-icono-col"><div class="fase-simbolo">🌗</div><div class="fase-nombre">Cuarto menguante</div></div>
+        <div class="fase-content">
+          <div class="fase-titulo">Decisión interna — reflexión</div>
+          <div class="fase-desc">Sol y Luna en <strong>cuadratura menguante</strong> (270°). El Sol avanza 21° desde la luna nueva. La decisión es interna — "mira, ¿sabes qué? Voy a hacer tal cosa."</div>
+          <div class="fase-dias">~Día 21</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Luna nueva según la modalidad del signo</div>
+  <div class="modal-grid">
+    <div class="modal-card modal-cardinal">
+      <div class="modal-nombre">Cardinal</div>
+      <div class="modal-desc">Inicia un <strong>propósito concreto</strong>. Inicio de un proyecto o dirección clara. Ej: Capricornio — propósito definido.</div>
+    </div>
+    <div class="modal-card modal-fijo">
+      <div class="modal-nombre">Fijo</div>
+      <div class="modal-desc">Inicia una <strong>manifestación</strong>. Estabiliza, consolida y concreta algo.</div>
+    </div>
+    <div class="modal-card modal-mutable">
+      <div class="modal-nombre">Mutable</div>
+      <div class="modal-desc">Inicia un <strong>movimiento</strong>. No manifiesta ni concreta — genera cambios, contactos, desplazamientos. Ej: Sagitario.</div>
+    </div>
+  </div>
+
+  <div class="section-label">Conceptos clave de la clase</div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">La semilla de la luna nueva — qué incluye</span><span class="badge b-nuevo">lunación</span></div>
+    <div class="concepto-body">
+      <div class="concepto-def"><div class="concepto-def-text">La luna nueva no solo marca el inicio — contiene <strong>toda la información del ciclo</strong>: sus aspectos, sus cuadraturas, sus quincuncios. Como una semilla que ya tiene el árbol completo dentro. Todo eso se irá desarrollando a lo largo de los 28 días.</div></div>
+      <div class="concepto-ej"><div class="ej-label">Ejemplo de clase</div><div class="ej-text">Luna nueva en <span class="s-fuego">Sagitario</span> grado 28: cuadratura Neptuno (expectativas elevadas), cuadratura Saturno (toque de realidad), quincuncio Urano (ángulo que falta), quincuncio Júpiter (ilusión en lo familiar). Todo forma parte del clima del mes.</div></div>
+    </div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">Quincuncio — el ángulo que falta</span><span class="badge b-clave">aspecto</span></div>
+    <div class="concepto-body">
+      <div class="concepto-def"><div class="concepto-def-text">El quincuncio no nubla — hace falta <strong>un ángulo de visión que no se está teniendo en cuenta</strong>. Hay información que no llega o una perspectiva que se está omitiendo. No es confusión (eso es Neptuno) — es que falta un dato.</div></div>
+      <div class="concepto-ej"><div class="ej-label">En la lunación de diciembre</div><div class="ej-text">Quincuncio con Urano retrógrado en <span class="s-tierra">Tauro</span> → hay cambios que hay que reevaluar, pero no se sabe cuáles porque falta perspectiva. Quincuncio con Júpiter retrógrado en <span class="s-agua">Cáncer</span> → algo en lo familiar que no está siendo considerado.</div></div>
+    </div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">Cómo calcular las fases con la efemérides</span><span class="badge b-clave">herramienta</span></div>
+    <div class="concepto-body">
+      <div class="concepto-def"><div class="concepto-def-text">El Sol se mueve <strong>1 grado por día</strong>. Partiendo del grado de la luna nueva: 7 días = cuarto creciente, 14 días = luna llena, 21 días = cuarto menguante. La Luna tiene que hacer el aspecto correspondiente al Sol desde el signo de la misma modalidad.</div></div>
+      <div class="concepto-ej"><div class="ej-label">Ejemplo: Luna nueva grado 28 Sagitario</div><div class="ej-text">
+        +7 días → Sol grado 5 <span class="s-tierra">Capricornio</span> · Luna grado 5 <span class="s-fuego">Aries</span> — cuarto creciente (27 dic)<br>
+        +14 días → Sol grado 12 <span class="s-tierra">Capricornio</span> · Luna grado 12 <span class="s-agua">Cáncer</span> — luna llena (3-4 ene)<br>
+        +21 días → Sol grado 19 <span class="s-tierra">Capricornio</span> · Luna grado 19 <span class="s-aire">Libra</span> — cuarto menguante (10 ene)
+      </div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Solsticio de invierno — 21 de diciembre</div>
+  <div class="solsticio-bloque">
+    <div class="solsticio-header">
+      <div class="solsticio-icono">☀️</div>
+      <div>
+        <div class="solsticio-titulo">Sol entra en grado 0 de Capricornio</div>
+        <div class="solsticio-subtitulo">Portal cardinal · Inicio de propósito · Hemisferio norte: invierno · Hemisferio sur: verano</div>
+      </div>
+    </div>
+    <div class="solsticio-body">
+      <div class="solsticio-item">Los <strong>solsticios y equinocios son portales importantes</strong> — el Sol en signo cardinal inicia un propósito nuevo, no solo un movimiento</div>
+      <div class="solsticio-item">Capricornio trae: <strong>responsabilidad, realismo, austeridad, paso a paso</strong> — empoderamiento a través de la estructura</div>
+      <div class="solsticio-item">Venus en Sagitario (conjunción disociada con el Sol) mantiene algo de ilusión y expectativa de la lunación anterior</div>
+      <div class="solsticio-item">Marte en Capricornio — acciones responsables, pero con cuadratura a Neptuno que puede traer confusión en la ejecución</div>
+      <div class="solsticio-item">Mercurio en Sagitario hace T cuadrada con el eje nodal — cuidado con los juicios; soltar viejos hábitos mentales (nodo sur Virgo)</div>
+      <div class="solsticio-item">Luna-Júpiter-Quirón forman T cuadrada — posible desbordamiento familiar donde alguien quiere ser indispensable</div>
+    </div>
+    <div class="solsticio-footer"><strong>Austeridad ≠ pobreza.</strong> Capricornio dice: no malgastar, ir paso a paso, ser responsable con los recursos. En el hemisferio sur (verano), el mismo arquetipo se aplica a organizar la época vacacional con responsabilidad.</div>
+  </div>
+
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item"><div class="retener-num">1</div><div class="retener-texto"><span>La lunación dura 28 días y se desarrolla en cuatro fases.</span> Luna nueva (siembra) · cuarto creciente (decisión externa) · luna llena (culminación) · cuarto menguante (decisión interna).</div></div>
+    <div class="retener-item"><div class="retener-num">2</div><div class="retener-texto"><span>La luna nueva en signo mutable inicia un movimiento, no una manifestación.</span> Cardinal = propósito. Fijo = manifestación. Mutable = movimiento, cambio, contactos.</div></div>
+    <div class="retener-item"><div class="retener-num">3</div><div class="retener-texto"><span>El Sol se mueve 1 grado por día.</span> Desde el grado de la luna nueva: +7 días = cuarto creciente, +14 = luna llena, +21 = cuarto menguante.</div></div>
+    <div class="retener-item"><div class="retener-num">4</div><div class="retener-texto"><span>El quincuncio indica que falta un ángulo de visión.</span> Hay información o perspectiva que no se está teniendo en cuenta.</div></div>
+    <div class="retener-item"><div class="retener-num">5</div><div class="retener-texto"><span>Los solsticios y equinocios son portales.</span> El Sol en signo cardinal marca el inicio de un propósito, no solo de un movimiento.</div></div>
+  </div>
+
+</div>
+</body>
+</html>
