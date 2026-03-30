@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C7 · Tránsitos por conjunción y oposición</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9;
+      --text: #1a1a18; --text2: #4a4a46; --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+      --radius: 8px; --radius-lg: 12px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2a; --text: #e8e6de; --text2: #a8a6a0; --text3: #68665e; --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18); }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; padding: 2rem 1rem; }
+    .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; }
+
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .curso-badge { display: inline-block; font-size: 11px; font-weight: 500; background: #e6f1fb; color: #185FA5; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tipo-badge { display: inline-block; font-size: 11px; font-weight: 500; background: #EEEDFE; color: #534AB7; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); margin-bottom: 10px; }
+    .practica-aviso { display: flex; gap: 10px; background: #EEEDFE; border: 0.5px solid #AFA9EC; border-radius: var(--radius); padding: 10px 14px; }
+    .practica-aviso-text { font-size: 12px; color: #534AB7; line-height: 1.5; }
+
+    .section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 2rem; }
+
+    .lente { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+    .lente-header { padding: 10px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .lente-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lente-subtitulo { font-size: 12px; color: var(--text2); }
+    .lente-body { padding: 12px 16px; }
+    .lente-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; margin-bottom: 2px; }
+    .lente-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .lente-footer { padding: 10px 16px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lente-footer strong { font-weight: 500; color: var(--text); }
+
+    /* ASPECTOS */
+    .aspecto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    @media (max-width: 480px) { .aspecto-grid { grid-template-columns: 1fr; } }
+    .aspecto-card { border-radius: var(--radius); border: 0.5px solid var(--border); overflow: hidden; }
+    .aspecto-header { padding: 8px 12px; display: flex; align-items: center; gap: 8px; }
+    .aspecto-simbolo { font-size: 16px; flex-shrink: 0; }
+    .aspecto-nombre { font-size: 12px; font-weight: 600; }
+    .aspecto-cuerpo { font-size: 12px; color: var(--text2); line-height: 1.5; padding: 8px 12px; padding-top: 0; }
+    /* ROJO — conjunción, oposición, cuadratura */
+    .a-rojo { border: 1px solid #F0C4BA; }
+    .a-rojo .aspecto-header { background: #FAECE7; }
+    .a-rojo .aspecto-nombre { color: #993C1D; }
+    .a-rojo .aspecto-cuerpo { color: #7A2510; }
+    /* AZUL — sextil, trígono */
+    .a-azul { border: 1px solid #B5D4F4; }
+    .a-azul .aspecto-header { background: #E6F1FB; }
+    .a-azul .aspecto-nombre { color: #185FA5; }
+    .a-azul .aspecto-cuerpo { color: #0C447C; }
+    /* VERDE — quincuncio */
+    .a-verde { border: 1px solid #C0DD97; }
+    .a-verde .aspecto-header { background: #EAF3DE; }
+    .a-verde .aspecto-nombre { color: #3B6D11; }
+    .a-verde .aspecto-cuerpo { color: #2A5000; }
+
+    /* COMPARATIVA */
+    .comp-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .comp-header { padding: 8px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); }
+    .comp-grid { display: grid; grid-template-columns: 1fr 1fr; }
+    @media (max-width: 520px) { .comp-grid { grid-template-columns: 1fr; } }
+    .comp-col { padding: 12px 14px; }
+    .comp-col:first-child { border-right: 0.5px solid var(--border); }
+    @media (max-width: 520px) { .comp-col:first-child { border-right: none; border-bottom: 0.5px solid var(--border); } }
+    .comp-col-titulo { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .comp-item { font-size: 12px; color: var(--text2); line-height: 1.5; padding-left: 10px; position: relative; margin-bottom: 3px; }
+    .comp-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .comp-footer { padding: 10px 14px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .comp-footer strong { font-weight: 500; color: var(--text); }
+
+    /* CONCEPTOS */
+    .badge { display: inline-block; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .b-clave { background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text2); }
+    .b-nuevo { background: #EEEDFE; color: #534AB7; }
+    .concepto-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .concepto-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .concepto-nombre { font-size: 14px; font-weight: 500; color: var(--text); flex: 1; }
+    .concepto-def { padding: 12px 14px; }
+    .concepto-def-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .concepto-def-text strong { font-weight: 500; color: var(--text); }
+
+    .retener-list { display: flex; flex-direction: column; gap: 6px; }
+    .retener-item { display: flex; gap: 12px; align-items: flex-start; padding: 11px 14px; border-radius: var(--radius); border: 0.5px solid var(--border); background: var(--bg); }
+    .retener-num { font-size: 12px; font-weight: 500; color: #185FA5; min-width: 20px; padding-top: 2px; }
+    .retener-texto { font-size: 13px; color: var(--text); line-height: 1.6; }
+    .retener-texto span { font-weight: 500; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-top">
+      <div class="curso-badge">Curso 4 · C7</div>
+      <div class="tipo-badge">Teoría + Práctica</div>
+    </div>
+    <div class="titulo">Tránsitos por conjunción y oposición</div>
+    <div class="meta">7 de enero de 2026 &nbsp;·&nbsp; Tránsitos · Aspectos · Mercurio · Marte · Casas</div>
+    <div class="practica-aviso">
+      <div class="practica-aviso-text">Clase mixta — repaso de aspectos en tránsito, diferencia entre Mercurio y Marte, y práctica sobre carta de Nelda con Marte recorriendo el estelium de Capricornio.</div>
+    </div>
+  </div>
+
+  <div class="section-label">Lente de lectura</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">El planeta en tránsito visita al planeta natal</div>
+      <div class="lente-subtitulo">El planeta natal está en su sitio — el tránsito llega, hace su impacto y sigue adelante</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">El planeta natal es una parte de ti — el planeta en tránsito la activa, la moviliza o la desafía</div>
+      <div class="lente-item">Para predecir: mirar hacia dónde va el planeta en tránsito después del aspecto — qué casa pisará, qué planeta natal tocará</div>
+      <div class="lente-item">Las dignidades siguen importando: si el planeta en tránsito está en exilio, su efecto se matiza</div>
+      <div class="lente-item">Los planetas interceptados reciben el tránsito de forma más interna — el efecto es más sutil o tardío</div>
+      <div class="lente-item">El cambio de casa de un planeta en tránsito también dice algo, aunque no haga aspecto a ningún planeta natal</div>
+    </div>
+    <div class="lente-footer"><strong>La astrología como autoindagación:</strong> para leer los tránsitos sobre tu carta necesitas saber cómo vives cada planeta en ti. La comprensión viene de dentro hacia fuera, no al revés.</div>
+  </div>
+
+  <div class="section-label">Aspectos en tránsito — qué produce cada uno</div>
+  <div class="aspecto-grid">
+    <div class="aspecto-card a-rojo"><div class="aspecto-header"><div class="aspecto-simbolo">☌</div><div class="aspecto-nombre">Conjunción — impacto</div></div><div class="aspecto-cuerpo">Encuentro directo con la energía del planeta natal. Intensidad máxima. Como cruzarte de frente con alguien en la calle.</div></div>
+    <div class="aspecto-card a-rojo"><div class="aspecto-header"><div class="aspecto-simbolo">☍</div><div class="aspecto-nombre">Oposición — estímulo</div></div><div class="aspecto-cuerpo">Tensión desde la distancia. No hay choque directo — hay estímulo, atracción o polaridad. Como ver a alguien al otro lado de la acera.</div></div>
+    <div class="aspecto-card a-rojo"><div class="aspecto-header"><div class="aspecto-simbolo">□</div><div class="aspecto-nombre">Cuadratura — desafío y reto</div></div><div class="aspecto-cuerpo">Dilema entre dos energías. Trae reto pero también acción — nos pone en movimiento. La tensión exige una respuesta.</div></div>
+    <div class="aspecto-card a-verde"><div class="aspecto-header"><div class="aspecto-simbolo">⚻</div><div class="aspecto-nombre">Quincuncio — punto ciego</div></div><div class="aspecto-cuerpo">Falta un ángulo de visión. No es confusión (eso es Neptuno) — es información o perspectiva que no llega.</div></div>
+    <div class="aspecto-card a-azul"><div class="aspecto-header"><div class="aspecto-simbolo">✶</div><div class="aspecto-nombre">Sextil — equilibrio y talento</div></div><div class="aspecto-cuerpo">Aporte armonioso que equilibra o facilita. Desarrollo de un talento que hay que activar conscientemente.</div></div>
+    <div class="aspecto-card a-azul"><div class="aspecto-header"><div class="aspecto-simbolo">△</div><div class="aspecto-nombre">Trígono — fluidez</div></div><div class="aspecto-cuerpo">Algo fluye con comodidad. Manifestación de un talento maduro. Puede generar comodidad excesiva si no se usa.</div></div>
+  </div>
+
+  <div class="section-label">Mercurio vs Marte en tránsito — diferencia clave</div>
+  <div class="comp-bloque">
+    <div class="comp-header">Dos planetas personales — dos funciones distintas</div>
+    <div class="comp-grid">
+      <div class="comp-col">
+        <div class="comp-col-titulo">☿ Mercurio — el movimiento</div>
+        <div class="comp-item">Trae comunicación, noticias, desplazamientos</div>
+        <div class="comp-item">Moviliza el escenario — hace que las cosas se muevan</div>
+        <div class="comp-item">El que mueve el coche una vez arrancado</div>
+        <div class="comp-item">El significador depende del signo y la casa: hermanos, entorno, mensajes</div>
+      </div>
+      <div class="comp-col">
+        <div class="comp-col-titulo">♂ Marte — el encendido</div>
+        <div class="comp-item">Trae acción, decisión, energía de respuesta</div>
+        <div class="comp-item">Enciende el motor — pero el coche todavía no se ha movido</div>
+        <div class="comp-item">La decisión puede quedar en potencia hasta que Mercurio la movilice</div>
+        <div class="comp-item">El impulso puede ser instintivo — el trabajo es convertirlo en respuesta elegida</div>
+      </div>
+    </div>
+    <div class="comp-footer"><strong>Imagen de clase:</strong> Marte le da a la llave y arranca el motor. Mercurio es el que pone el coche en marcha. Marte sin Mercurio = energía encendida pero sin movimiento concreto.</div>
+  </div>
+
+  <div class="section-label">Conceptos clave de la clase</div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">El efecto del tránsito según el tipo de casa</span><span class="badge b-nuevo">casas y tránsitos</span></div>
+    <div class="concepto-def"><div class="concepto-def-text">Cuando un planeta en tránsito pasa de una casa a otra, la motivación cambia aunque no haga aspecto a ningún planeta natal. <strong>Casa angular</strong> (cardinal) = propósito, inicio. <strong>Casa sucedente</strong> (fija) = consolidación, manifestación. <strong>Casa cadente</strong> (mutable) = movimiento, adaptación, modificación de lo anterior.</div></div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">Marte con Neptuno — acción sin claridad</span><span class="badge b-clave">combinación</span></div>
+    <div class="concepto-def"><div class="concepto-def-text">Cuando Marte hace aspecto con Neptuno, la acción pierde claridad o dirección. Puede traer <strong>mala praxis</strong>, desorientación, acciones que no salen como se pensaban, o ausencia de acción porque no hay claridad para moverse. En conjunción también puede ser acción desde la compasión o el sueño — pero sin resultados concretos inmediatos.</div></div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">La astrología vivencial — conocer tu propio arquetipo</span><span class="badge b-nuevo">profundización</span></div>
+    <div class="concepto-def"><div class="concepto-def-text">Para leer los tránsitos sobre tu carta necesitas saber <strong>cómo vives tú cada planeta</strong>. No es suficiente saber qué significa un planeta en un signo — hay que saber cómo se manifiesta en ti, qué parte tuya representa. Se trabaja buscando la etimología de la palabra que define el arquetipo, visualizando la imagen y observando en qué situaciones concretas de tu vida ese planeta se activa.</div></div>
+  </div>
+
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item"><div class="retener-num">1</div><div class="retener-texto"><span>El planeta en tránsito activa una parte del planeta natal — no al revés.</span> El natal está en su sitio; el tránsito llega, hace el impacto y sigue.</div></div>
+    <div class="retener-item"><div class="retener-num">2</div><div class="retener-texto"><span>Marte enciende el motor. Mercurio mueve el coche.</span></div></div>
+    <div class="retener-item"><div class="retener-num">3</div><div class="retener-texto"><span>El cambio de casa de un planeta en tránsito cambia la motivación.</span> Angular = propósito. Sucedente = manifestación. Cadente = movimiento y adaptación.</div></div>
+  </div>
+
+</div>
+</body>
+</html>
