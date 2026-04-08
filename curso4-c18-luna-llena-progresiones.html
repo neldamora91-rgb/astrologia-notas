@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C18 · Luna llena en Aries · Progresiones secundarias</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9;
+      --text: #1a1a18; --text2: #4a4a46; --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+      --radius: 8px; --radius-lg: 12px;
+      --sol: #993C1D; --sol-bg: #FAECE7; --sol-border: #F0C4BA;
+      --luna: #185FA5; --luna-bg: #E6F1FB; --luna-border: #B5D4F4;
+      --purple: #534AB7; --purple-bg: #EEEDFE; --purple-border: #AFA9EC;
+      --rojo: #993C1D; --rojo-bg: #FAECE7; --rojo-border: #F0C4BA;
+      --verde: #3B6D11; --verde-bg: #EAF3DE; --verde-border: #C0DD97;
+      --azul: #185FA5; --azul-bg: #E6F1FB; --azul-border: #B5D4F4;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2a; --text: #e8e6de; --text2: #a8a6a0; --text3: #68665e; --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18); }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; padding: 2rem 1rem; }
+    .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; }
+
+    /* HEADER */
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .curso-badge { font-size: 11px; font-weight: 500; background: #e6f1fb; color: #185FA5; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tipo-badge { font-size: 11px; font-weight: 500; background: #EEEDFE; color: #534AB7; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); }
+
+    /* DIVISOR DE BLOQUE */
+    .bloque-titulo { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; padding: 6px 12px; border-radius: var(--radius); display: inline-block; margin-top: 2rem; margin-bottom: 12px; }
+    .bloque-luna { background: #E6F1FB; color: #185FA5; }
+    .bloque-prog { background: #EEEDFE; color: #534AB7; }
+
+    .section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 1.75rem; }
+
+    /* LENTE */
+    .lente { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+    .lente-header { padding: 10px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .lente-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lente-subtitulo { font-size: 12px; color: var(--text2); }
+    .lente-body { padding: 12px 16px; }
+    .lente-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; margin-bottom: 2px; }
+    .lente-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .lente-footer { padding: 10px 16px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lente-footer strong { font-weight: 500; color: var(--text); }
+
+    /* LUNA LLENA */
+    .luna-bloque { border: 1.5px solid var(--azul-border); border-radius: var(--radius-lg); overflow: hidden; }
+    .luna-header { padding: 12px 18px; background: var(--azul-bg); display: flex; align-items: center; gap: 12px; }
+    .luna-icono { font-size: 24px; flex-shrink: 0; }
+    .luna-titulo { font-size: 15px; font-weight: 600; color: #0C447C; }
+    .luna-subtitulo { font-size: 12px; color: var(--azul); margin-top: 2px; }
+    .luna-body { padding: 12px 16px; border-top: 1px solid var(--azul-border); }
+    .luna-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; margin-bottom: 3px; }
+    .luna-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .luna-item strong { font-weight: 500; color: var(--text); }
+    .luna-footer { padding: 10px 16px; background: var(--azul-bg); border-top: 1px solid var(--azul-border); font-size: 12px; color: #0C447C; line-height: 1.5; }
+    .luna-footer strong { font-weight: 600; }
+
+    /* ASPECTOS DE LA LUNA LLENA */
+    .aspectos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    @media (max-width: 480px) { .aspectos-grid { grid-template-columns: 1fr; } }
+    .aspecto-card { border-radius: var(--radius); overflow: hidden; border: 0.5px solid var(--border); }
+    .aspecto-header { padding: 7px 12px; display: flex; align-items: center; gap: 8px; }
+    .aspecto-simbolo { font-size: 15px; }
+    .aspecto-nombre { font-size: 12px; font-weight: 600; }
+    .aspecto-body { font-size: 12px; color: var(--text2); line-height: 1.5; padding: 7px 12px; padding-top: 0; }
+    /* Rojo: conjunción, oposición, cuadratura */
+    .a-rojo { border-color: var(--rojo-border); }
+    .a-rojo .aspecto-header { background: var(--rojo-bg); }
+    .a-rojo .aspecto-nombre { color: var(--rojo); }
+    .a-rojo .aspecto-body { color: #7A2510; }
+    /* Azul: sextil, trígono */
+    .a-azul { border-color: var(--azul-border); }
+    .a-azul .aspecto-header { background: var(--azul-bg); }
+    .a-azul .aspecto-nombre { color: var(--azul); }
+    .a-azul .aspecto-body { color: #0C447C; }
+
+    /* CONCEPTO SOL-SATURNO */
+    .concepto-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .concepto-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .concepto-nombre { font-size: 14px; font-weight: 500; color: var(--text); flex: 1; }
+    .badge { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
+    .b-clave { background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text2); }
+    .b-nuevo { background: #EEEDFE; color: #534AB7; }
+    .concepto-def { padding: 12px 14px; font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .concepto-def strong { font-weight: 500; color: var(--text); }
+
+    /* PROGRESIONES — CONCEPTOS */
+    .prog-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .prog-header { padding: 8px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); }
+    .prog-body { padding: 12px 14px; }
+    .prog-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; margin-bottom: 3px; }
+    .prog-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .prog-item strong { font-weight: 500; color: var(--text); }
+    .prog-footer { padding: 8px 14px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .prog-footer strong { font-weight: 500; color: var(--text); }
+
+    /* PRÁCTICA DE CARTAS */
+    .practica-aviso { display: flex; gap: 10px; background: var(--purple-bg); border: 0.5px solid var(--purple-border); border-radius: var(--radius); padding: 10px 14px; margin-bottom: 10px; }
+    .practica-aviso-text { font-size: 12px; color: var(--purple); line-height: 1.5; }
+
+    .carta-card { border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 10px; }
+    .carta-header { display: flex; align-items: center; gap: 12px; padding: 10px 14px; }
+    .carta-icono { font-size: 18px; flex-shrink: 0; }
+    .carta-nombre { font-size: 14px; font-weight: 600; }
+    .carta-subtitulo { font-size: 12px; margin-top: 1px; }
+    .carta-body { border-top: 1px solid; }
+    .carta-fila { display: grid; grid-template-columns: 110px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .carta-fila:last-child { border-bottom: none; }
+    .carta-fila:nth-child(even) { background: var(--bg2); }
+    .carta-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .carta-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .carta-val strong { font-weight: 500; color: var(--text); }
+    .carta-footer { padding: 8px 14px; border-top: 1px solid; font-size: 12px; font-style: italic; line-height: 1.5; }
+
+    /* DEP */
+    .c-dep { border: 1px solid #C4A6D8; }
+    .c-dep .carta-header { background: #F5EEF8; }
+    .c-dep .carta-nombre { color: #6B2F8A; }
+    .c-dep .carta-subtitulo { color: #9B5BBF; }
+    .c-dep .carta-body { border-color: #C4A6D8; }
+    .c-dep .carta-footer { background: #F5EEF8; border-color: #C4A6D8; color: #5A2070; }
+
+    /* JIMENA */
+    .c-jimena { border: 1px solid var(--azul-border); }
+    .c-jimena .carta-header { background: var(--azul-bg); }
+    .c-jimena .carta-nombre { color: var(--azul); }
+    .c-jimena .carta-subtitulo { color: #2E7ED4; }
+    .c-jimena .carta-body { border-color: var(--azul-border); }
+    .c-jimena .carta-footer { background: var(--azul-bg); border-color: var(--azul-border); color: #0C447C; }
+
+    /* NELDA */
+    .c-nelda { border: 1px solid var(--verde-border); }
+    .c-nelda .carta-header { background: var(--verde-bg); }
+    .c-nelda .carta-nombre { color: var(--verde); }
+    .c-nelda .carta-subtitulo { color: #518F1A; }
+    .c-nelda .carta-body { border-color: var(--verde-border); }
+    .c-nelda .carta-footer { background: var(--verde-bg); border-color: var(--verde-border); color: #2A5000; }
+
+    .pill { display: inline-block; font-size: 11px; font-weight: 500; padding: 1px 7px; border-radius: 20px; margin-right: 4px; }
+    .pill-rojo { background: var(--rojo-bg); color: var(--rojo); }
+    .pill-azul { background: var(--azul-bg); color: var(--azul); }
+    .pill-verde { background: var(--verde-bg); color: var(--verde); }
+    .pill-purple { background: var(--purple-bg); color: var(--purple); }
+
+    /* SEPARADOR */
+    .separador { border: none; border-top: 2px dashed var(--border); margin: 2rem 0; }
+
+    /* RETENER */
+    .retener-list { display: flex; flex-direction: column; gap: 6px; }
+    .retener-item { display: flex; gap: 12px; align-items: flex-start; padding: 11px 14px; border-radius: var(--radius); border: 0.5px solid var(--border); }
+    .retener-num { font-size: 12px; font-weight: 500; color: var(--azul); min-width: 20px; padding-top: 2px; }
+    .retener-texto { font-size: 13px; color: var(--text); line-height: 1.6; }
+    .retener-texto span { font-weight: 500; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div class="curso-badge">Curso 4 · C18</div>
+      <div class="tipo-badge">Teoría + Práctica</div>
+    </div>
+    <div class="titulo">Luna llena en Aries · Progresiones secundarias</div>
+    <div class="meta">1 de abril de 2026 &nbsp;·&nbsp; Lunaciones · Progresiones · Sol progresado · Luna progresada · Práctica</div>
+  </div>
+
+  <!-- ══════════════════ BLOQUE 1: LUNA LLENA ══════════════════ -->
+  <div class="bloque-titulo bloque-luna">🌕 &nbsp;Parte 1 — Luna llena en Aries (2 abril, 3h madrugada)</div>
+
+  <div class="section-label">Lente de lectura</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">Eje Aries–Libra — desde dónde construimos los vínculos</div>
+      <div class="lente-subtitulo">Luna nueva anterior en Piscis grado 28 · final de ciclo emocional antes del inicio en Aries</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">La luna nueva anterior estaba en el <strong>grado 28 de Piscis</strong> — final de signo, final del zodiaco, señal de cierre de ciclo antes del inicio en Aries</div>
+      <div class="lente-item">Piscis pide que las emociones sean comprendidas — incluyendo sus sombras: victimismo, sacrificio, chantaje emocional — para trascenderlas</div>
+      <div class="lente-item">La luna llena en <strong>Libra grado 12</strong> (decanato Escorpio) refleja la conciencia solar de Aries: cómo me posiciono como individuo en las relaciones</div>
+      <div class="lente-item">Decanato Escorpio en Libra habla de compromiso, apego, desapego, asuntos oscuros en las relaciones — la profundidad del vínculo</div>
+    </div>
+    <div class="lente-footer"><strong>La luna llena siempre refleja la conciencia de la luna nueva anterior.</strong> Lo que se sembró en Piscis ahora se ve reflejado — las emociones no comprendidas aparecen en las relaciones.</div>
+  </div>
+
+  <!-- LUNA LLENA BLOQUE -->
+  <div class="section-label">La carta de la luna llena</div>
+  <div class="luna-bloque">
+    <div class="luna-header">
+      <div class="luna-icono">🌕</div>
+      <div>
+        <div class="luna-titulo">Luna llena en Aries–Libra · Grado 12</div>
+        <div class="luna-subtitulo">Sol en Aries · Luna en Libra · Meridiano de Greenwich (tiempo universal)</div>
+      </div>
+    </div>
+    <div class="luna-body">
+      <div class="luna-item"><strong>Eje Aries–Libra:</strong> equilibrio entre el yo individual (Aries) y el vínculo con el otro (Libra). El desafío: llegar al equilibrio a través del conflicto — así funciona en la humanidad.</div>
+      <div class="luna-item"><strong>Sol acompañado de Saturno y Neptuno en Aries:</strong> el ciclo sinódico Sol-Saturno se inició hace una semana (conjunción exacta). Toque de realidad y reset de identidad.</div>
+      <div class="luna-item"><strong>Saturno en Aries está en caída:</strong> la capacidad de poner límites internos se ve debilitada — poner el límite consciente requiere un esfuerzo adicional.</div>
+      <div class="luna-item"><strong>Venus en Tauro cuadratura Plutón en Acuario:</strong> economía fluctuando. Finanzas personales y sociales en estado de conflicto e incertidumbre.</div>
+      <div class="luna-item"><strong>Júpiter en Cáncer conecta con Sol y Luna:</strong> foco en las relaciones familiares y en el sistema de creencias heredado. Grado 15 de Cáncer en decanato Acuario → inercias familiares que piden ser reordenadas.</div>
+    </div>
+    <div class="luna-footer"><strong>La carta bajo el meridiano de Greenwich es la carta mundial</strong> — válida para todo el planeta. Cada persona la personalizará poniéndola bajo su ascendente, lo que cambiará las casas.</div>
+  </div>
+
+  <!-- ASPECTOS DE LA LUNA LLENA -->
+  <div class="section-label">Aspectos clave de la luna llena</div>
+  <div class="aspectos-grid">
+    <div class="aspecto-card a-rojo">
+      <div class="aspecto-header"><div class="aspecto-simbolo">☌</div><div class="aspecto-nombre">Sol + Saturno (conjunción) · Aries</div></div>
+      <div class="aspecto-body">Inicio del ciclo sinódico Sol-Saturno. <strong>Toque de realidad</strong> — coherencia entre lo que digo y lo que hago. Sol = personalidad consciente · Saturno = personalidad inconsciente (mandatos, legado familiar).</div>
+    </div>
+    <div class="aspecto-card a-azul">
+      <div class="aspecto-header"><div class="aspecto-simbolo">☌</div><div class="aspecto-nombre">Saturno + Neptuno · Aries</div></div>
+      <div class="aspecto-body">Neptuno (identidad psíquica) ayuda a <strong>unificar inconsciente, subconsciente y consciente</strong>. Oportunidad de reset: el Sol entre Saturno y Neptuno tiene acceso a los tres niveles.</div>
+    </div>
+    <div class="aspecto-card a-rojo">
+      <div class="aspecto-header"><div class="aspecto-simbolo">□</div><div class="aspecto-nombre">Venus (Tauro) ☐ Plutón (Acuario)</div></div>
+      <div class="aspecto-body">Economía y recursos en <strong>estado de conflicto</strong>. Fluctuaciones financieras. La sociedad vs los valores materiales. Impronta que deja proceso aunque la cuadratura se deshaga.</div>
+    </div>
+    <div class="aspecto-card a-azul">
+      <div class="aspecto-header"><div class="aspecto-simbolo">△</div><div class="aspecto-nombre">Júpiter (Cáncer) con Sol y Luna</div></div>
+      <div class="aspecto-body">Toda la luna llena conecta con Júpiter. <strong>Foco en relaciones familiares</strong> y sistema de creencias heredado. Grado 15 Cáncer decanato Acuario → inercias familiares.</div>
+    </div>
+  </div>
+
+  <!-- CONCEPTO: CICLO SINÓDICO SOL-SATURNO -->
+  <div class="section-label">Concepto — ciclo sinódico Sol-Saturno</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">Ciclo sinódico Sol-Saturno — personalidad consciente e inconsciente</span><span class="badge b-nuevo">nuevo</span></div>
+    <div class="concepto-def">El <strong>ciclo sinódico</strong> de un planeta empieza cuando el Sol hace conjunción con él. A partir de ahí se inicia un ciclo de un año (el tiempo que tarda el Sol en volver a ese punto). En este caso: el Sol ha pasado sobre Saturno hace una semana, iniciando un nuevo ciclo de un año. <strong>Sol = personalidad consciente</strong> · <strong>Saturno = personalidad inconsciente</strong> (el arquetipo del tiempo, las experiencias acumuladas, el legado familiar). La conjunción es el momento donde lo inconsciente sale a la luz de la conciencia — oportunidad de alinearse o detectar la incoherencia entre lo que decimos y lo que hacemos.</div>
+  </div>
+
+  <hr class="separador">
+
+  <!-- ══════════════════ BLOQUE 2: PROGRESIONES ══════════════════ -->
+  <div class="bloque-titulo bloque-prog">🌙 &nbsp;Parte 2 — Progresiones secundarias: profundización y práctica</div>
+
+  <!-- CONCEPTOS NUEVOS DE PROGRESIONES -->
+  <div class="section-label">Conceptos nuevos de esta clase</div>
+
+  <div class="prog-bloque">
+    <div class="prog-header">El punto medio entre dos planetas natales</div>
+    <div class="prog-body">
+      <div class="prog-item">Cuando el <strong>Sol progresado</strong> recorre un signo y hay dos <strong>planetas natales</strong> dentro de ese signo con espacio entre ellos, se calcula el punto medio.</div>
+      <div class="prog-item">Los planetas natales son fijos — lo que se mueve entre ellos es el Sol progresado.</div>
+      <div class="prog-item">Mientras el Sol progresado viaja desde el primer planeta natal hasta el punto medio → domina la energía de ese primer planeta.</div>
+      <div class="prog-item">Desde el punto medio hasta el segundo planeta natal → la experiencia se tiñe de la energía del segundo planeta.</div>
+      <div class="prog-item">Permite precisar <strong>cuántos años</strong> duró cada influencia dentro del mismo signo.</div>
+    </div>
+    <div class="prog-footer"><strong>Ejemplo de clase (DEP):</strong> en Escorpio tiene Plutón natal en grado 1 y Venus natal en grado 11. El Sol progresado pasó entre ellos. Punto medio = grado 6 → primeros 5 años bajo energía plutoniana (transformación), luego 5 años acercándose a Venus (relaciones intensas, sexualidad en Escorpio).</div>
+  </div>
+
+  <div class="prog-bloque">
+    <div class="prog-header">Planeta inaspectado en progresión</div>
+    <div class="prog-body">
+      <div class="prog-item">Un planeta inaspectado en la carta natal <strong>funciona fuera de la conciencia solar</strong> — opera por sí mismo sin que la persona lo controle conscientemente.</div>
+      <div class="prog-item">Cuando la Luna progresada lo toca, es una oportunidad de <strong>hacer visible ese arquetipo</strong> y traerlo a la conciencia.</div>
+      <div class="prog-item">Si está en las casas de abajo (zona inconsciente de la carta), el proceso es aún más interno.</div>
+    </div>
+    <div class="prog-footer"><strong>Ejemplo:</strong> Saturno inaspectado en la carta natal de Jimena — la seguridad material y los límites operaban fuera de su control. La Luna progresada tocándolo en 8 meses será la oportunidad de integrarlo.</div>
+  </div>
+
+  <div class="prog-bloque">
+    <div class="prog-header">La luna progresada activa todos los planetas natales</div>
+    <div class="prog-body">
+      <div class="prog-item">El Sol progresado recorre solo ~3 signos en una vida — no tocará todos los planetas natales.</div>
+      <div class="prog-item">La Luna progresada, al dar la vuelta completa en 28–30 años, <strong>tocará todos los planetas natales</strong> a lo largo de la vida.</div>
+      <div class="prog-item">Cada contacto de la Luna progresada con un planeta natal activa ese planeta — sus aspectos, lo que representa en la psique.</div>
+      <div class="prog-item">La Luna ancla en la experiencia concreta lo que el Sol propone como propósito.</div>
+    </div>
+    <div class="prog-footer"><strong>El sol propone, la luna dispone.</strong> El Sol dice qué quiere experimentar el alma. La Luna dice dónde y cómo se va a vivir esa experiencia.</div>
+  </div>
+
+  <!-- PRÁCTICA DE CARTAS -->
+  <div class="section-label">Práctica — progresiones sobre cartas</div>
+  <div class="practica-aviso">
+    <div class="practica-aviso-text">Práctica en vivo sobre las cartas de DEP (41 años) y Nelda (34 años). Se trabajan los planetas progresados activos en este momento y sus contactos con planetas natales.</div>
+  </div>
+
+  <!-- DEP -->
+  <div class="carta-card c-dep">
+    <div class="carta-header">
+      <div class="carta-icono">♇</div>
+      <div>
+        <div class="carta-nombre">DEP · 41 años</div>
+        <div class="carta-subtitulo">Fecha progresada equivalente: 15 de noviembre de 1984</div>
+      </div>
+    </div>
+    <div class="carta-body">
+      <div class="carta-fila"><div class="carta-key">Sol progresado</div><div class="carta-val"><span class="pill pill-rojo">Escorpio grado 23</span> Casa 3 · Decanato Piscis · Le quedan 7 años para entrar en Sagitario</div></div>
+      <div class="carta-fila"><div class="carta-key">Tiempo en Escorpio</div><div class="carta-val">23 años. El alma lleva 23 años explorando la transformación a través de la comunicación, los estudios y el entorno cercano (casa 3).</div></div>
+      <div class="carta-fila"><div class="carta-key">Decanato Piscis</div><div class="carta-val">Hace 3 años entró en el decanato de Piscis — disolución de miedos de Escorpio, finales. Hace 4 años: cambio de trabajo + fin de relación. Saturno en Escorpio en ese momento.</div></div>
+      <div class="carta-fila"><div class="carta-key">Sol ☌ Plutón</div><div class="carta-val">Hace 22 años (a los ~19 años) · Gran transformación personal · Época plutoniana intensa (pelo rosa, ropa negra, proceso identitario profundo)</div></div>
+      <div class="carta-fila"><div class="carta-key">Sol ☌ Venus</div><div class="carta-val">Hace 12 años · Venus Escorpio = relaciones profundas, apego, intensidad emocional</div></div>
+      <div class="carta-fila"><div class="carta-key">Sol ☌ Saturno</div><div class="carta-val">Hace 4 años · Saturno = finales en lo material y relacional · Confirmado: fin de pareja, cambio de trabajo, sensación de estar perdida</div></div>
+      <div class="carta-fila"><div class="carta-key">Punto medio Plutón-Venus</div><div class="carta-val">Entre grado 1 (Plutón) y grado 11 (Venus): punto medio en grado 6. Primeros 5 años = proceso plutoniano (transformación). Segundos 5 años = energía venusina (relaciones intensas, sexualidad). A los 30 años: propuesta de matrimonio → salió corriendo.</div></div>
+      <div class="carta-fila"><div class="carta-key">Luna progresada</div><div class="carta-val"><span class="pill pill-azul">Leo grado 14</span> Casa 12 · Hace 3 meses que entró · Proceso de retiro e introspección</div></div>
+    </div>
+    <div class="carta-footer">El sol en Escorpio los últimos 23 años habla de un proceso largo de transformación de la identidad a través del entorno y la comunicación. Cada planeta que tocó el sol va confirmando episodios reales de la vida.</div>
+  </div>
+
+  <!-- NELDA -->
+  <div class="carta-card c-nelda">
+    <div class="carta-header">
+      <div class="carta-icono">☽</div>
+      <div>
+        <div class="carta-nombre">Nelda · 34 años</div>
+        <div class="carta-subtitulo">Sol progresado: Escorpio grado 29 · Casa 7 · A punto de entrar en Sagitario</div>
+      </div>
+    </div>
+    <div class="carta-body">
+      <div class="carta-fila"><div class="carta-key">Sol progresado</div><div class="carta-val"><span class="pill pill-rojo">Escorpio grado 29</span> Casa 7 · Quedan ~4 meses para entrar en Sagitario · Grado 29 = último aprendizaje del signo</div></div>
+      <div class="carta-fila"><div class="carta-key">19 años en Escorpio</div><div class="carta-val">El alma lleva 19 años explorando las relaciones desde Escorpio: intensidad, apego, fusión, control, transformación. Confirmado: a los 15 años (inicio en casa 7) → primer noviazgo formal.</div></div>
+      <div class="carta-fila"><div class="carta-key">Sol ☌ Plutón</div><div class="carta-val">Hace 10 años · Giro transformador en las relaciones · Confirmado: conoció a Sam</div></div>
+      <div class="carta-fila"><div class="carta-key">Próximo cambio</div><div class="carta-val">En ~4 meses el Sol entra en <strong>Sagitario</strong> (signo mutable) en la misma casa 7. De lo fijo (estático, seguro) a lo mutable (movimiento, expansión, aventura). El alma quiere vivir las relaciones desde la libertad, la expansión y el optimismo.</div></div>
+      <div class="carta-fila"><div class="carta-key">Luna en ese momento</div><div class="carta-val">Cuando el Sol entre en Sagitario, la Luna estará en <span class="pill pill-azul">Géminis grado 10</span> en casa 2 → compartir recursos con libertad, valorar la libertad dentro de la relación.</div></div>
+      <div class="carta-fila"><div class="carta-key">Luna progresada ahora</div><div class="carta-val"><span class="pill pill-verde">Géminis grado 6</span> Casa 2 · Decanato Libra · Aspecto con planetas natales · Temas de recursos y valoración</div></div>
+      <div class="carta-fila"><div class="carta-key">Manifestación</div><div class="carta-val">Excedencia ampliada → viaje a México en julio con Sam y Ema · Nunca había vuelto tanto tiempo a casa · Relajarse en los recursos · Expansión en la pareja. El alma ya quería esto antes de que el Sol entrara en Sagitario.</div></div>
+    </div>
+    <div class="carta-footer">El contraste es claro: 19 años de Escorpio en las relaciones (intensidad, apego, transformación) → ahora el alma pide Sagitario (movimiento, expansión, libertad dentro del vínculo). No es un tránsito — es un propósito que el alma lleva gestando.</div>
+  </div>
+
+  <!-- PUNTOS A RETENER -->
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item"><div class="retener-num">1</div><div class="retener-texto"><span>El punto medio entre dos planetas divide la experiencia en dos etapas.</span> Hasta el punto medio domina el primer planeta; desde ahí, el segundo. Permite precisar cuántos años duró cada influencia.</div></div>
+    <div class="retener-item"><div class="retener-num">2</div><div class="retener-texto"><span>Un planeta inaspectado opera fuera de la conciencia solar.</span> Cuando la Luna progresada lo toca, es la oportunidad de integrarlo y traerlo a la conciencia.</div></div>
+    <div class="retener-item"><div class="retener-num">3</div><div class="retener-texto"><span>La Luna progresada tocará todos los planetas natales a lo largo de la vida.</span> El Sol progresado solo recorre ~3 signos. La Luna es quien activa todos los arquetipos de la carta.</div></div>
+    <div class="retener-item"><div class="retener-num">4</div><div class="retener-texto"><span>El sol propone, la luna dispone.</span> El Sol marca el propósito del alma (qué). La Luna ancla la experiencia en el dónde y el cómo.</div></div>
+    <div class="retener-item"><div class="retener-num">5</div><div class="retener-texto"><span>Las progresiones no son un tránsito — son el propósito del alma.</span> Un viaje, un trabajo, una relación pueden ser la manifestación de lo que el alma lleva años gestando internamente.</div></div>
+  </div>
+
+</div>
+</body>
+</html>
