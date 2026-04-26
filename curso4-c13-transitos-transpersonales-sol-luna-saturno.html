@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C13 · Tránsitos transpersonales con Sol, Luna y Saturno</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9;
+      --text: #1a1a18; --text2: #4a4a46; --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+      --radius: 8px; --radius-lg: 12px;
+      --sol: #993C1D; --sol-bg: #FAECE7; --sol-border: #F0C4BA;
+      --luna: #185FA5; --luna-bg: #E6F1FB; --luna-border: #B5D4F4;
+      --sat: #534AB7; --sat-bg: #EEEDFE; --sat-border: #AFA9EC;
+      --urano: #1A7A8A; --urano-bg: #E0F4F7; --urano-border: #9AD5DF;
+      --neptuno: #6B3CB5; --neptuno-bg: #F0E8FC; --neptuno-border: #C9A8EF;
+      --pluton: #993C1D; --pluton-bg: #FAECE7; --pluton-border: #F0C4BA;
+      --verde: #3B6D11; --verde-bg: #EAF3DE; --verde-border: #C0DD97;
+      --merc: #854F0B; --merc-bg: #FAEEDA; --merc-border: #EDCF9A;
+      --rojo: #993C1D; --azul: #185FA5;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2a; --text: #e8e6de; --text2: #a8a6a0; --text3: #68665e; --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18); }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; padding: 2rem 1rem; }
+    .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; }
+
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .curso-badge { font-size: 11px; font-weight: 500; background: #e6f1fb; color: #185FA5; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tipo-badge { font-size: 11px; font-weight: 500; background: #EEEDFE; color: #534AB7; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); }
+    .section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 1.75rem; }
+
+    /* LENTE */
+    .lente { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+    .lente-header { padding: 10px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .lente-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lente-subtitulo { font-size: 12px; color: var(--text2); }
+    .lente-body { padding: 12px 16px; }
+    .lente-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; margin-bottom: 2px; }
+    .lente-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .lente-footer { padding: 10px 16px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lente-footer strong { font-weight: 500; color: var(--text); }
+
+    /* TABLA PERSONALIDAD */
+    .tabla-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .tabla-label { padding: 8px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); }
+    .tabla-header-row { display: grid; grid-template-columns: 90px 1fr 1fr 1fr; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .tabla-row { display: grid; grid-template-columns: 90px 1fr 1fr 1fr; border-bottom: 0.5px solid var(--border); }
+    .tabla-row:last-child { border-bottom: none; }
+    .tabla-row:nth-child(even) { background: var(--bg2); }
+    .tabla-cel { padding: 8px 10px; font-size: 12px; color: var(--text2); line-height: 1.4; }
+    .tabla-cel.head { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); }
+    .tabla-cel.pl { font-weight: 600; font-size: 12px; }
+    .pl-sol { color: var(--sol); }
+    .pl-luna { color: var(--luna); }
+    .pl-sat { color: var(--sat); }
+    .pill-urano { background: var(--urano-bg); color: var(--urano); font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 20px; }
+    .pill-neptuno { background: var(--neptuno-bg); color: var(--neptuno); font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 20px; }
+    .pill-pluton { background: var(--pluton-bg); color: var(--pluton); font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 20px; }
+
+    /* TRANSPERSONAL CARD */
+    .trans-card { border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .trans-header { padding: 10px 14px; display: flex; align-items: center; gap: 10px; }
+    .trans-icono { font-size: 20px; flex-shrink: 0; }
+    .trans-nombre { font-size: 14px; font-weight: 600; }
+    .trans-sub { font-size: 11px; margin-top: 1px; }
+    .trans-body { border-top: 1px solid; }
+    .trans-fila { display: grid; grid-template-columns: 120px 1fr; gap: 8px; padding: 8px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .trans-fila:last-child { border-bottom: none; }
+    .trans-fila:nth-child(even) { background: var(--bg2); }
+    .trans-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .trans-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .trans-val strong { font-weight: 500; color: var(--text); }
+    .trans-footer { padding: 8px 14px; border-top: 1px solid; font-size: 12px; font-style: italic; line-height: 1.5; }
+
+    .t-urano { border: 1px solid var(--urano-border); }
+    .t-urano .trans-header { background: var(--urano-bg); }
+    .t-urano .trans-nombre { color: var(--urano); }
+    .t-urano .trans-sub { color: #267A8A; }
+    .t-urano .trans-body { border-color: var(--urano-border); }
+    .t-urano .trans-footer { background: var(--urano-bg); border-color: var(--urano-border); color: #0F5060; }
+
+    .t-neptuno { border: 1px solid var(--neptuno-border); }
+    .t-neptuno .trans-header { background: var(--neptuno-bg); }
+    .t-neptuno .trans-nombre { color: var(--neptuno); }
+    .t-neptuno .trans-sub { color: #8A58C8; }
+    .t-neptuno .trans-body { border-color: var(--neptuno-border); }
+    .t-neptuno .trans-footer { background: var(--neptuno-bg); border-color: var(--neptuno-border); color: #4A2080; }
+
+    .t-pluton { border: 1px solid var(--pluton-border); }
+    .t-pluton .trans-header { background: var(--pluton-bg); }
+    .t-pluton .trans-nombre { color: var(--pluton); }
+    .t-pluton .trans-sub { color: #C05030; }
+    .t-pluton .trans-body { border-color: var(--pluton-border); }
+    .t-pluton .trans-footer { background: var(--pluton-bg); border-color: var(--pluton-border); color: #7A2510; }
+
+    /* PRÁCTICA CARTAS */
+    .practica-aviso { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 10px 14px; margin-bottom: 10px; font-size: 12px; color: var(--text2); }
+
+    .carta-card { border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 10px; }
+    .carta-header { display: flex; align-items: center; gap: 12px; padding: 10px 14px; }
+    .carta-icono { font-size: 18px; flex-shrink: 0; }
+    .carta-nombre { font-size: 14px; font-weight: 600; }
+    .carta-subtitulo { font-size: 12px; margin-top: 1px; }
+    .carta-body { border-top: 1px solid; }
+    .carta-fila { display: grid; grid-template-columns: 120px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .carta-fila:last-child { border-bottom: none; }
+    .carta-fila:nth-child(even) { background: var(--bg2); }
+    .carta-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .carta-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .carta-val strong { font-weight: 500; color: var(--text); }
+    .carta-footer { padding: 8px 14px; border-top: 1px solid; font-size: 12px; font-style: italic; line-height: 1.5; }
+
+    .c-jimena { border: 1px solid var(--merc-border); }
+    .c-jimena .carta-header { background: var(--merc-bg); }
+    .c-jimena .carta-nombre { color: var(--merc); }
+    .c-jimena .carta-subtitulo { color: #A0650F; }
+    .c-jimena .carta-body { border-color: var(--merc-border); }
+    .c-jimena .carta-footer { background: var(--merc-bg); border-color: var(--merc-border); color: #6B3C00; }
+
+    .c-nelda { border: 1px solid var(--verde-border); }
+    .c-nelda .carta-header { background: var(--verde-bg); }
+    .c-nelda .carta-nombre { color: var(--verde); }
+    .c-nelda .carta-subtitulo { color: #518F1A; }
+    .c-nelda .carta-body { border-color: var(--verde-border); }
+    .c-nelda .carta-footer { background: var(--verde-bg); border-color: var(--verde-border); color: #2A5000; }
+
+    /* HERRAMIENTA */
+    .herramienta-bloque { border: 0.5px solid var(--urano-border); border-radius: var(--radius-lg); overflow: hidden; }
+    .herramienta-header { padding: 8px 14px; background: var(--urano-bg); border-bottom: 0.5px solid var(--urano-border); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--urano); }
+    .herramienta-body { padding: 12px 14px; }
+    .herramienta-paso { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; margin-bottom: 4px; }
+    .herramienta-paso::before { content: '→'; position: absolute; left: 0; color: var(--urano); font-weight: 700; }
+    .herramienta-footer { padding: 8px 14px; background: var(--urano-bg); border-top: 0.5px solid var(--urano-border); font-size: 12px; color: #0F5060; }
+
+    /* CONCEPTO */
+    .concepto-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .concepto-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .concepto-nombre { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; }
+    .badge { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
+    .b-clave { background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text2); }
+    .concepto-def { padding: 12px 14px; font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .concepto-def strong { font-weight: 500; color: var(--text); }
+
+    /* RETENER */
+    .retener-list { display: flex; flex-direction: column; gap: 6px; }
+    .retener-item { display: flex; gap: 12px; align-items: flex-start; padding: 11px 14px; border-radius: var(--radius); border: 0.5px solid var(--border); }
+    .retener-num { font-size: 12px; font-weight: 500; color: var(--neptuno); min-width: 20px; padding-top: 2px; }
+    .retener-texto { font-size: 13px; color: var(--text); line-height: 1.6; }
+    .retener-texto span { font-weight: 500; }
+
+    .separador { border: none; border-top: 2px dashed var(--border); margin: 2rem 0; }
+    .pill { display: inline-block; font-size: 11px; font-weight: 500; padding: 1px 7px; border-radius: 20px; margin-right: 3px; }
+    .p-sol { background: var(--sol-bg); color: var(--sol); }
+    .p-luna { background: var(--luna-bg); color: var(--luna); }
+    .p-sat { background: var(--sat-bg); color: var(--sat); }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div class="curso-badge">Curso 4 · C13</div>
+      <div class="tipo-badge">Teoría + Práctica</div>
+    </div>
+    <div class="titulo">Tránsitos transpersonales con Sol, Luna y Saturno</div>
+    <div class="meta">25 de febrero de 2026 &nbsp;·&nbsp; Urano · Neptuno · Plutón · Sol · Luna · Saturno · Práctica con efemérides</div>
+  </div>
+
+  <!-- LENTE -->
+  <div class="section-label">Lente de lectura</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">Los transpersonales refinan y elevan los planetas de la personalidad</div>
+      <div class="lente-subtitulo">Sol, Luna y Saturno son transformados por Urano, Neptuno y Plutón — cada uno a su manera</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">Los transpersonales son los planetas espirituales — actúan en el campo psíquico y se notan más cuando no somos conscientes de ellos</div>
+      <div class="lente-item">Cada contacto entre un transpersonal y un planeta personal nos trae una <strong>crisis</strong> — en el sentido de cambio, no de catástrofe. Una crisis es una decisión que hay que tomar</div>
+      <div class="lente-item">Urano = parte consciente de la psique · Neptuno = la psique en sí · Plutón = parte inconsciente de la psique</div>
+      <div class="lente-item">Estos contactos son únicos en una vida — los transpersonales tardan 84 (Urano), ~165 (Neptuno) y ~248 años (Plutón) en dar la vuelta. No volverán al mismo punto en nuestra existencia</div>
+    </div>
+    <div class="lente-footer"><strong>El Sol</strong> es el nivel mental de la personalidad (no confundir con Mercurio — el Sol es la conciencia identitaria, no la comunicación). <strong>La Luna</strong> es el nivel emocional. <strong>Saturno</strong> es el nivel físico y material.</div>
+  </div>
+
+  <!-- TABLA: TRANSPERSONAL x PLANETA PERSONAL -->
+  <div class="section-label">Qué trae cada transpersonal según el planeta que toca</div>
+  <div class="tabla-bloque">
+    <div class="tabla-label">Matriz de efectos — transpersonal × planeta personal</div>
+    <div class="tabla-header-row">
+      <div class="tabla-cel head">Planeta</div>
+      <div class="tabla-cel head"><span class="pill-urano">♅ Urano</span> Despierta</div>
+      <div class="tabla-cel head"><span class="pill-neptuno">♆ Neptuno</span> Adormece</div>
+      <div class="tabla-cel head"><span class="pill-pluton">♇ Plutón</span> Intensifica</div>
+    </div>
+    <div class="tabla-row">
+      <div class="tabla-cel pl pl-sol">☉ Sol</div>
+      <div class="tabla-cel">Revolución en el pensamiento. Personalidad más cambiante. Despertar de conciencia. Ideas ingeniosas, pensamiento estratega. Los signos fijos lo viven más difícil.</div>
+      <div class="tabla-cel">Confusión y desorientación de la identidad. Idealización del yo. Puede traer espiritualidad profunda. Conecta con el no-yo y la verdadera identidad más allá del personaje.</div>
+      <div class="tabla-cel">Transformación de la identidad y forma de ser. Cambios en la manera de ver el mundo. Algo en mí muere. Nueva conciencia del intelecto. Antes y después en la identidad.</div>
+    </div>
+    <div class="tabla-row">
+      <div class="tabla-cel pl pl-luna">☽ Luna</div>
+      <div class="tabla-cel">Inestabilidad emocional e irritabilidad como efecto. En realidad: descubrir emociones no identificadas. Sacudida emocional inesperada → revela algo verdadero. En sinastría: zarandeo entre dos personas.</div>
+      <div class="tabla-cel">Acrecienta la sensibilidad y la espiritualidad. Amor incondicional. Puede traer idealización con la madre. Trastornos depresivos posibles (proceso de limpieza emocional). Conecta con el amor incondicional.</div>
+      <div class="tabla-cel">Transformación alquímica emocional. Sensación de secuestro emocional — muy abatido. Intensidad emocional enorme. Inteligencia emocional que aumenta profundamente. Algo de lo emocional es transmutado por el fuego.</div>
+    </div>
+    <div class="tabla-row">
+      <div class="tabla-cel pl pl-sat">♄ Saturno</div>
+      <div class="tabla-cel">Cambios estructurales en el trabajo o la seguridad. Cambios en la pertenencia. Puede traer algo inesperado en lo material. Cuando es un buen aspecto: cambio favorable y fluido.</div>
+      <div class="tabla-cel">Disuelve límites, estructuras y realidades físicas o laborales. Sensación de pérdida de seguridad y de raíces propias (no familiares — el estar enraizado como individuo). Puede traer desorientación.</div>
+      <div class="tabla-cel">Cambios profundos físicos y materiales. Puede afectar al cuerpo (estructura física) o a la estructura profesional. Siempre hay un antes y un después. Algo muere en lo material para renacer.</div>
+    </div>
+  </div>
+
+  <!-- URANO EN DETALLE -->
+  <div class="section-label">Urano — cómo trabaja</div>
+  <div class="trans-card t-urano">
+    <div class="trans-header">
+      <div class="trans-icono">♅</div>
+      <div>
+        <div class="trans-nombre">Urano — el que despierta</div>
+        <div class="trans-sub">Parte consciente de la psique · busca traer una verdad</div>
+      </div>
+    </div>
+    <div class="trans-body">
+      <div class="trans-fila"><div class="trans-key">Mecanismo</div><div class="trans-val">Siempre busca traer una <strong>verdad</strong> — no la muestra directamente sino a través de cambios drásticos e inesperados. La sacudida es el método, la verdad es el objetivo.</div></div>
+      <div class="trans-fila"><div class="trans-key">Las inercias</div><div class="trans-val">Urano llega cuando hay una <strong>cristalización</strong> — algo llegó a su forma final y no puede crecer más. Urano viene a romperla. Las inercias saturninas son su objetivo principal.</div></div>
+      <div class="trans-fila"><div class="trans-key">En sinastría</div><div class="trans-val">Si otra persona tiene Urano donde tú tienes la Luna, esa persona siempre traerá inestabilidad emocional inesperada. Todo va bien y de repente, puf — como un zarandeo. No se ve venir.</div></div>
+      <div class="trans-fila"><div class="trans-key">Duración en un grado</div><div class="trans-val">Un transpersonal puede pasar hasta <strong>3 veces</strong> por el mismo grado (directo, retrógrado, directo de nuevo). Usar la efemérides para localizar las tres fechas y ver qué ocurrió en cada paso.</div></div>
+      <div class="trans-fila"><div class="trans-key">Sistema nervioso</div><div class="trans-val">Urano rige el sistema nervioso. En Géminis (mayo 2026): cuidar la alimentación y el eje psicointestinal (Virgo-Piscis nodal) para que el canal esté libre para la energía entrante.</div></div>
+    </div>
+    <div class="trans-footer">Urano en la carta de cada persona activa especialmente las casas donde cae su tránsito. En la casa 1 (como en Nelda): el cambio lo protagoniza uno mismo. En la casa 5 (como en Jimena): puede implicar hijos o creatividad.</div>
+  </div>
+
+  <!-- NEPTUNO EN DETALLE -->
+  <div class="section-label">Neptuno — cómo trabaja</div>
+  <div class="trans-card t-neptuno">
+    <div class="trans-header">
+      <div class="trans-icono">♆</div>
+      <div>
+        <div class="trans-nombre">Neptuno — el que adormece y disuelve</div>
+        <div class="trans-sub">La psique en sí · principio disolvente de fronteras · amor incondicional</div>
+      </div>
+    </div>
+    <div class="trans-body">
+      <div class="trans-fila"><div class="trans-key">Protocolo</div><div class="trans-val">1. <strong>Confusión</strong> (aspectos difíciles) → 2. <strong>Deshacimiento</strong> (la sal en el agua: se deshace pero no desaparece, se reconvierte) → 3. <strong>Clarificación y orden</strong>. El agua salada como resultado final.</div></div>
+      <div class="trans-fila"><div class="trans-key">Qué disuelve</div><div class="trans-val">Lo que está <strong>excesivamente rígido</strong> — identificaciones, estructuras que ya no sirven. No las elimina: las reconvierte. Lo que percibimos como pérdida es en realidad liberación de lo que nos mantenía atrapados.</div></div>
+      <div class="trans-fila"><div class="trans-key">El no-yo</div><div class="trans-val">Neptuno conecta con nuestra verdadera identidad más allá del personaje — el ser, la seidad. Para acceder al amor incondicional hay que primero desidentificarse del personaje. Neptuno hace ese trabajo.</div></div>
+      <div class="trans-fila"><div class="trans-key">El aspecto anestésico</div><div class="trans-val">Adormece como el éter (descubierto cuando se encontró Neptuno). Salir de la realidad concreta. Por eso el alcohol y las drogas son neptuninas — formas de anestesiarse de la realidad. También puede traer ensoñación, inspiración artística.</div></div>
+      <div class="trans-fila"><div class="trans-key">Depresión como proceso</div><div class="trans-val">Neptuno con la luna puede traer trastornos depresivos. No como patología definitiva sino como <strong>proceso de limpieza emocional</strong> — la tristeza es el paso necesario para desidentificarse de una emoción y llegar al amor incondicional.</div></div>
+    </div>
+    <div class="trans-footer">Neptuno no es solo "trágico" — al final del proceso llega el gran amor, la unidad. Parece que te lo quita todo para darte lo esencial: la conexión con el ser más allá del personaje.</div>
+  </div>
+
+  <!-- PLUTÓN EN DETALLE -->
+  <div class="section-label">Plutón — cómo trabaja</div>
+  <div class="trans-card t-pluton">
+    <div class="trans-header">
+      <div class="trans-icono">♇</div>
+      <div>
+        <div class="trans-nombre">Plutón — el que intensifica y transforma</div>
+        <div class="trans-sub">Parte inconsciente de la psique · voluntad impersonal · alma</div>
+      </div>
+    </div>
+    <div class="trans-body">
+      <div class="trans-fila"><div class="trans-key">Voluntad impersonal</div><div class="trans-val">Se le atribuye el <strong>alma</strong> a Plutón. La voluntad impersonal puede dictar destruir algo en nuestra vida porque no nos lleva por el camino evolutivo. Siempre hay una intención evolutiva — nunca es arbitrario.</div></div>
+      <div class="trans-fila"><div class="trans-key">El autosecuestro</div><div class="trans-val">El "secuestro" de Plutón es en realidad <strong>liberación del propio autosecuestro</strong>. Al hacer visible lo que estaba en la sombra, nos libera de las cadenas que nos habíamos puesto sin saberlo. El bloqueo es el proceso.</div></div>
+      <div class="trans-fila"><div class="trans-key">La semilla</div><div class="trans-val">Plutón puede plantar una semilla que otro tránsito posterior activa. Ejemplo: Plutón pasa por la Luna → planta la semilla → meses o años después, otro tránsito la detona. Un proceso, no un evento puntual.</div></div>
+      <div class="trans-fila"><div class="trans-key">Duración variable</div><div class="trans-val">11 a 21 años por signo según distancia al Sol. En Acuario estará ~21 años. Cuando está en los últimos grados puede pasar un <strong>mes y medio en un solo grado</strong> — un transpersonal puede perforar el ascendente durante semanas.</div></div>
+      <div class="trans-fila"><div class="trans-key">Cambio de casa/signo</div><div class="trans-val">Cuando un transpersonal cambia de signo o entra en una casa angular (casas 1, 4, 7, 10), se nota especialmente. Las casas cardinales están siempre sujetas a un nuevo propósito.</div></div>
+    </div>
+    <div class="trans-footer">Plutón en Acuario destruye el concepto mental de sociedad para reconstruirlo. Igual que el teletrabajo fue plutoniano-uraniano: una forma de trabajar murió para que naciera otra.</div>
+  </div>
+
+  <hr class="separador">
+
+  <!-- HERRAMIENTA: EFEMÉRIDES RETROACTIVA -->
+  <div class="section-label">Herramienta — rastrear un tránsito en la efemérides</div>
+  <div class="herramienta-bloque">
+    <div class="herramienta-header">Cómo encontrar cuándo un transpersonal pasó (o pasará) por un planeta natal</div>
+    <div class="herramienta-body">
+      <div class="herramienta-paso">Ir a la efemérides. Localizar la columna del transpersonal que te interesa.</div>
+      <div class="herramienta-paso">Buscar el grado del planeta natal en esa columna — pasar páginas hacia atrás (o adelante) hasta encontrarlo.</div>
+      <div class="herramienta-paso"><strong>Ojo con las retrogradaciones:</strong> el transpersonal puede pasar 3 veces por el mismo grado (directo → retrógrado → directo de nuevo). Anotar las tres fechas.</div>
+      <div class="herramienta-paso">Recordar qué ocurrió en esas fechas — el arquetipo que viviste confirma el significado del tránsito.</div>
+      <div class="herramienta-paso">Hacer lo mismo hacia adelante para ver cuándo llegará a otro planeta natal.</div>
+    </div>
+    <div class="herramienta-footer">Ejemplo de clase: Urano sobre el Saturno natal de Jimena (grado 15 Tauro, casa 4) → primera vez mayo 2022 → segunda vez febrero/marzo 2023. Cada fecha corresponde a una sacudida en la seguridad y estructura familiar.</div>
+  </div>
+
+  <!-- PRÁCTICA CARTAS -->
+  <div class="section-label">Práctica — transpersonales sobre cartas</div>
+  <div class="practica-aviso">Lectura en vivo sobre cartas de Jimena y Nelda — se identifica qué transpersonales están activos ahora y cuáles llegarán próximamente a los planetas de la personalidad.</div>
+
+  <!-- JIMENA -->
+  <div class="carta-card c-jimena">
+    <div class="carta-header">
+      <div class="carta-icono">♅</div>
+      <div>
+        <div class="carta-nombre">Jimena</div>
+        <div class="carta-subtitulo">Urano en conjunción con el Sol · Neptuno llegando al Sol</div>
+      </div>
+    </div>
+    <div class="carta-body">
+      <div class="carta-fila"><div class="carta-key">♅ Urano → Sol</div><div class="carta-val">Urano ya pasó encima del Sol (Géminis, casa 5). Sol <strong>inaspectado</strong> en la carta natal → hay un aspecto de la propia conciencia que no está del todo en la luz. Urano viene a despertar eso. Puede traer algo inesperado con un hijo (casa 5) o con la creatividad.</div></div>
+      <div class="carta-fila"><div class="carta-key">Urano → Saturno</div><div class="carta-val">Mayo 2022 (primera vez) y feb/mar 2023 (segunda vez). Sacudida en la seguridad familiar y estructural (Saturno en Tauro, casa 4). Ejercicio: buscar qué ocurrió en esas fechas.</div></div>
+      <div class="carta-fila"><div class="carta-key">♆ Neptuno → Sol</div><div class="carta-val">Neptuno llegará al Sol cuando alcance el grado 9 de Aries (en el Sol de Jimena, Géminis). Es un <strong>sextil</strong> → oportunidad de deshacer aspectos del yo más instintivos y básicos sin tanta confrontación. Puede coincidir temporalmente con el Urano encima del Sol.</div></div>
+      <div class="carta-fila"><div class="carta-key">Urano + Neptuno simultáneos</div><div class="carta-val">Ana sugiere calcular cuándo Urano llegará al sol y cuándo Neptuno al grado 9 — probablemente coincidan. Si ocurren a la vez: <strong>revolución de pensamiento</strong> (Urano) + <strong>disolución de identidades rígidas</strong> (Neptuno) al mismo tiempo. Momento muy importante.</div></div>
+      <div class="carta-fila"><div class="carta-key">♆ Neptuno → Quirón</div><div class="carta-val">Cuando Neptuno llegue al grado 9 también tocará Quirón (casa 3). La herida en la comunicación (Quirón en Aries, casa 3) se trabaja por disolución — no confrontación sino suavización y clarificación.</div></div>
+      <div class="carta-fila"><div class="carta-key">Clave para Jimena</div><div class="carta-val">La <strong>manera de pensar</strong> es el eje de transformación. El pensamiento está bajo la influencia de los tres transpersonales sucesivamente. Jimena siempre escribe — el Urano en el sol puede detonar ese proceso creativo de forma más consciente.</div></div>
+    </div>
+    <div class="carta-footer">Los tres transpersonales llegarán a Sol, Luna y Saturno de Jimena casi seguidos — una transformación de personalidad muy grande a lo largo de los próximos años.</div>
+  </div>
+
+  <!-- NELDA -->
+  <div class="carta-card c-nelda">
+    <div class="carta-header">
+      <div class="carta-icono">♇</div>
+      <div>
+        <div class="carta-nombre">Nelda</div>
+        <div class="carta-subtitulo">Saturno bajo los tres transpersonales · iniciación</div>
+      </div>
+    </div>
+    <div class="carta-body">
+      <div class="carta-fila"><div class="carta-key">El Saturno iniciado</div><div class="carta-val">El Saturno natal de Nelda está siendo tocado por los <strong>tres transpersonales</strong> a la vez. Es una iniciación profunda de todo lo que representa el Saturno en su carta: autoexigencia, estructura, responsabilidad profesional, relación con la autoridad.</div></div>
+      <div class="carta-fila"><div class="carta-key">♅ Urano → Saturno</div><div class="carta-val">Urano hace un buen aspecto (sextil) → el cambio es <strong>fluido</strong>. Cambio positivo que Nelda protagoniza (Urano en casa 1). La decisión de ampliar la baja hasta septiembre es un ejemplo: un cambio inesperado que Nelda misma impulsa.</div></div>
+      <div class="carta-fila"><div class="carta-key">♆ Neptuno → Saturno</div><div class="carta-val">Neptuno disuelve la autoexigencia y las estructuras rígidas del Saturno en Acuario. Específicamente: la <strong>autoexigencia como mecanismo de supervivencia</strong> — "si me exijo, si soy responsable, entonces estaré segura." Neptuno disuelve esa identificación.</div></div>
+      <div class="carta-fila"><div class="carta-key">♇ Plutón → Saturno</div><div class="carta-val">Plutón hace cuadratura al Saturno natal. Se pondrá retrógrado pero no llegará al grado cero — cuando avance de nuevo tocará con más fuerza. <strong>Planeta del alma</strong> exigiendo al Saturno que haga consciente algo que está en la sombra material y profesional.</div></div>
+      <div class="carta-fila"><div class="carta-key">Manifestación actual</div><div class="carta-val">Nelda soltando la autoexigencia laboral estando con Ema. El instinto de protección de la progenie (supervivencia de la especie) supera al mandato del Saturno de ser responsable profesionalmente. Neptuno trabajando con el sextil venusino → valorando ese estado.</div></div>
+      <div class="carta-fila"><div class="carta-key">Semilla plutoniana</div><div class="carta-val">Plutón planta la semilla ahora. Puede ser que la transformación vocacional (libertad horaria, cambio de estructura laboral) se detone cuando Saturno en tránsito haga cuadratura a su Saturno natal en ~3 años.</div></div>
+    </div>
+    <div class="carta-footer">Los momentos de mayor duda sobre el trabajo (los ya vividos) son Plutón trabajando. Dejar que pase para que aparezca la semilla de construcción nueva. La maternidad ya está cambiando la relación con el trabajo — más madurez, más perspectiva.</div>
+  </div>
+
+  <!-- CONCEPTO: CRISIS -->
+  <div class="section-label">Concepto clave</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">Crisis = cambio · no catástrofe</span><span class="badge b-clave">esencial</span></div>
+    <div class="concepto-def">Cada vez que los transpersonales tocan los planetas de la personalidad nos traen una <strong>crisis</strong>. La palabra crisis tiene como raíz el cambio — es el momento en que hay que tomar una decisión. Entramos en resistencia, resistencia, resistencia hasta que soltamos y entonces hay un cambio de dirección. Una crisis siempre nos lleva a tomar una decisión. No es destrucción — es transformación. La diferencia entre los tres: <strong>Urano</strong> cambia drástica e inesperadamente · <strong>Neptuno</strong> disuelve lentamente por disolución · <strong>Plutón</strong> transforma por muerte y renacimiento.</div>
+  </div>
+
+  <!-- PUNTOS A RETENER -->
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item"><div class="retener-num">1</div><div class="retener-texto"><span>Sol = mente identitaria · Luna = emociones · Saturno = físico y material.</span> Los transpersonales refinan estos tres planetas hacia una mayor conciencia. No hay otro camino.</div></div>
+    <div class="retener-item"><div class="retener-num">2</div><div class="retener-texto"><span>Urano busca traer una verdad a través de sacudidas.</span> El zarandeo es el método, no el objetivo. Siempre hay una inercia que romper. En sinastría: si su Urano cae sobre tu Luna, espera inestabilidad emocional inesperada.</div></div>
+    <div class="retener-item"><div class="retener-num">3</div><div class="retener-texto"><span>Neptuno disuelve lo excesivamente rígido para reconvertirlo.</span> Protocolo: confusión → deshacimiento → clarificación. La sal no desaparece en el agua — se reconvierte en agua salada.</div></div>
+    <div class="retener-item"><div class="retener-num">4</div><div class="retener-texto"><span>Plutón planta semillas que otros tránsitos activan más tarde.</span> Es un proceso, no un evento. Tiene voluntad impersonal — siempre hay una intención evolutiva detrás de lo que destruye.</div></div>
+    <div class="retener-item"><div class="retener-num">5</div><div class="retener-texto"><span>Con la efemérides puedes rastrear cuándo pasó (y cuántas veces) un transpersonal por un planeta natal.</span> Ir hacia atrás en las páginas hasta encontrar el grado. Anotar las tres fechas (directo, retrógrado, directo). Conectar con lo que ocurrió.</div></div>
+  </div>
+
+</div>
+</body>
+</html>
