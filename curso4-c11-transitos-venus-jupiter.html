@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C11 · Tránsitos Venus y Júpiter</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9;
+      --text: #1a1a18; --text2: #4a4a46; --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+      --radius: 8px; --radius-lg: 12px;
+      --venus: #185FA5; --venus-bg: #E6F1FB; --venus-border: #B5D4F4;
+      --jup: #3B6D11; --jup-bg: #EAF3DE; --jup-border: #C0DD97;
+      --sat: #534AB7; --sat-bg: #EEEDFE; --sat-border: #AFA9EC;
+      --retro: #993C1D; --retro-bg: #FAECE7; --retro-border: #F0C4BA;
+      --tierra: #854F0B; --tierra-bg: #FAEEDA; --tierra-border: #EDCF9A;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2a; --text: #e8e6de; --text2: #a8a6a0; --text3: #68665e; --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18); }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; padding: 2rem 1rem; }
+    .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; }
+
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .curso-badge { font-size: 11px; font-weight: 500; background: #e6f1fb; color: #185FA5; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tipo-badge { font-size: 11px; font-weight: 500; background: #EEEDFE; color: #534AB7; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); }
+    .section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 1.75rem; }
+
+    /* LENTE */
+    .lente { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+    .lente-header { padding: 10px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .lente-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lente-subtitulo { font-size: 12px; color: var(--text2); }
+    .lente-body { padding: 12px 16px; }
+    .lente-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; margin-bottom: 2px; }
+    .lente-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .lente-footer { padding: 10px 16px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lente-footer strong { font-weight: 500; color: var(--text); }
+
+    /* TARJETAS DE PLANETA */
+    .planeta-card { border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .planeta-header { padding: 10px 14px; display: flex; align-items: center; gap: 12px; }
+    .planeta-icono { font-size: 20px; flex-shrink: 0; }
+    .planeta-nombre { font-size: 14px; font-weight: 600; }
+    .planeta-sub { font-size: 11px; margin-top: 1px; }
+    .planeta-body { border-top: 1px solid; }
+    .planeta-fila { display: grid; grid-template-columns: 110px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .planeta-fila:last-child { border-bottom: none; }
+    .planeta-fila:nth-child(even) { background: var(--bg2); }
+    .planeta-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .planeta-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .planeta-val strong { font-weight: 500; color: var(--text); }
+    .planeta-footer { padding: 8px 14px; border-top: 1px solid; font-size: 12px; font-style: italic; line-height: 1.5; }
+
+    .p-venus { border: 1px solid var(--venus-border); }
+    .p-venus .planeta-header { background: var(--venus-bg); }
+    .p-venus .planeta-nombre { color: var(--venus); }
+    .p-venus .planeta-sub { color: #2E7ED4; }
+    .p-venus .planeta-body { border-color: var(--venus-border); }
+    .p-venus .planeta-footer { background: var(--venus-bg); border-color: var(--venus-border); color: #0C447C; }
+
+    .p-jup { border: 1px solid var(--jup-border); }
+    .p-jup .planeta-header { background: var(--jup-bg); }
+    .p-jup .planeta-nombre { color: var(--jup); }
+    .p-jup .planeta-sub { color: #518F1A; }
+    .p-jup .planeta-body { border-color: var(--jup-border); }
+    .p-jup .planeta-footer { background: var(--jup-bg); border-color: var(--jup-border); color: #2A5000; }
+
+    .p-sat { border: 1px solid var(--sat-border); }
+    .p-sat .planeta-header { background: var(--sat-bg); }
+    .p-sat .planeta-nombre { color: var(--sat); }
+    .p-sat .planeta-sub { color: #6B60C8; }
+    .p-sat .planeta-body { border-color: var(--sat-border); }
+    .p-sat .planeta-footer { background: var(--sat-bg); border-color: var(--sat-border); color: #3A3280; }
+
+    /* MÉTODO CORRELATIVO */
+    .metodo-bloque { border: 1.5px solid var(--tierra-border); border-radius: var(--radius-lg); overflow: hidden; }
+    .metodo-header { padding: 12px 18px; background: var(--tierra-bg); }
+    .metodo-titulo { font-size: 15px; font-weight: 600; color: var(--tierra); }
+    .metodo-sub { font-size: 12px; color: #A0650F; margin-top: 2px; }
+    .metodo-pasos { border-top: 1px solid var(--tierra-border); }
+    .metodo-paso { display: grid; grid-template-columns: 28px 1fr; gap: 10px; padding: 10px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .metodo-paso:last-child { border-bottom: none; }
+    .metodo-paso:nth-child(even) { background: var(--bg2); }
+    .metodo-num { font-size: 12px; font-weight: 700; color: var(--tierra); padding-top: 2px; }
+    .metodo-texto { font-size: 12px; color: var(--text2); line-height: 1.6; }
+    .metodo-texto strong { font-weight: 500; color: var(--text); }
+    .metodo-footer { padding: 10px 18px; background: var(--tierra-bg); border-top: 1px solid var(--tierra-border); font-size: 12px; color: #6B3C00; line-height: 1.5; }
+    .metodo-footer strong { font-weight: 600; }
+
+    /* EJEMPLO CARTA NELDA */
+    .ejemplo-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .ejemplo-header { padding: 8px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); }
+    .ejemplo-cadena { padding: 12px 14px; }
+    .cadena-step { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; }
+    .cadena-step:last-child { margin-bottom: 0; }
+    .cadena-arrow { font-size: 14px; color: var(--tierra); flex-shrink: 0; padding-top: 2px; font-weight: 700; }
+    .cadena-text { font-size: 12px; color: var(--text2); line-height: 1.6; }
+    .cadena-text strong { font-weight: 500; color: var(--text); }
+    .ejemplo-footer { padding: 8px 14px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); font-style: italic; }
+
+    /* CICLO SINÓDICO */
+    .ciclo-bloque { border: 1.5px solid var(--sat-border); border-radius: var(--radius-lg); overflow: hidden; }
+    .ciclo-header { padding: 10px 16px; background: var(--sat-bg); }
+    .ciclo-titulo { font-size: 14px; font-weight: 600; color: var(--sat); }
+    .ciclo-sub { font-size: 12px; color: #6B60C8; margin-top: 2px; }
+    .ciclo-body { border-top: 1px solid var(--sat-border); }
+    .ciclo-fila { display: grid; grid-template-columns: 110px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--border); }
+    .ciclo-fila:last-child { border-bottom: none; }
+    .ciclo-fila:nth-child(even) { background: var(--bg2); }
+    .ciclo-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .ciclo-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .ciclo-val strong { font-weight: 500; color: var(--text); }
+    .ciclo-footer { padding: 10px 16px; background: var(--sat-bg); border-top: 1px solid var(--sat-border); font-size: 12px; color: var(--sat); line-height: 1.5; }
+    .ciclo-footer strong { font-weight: 600; }
+
+    /* CONCEPTO */
+    .concepto-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .concepto-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .concepto-nombre { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; }
+    .badge { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
+    .b-clave { background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text2); }
+    .concepto-def { padding: 12px 14px; font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .concepto-def strong { font-weight: 500; color: var(--text); }
+
+    /* RETENER */
+    .retener-list { display: flex; flex-direction: column; gap: 6px; }
+    .retener-item { display: flex; gap: 12px; align-items: flex-start; padding: 11px 14px; border-radius: var(--radius); border: 0.5px solid var(--border); }
+    .retener-num { font-size: 12px; font-weight: 500; color: var(--venus); min-width: 20px; padding-top: 2px; }
+    .retener-texto { font-size: 13px; color: var(--text); line-height: 1.6; }
+    .retener-texto span { font-weight: 500; }
+
+    .pill { display: inline-block; font-size: 11px; font-weight: 500; padding: 1px 7px; border-radius: 20px; margin-right: 4px; }
+    .pill-venus { background: var(--venus-bg); color: var(--venus); }
+    .pill-jup { background: var(--jup-bg); color: var(--jup); }
+    .pill-sat { background: var(--sat-bg); color: var(--sat); }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div class="curso-badge">Curso 4 · C11</div>
+      <div class="tipo-badge">Teoría + Práctica</div>
+    </div>
+    <div class="titulo">Tránsitos Venus y Júpiter · Lectura correlativa de regentes</div>
+    <div class="meta">11 de febrero de 2026 &nbsp;·&nbsp; Tránsitos · Venus · Júpiter · Saturno · Ciclo sinódico · Método de regentes</div>
+  </div>
+
+  <!-- LENTE -->
+  <div class="section-label">Lente de lectura</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">Leer un tránsito es abrir una cadena de cajitas</div>
+      <div class="lente-subtitulo">Cada planeta lleva a su signo · cada signo a su regente · cada regente a otra casa · y así hasta que la historia queda completa</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">No hay un protocolo fijo de cuántas capas ir — se sigue hasta que la historia tiene coherencia y las piezas encajan</div>
+      <div class="lente-item">El tránsito es la entrada: <em>¿qué energía está disponible?</em> El signo: <em>¿en qué área y con qué cualidad?</em> El regente: <em>¿dónde vive esa energía en esta carta concreta?</em></div>
+      <div class="lente-item">No hay que ponerse nervioso al encadenar — una cosa no invalida la anterior. Hay que ir de uno en uno, como si caminaras de casa al parking</div>
+      <div class="lente-item">Se para cuando hay un aspecto que ya cierra el círculo de vuelta a algo que ya miramos</div>
+    </div>
+    <div class="lente-footer"><strong>Clave práctica:</strong> cuanto más tiempo pasas mirando una carta, más intuición llega. No es memorizar protocolos — es ir haciendo las cábalas dentro mientras miras.</div>
+  </div>
+
+  <!-- VENUS EN TRÁNSITO POR SIGNO -->
+  <div class="section-label">Venus en tránsito — por tipo de signo</div>
+  <div class="planeta-card p-venus">
+    <div class="planeta-header">
+      <div class="planeta-icono">♀</div>
+      <div>
+        <div class="planeta-nombre">Venus en tránsito</div>
+        <div class="planeta-sub">Equilibrar · armonizar · valorar · economía · autoestima</div>
+      </div>
+    </div>
+    <div class="planeta-body">
+      <div class="planeta-fila">
+        <div class="planeta-key">En cardinales</div>
+        <div class="planeta-val"><strong>Impulso hacia equilibrar algo</strong> — como un propósito. Aries: autoafirmación más afinada y equilibrada. Libra: equilibrio en las relaciones. Cáncer: valorar asuntos del pasado y encuentros familiares. Capricornio: beneficios materiales, equilibrar la ambición o lo tradicional.</div>
+      </div>
+      <div class="planeta-fila">
+        <div class="planeta-key">En fijos</div>
+        <div class="planeta-val">Equilibrio más profundo y consolidado — tarda más en moverse. Tauro: valoración de recursos propios. Leo: autoestima y reconocimiento. Escorpio: relaciones profundas (exilio). Acuario: valoración de lo grupal y social.</div>
+      </div>
+      <div class="planeta-fila">
+        <div class="planeta-key">En mutables</div>
+        <div class="planeta-val">Equilibrio a través del movimiento y la adaptación. Virgo: lo práctico, el servicio, la utilidad. Géminis: la comunicación y los intercambios. Sagitario: el sistema de creencias. Piscis: lo espiritual y emocional.</div>
+      </div>
+      <div class="planeta-fila">
+        <div class="planeta-key">Por las casas</div>
+        <div class="planeta-val">El signo siempre cae en la misma casa para cada persona. Venus en Libra para Nelda siempre será en la casa 6 — equilibrio en el área laboral y rutinas diarias.</div>
+      </div>
+      <div class="planeta-fila">
+        <div class="planeta-key">Traslación de luz</div>
+        <div class="planeta-val">Mirar <strong>de dónde viene</strong> el planeta antes de entrar en el signo actual. Lo que acaba de pasar en el signo anterior da contexto — una transformación previa que ahora se asienta o confirma.</div>
+      </div>
+    </div>
+    <div class="planeta-footer">Siempre preguntar: ¿qué es este planeta? ¿Cuáles son sus características? ¿Cuál es su respuesta en este signo? Y luego: ¿en qué casa cae en esta carta concreta?</div>
+  </div>
+
+  <!-- MÉTODO CORRELATIVO DE REGENTES -->
+  <div class="section-label">El método correlativo de regentes</div>
+  <div class="metodo-bloque">
+    <div class="metodo-header">
+      <div class="metodo-titulo">Cómo seguir la cadena de regentes</div>
+      <div class="metodo-sub">Se usa especialmente cuando no hay planetas en la casa donde cae el tránsito</div>
+    </div>
+    <div class="metodo-pasos">
+      <div class="metodo-paso"><div class="metodo-num">1</div><div class="metodo-texto"><strong>El tránsito entra en un signo.</strong> Identifica en qué casa cae ese signo para esta persona.</div></div>
+      <div class="metodo-paso"><div class="metodo-num">2</div><div class="metodo-texto"><strong>Si hay planetas en esa casa:</strong> leer directamente el impacto sobre esos planetas. <strong>Si no hay planetas:</strong> ir al regente del signo de esa casa.</div></div>
+      <div class="metodo-paso"><div class="metodo-num">3</div><div class="metodo-texto"><strong>Buscar el regente:</strong> ¿en qué signo está? ¿en qué casa? Eso amplía y especifica la experiencia.</div></div>
+      <div class="metodo-paso"><div class="metodo-num">4</div><div class="metodo-texto"><strong>Ver si el regente tiene aspectos relevantes</strong> con otros planetas. Eso añade matices o tensiones a la historia.</div></div>
+      <div class="metodo-paso"><div class="metodo-num">5</div><div class="metodo-texto"><strong>Se para</strong> cuando llega un aspecto que cierra el círculo — vuelve a algo ya visto — o cuando la historia ya tiene suficiente coherencia.</div></div>
+    </div>
+    <div class="metodo-footer"><strong>La metáfora de Ana:</strong> es como salir de casa — abres la puerta, caminas al parking, coges el coche, llegas. Una secuencia. No hay que ponerse nervioso ni sentir que se pierde el hilo. Todo tiene coherencia.</div>
+  </div>
+
+  <!-- EJEMPLO EN CARTA NELDA -->
+  <div class="section-label">Ejemplo — Venus en Capricornio en la carta de Nelda</div>
+  <div class="ejemplo-bloque">
+    <div class="ejemplo-header">Lectura correlativa en vivo — Venus transitando Capricornio (casa 9 de Nelda)</div>
+    <div class="ejemplo-cadena">
+      <div class="cadena-step">
+        <div class="cadena-arrow">→</div>
+        <div class="cadena-text"><strong>Venus entra en Capricornio.</strong> Es un signo cardinal → impulso de equilibrar algo. Cae en la casa 8 primero (transformación de creencias) y luego en la casa 9 de Nelda (sistema de creencias, conocimiento, extranjero).</div>
+      </div>
+      <div class="cadena-step">
+        <div class="cadena-arrow">→</div>
+        <div class="cadena-text"><strong>Estelium en Capricornio</strong> (casa 9): hay planetas. Venus viene a equilibrar ese estelium — hay algo que quiere cambiar (Urano), algo que no quiere soltar (Lilit: "¿y si no soy capaz?"), algo que se puede aprovechar (Nodo Norte + Neptuno). Venus dice: <em>no hay que cambiarlo todo.</em></div>
+      </div>
+      <div class="cadena-step">
+        <div class="cadena-arrow">→</div>
+        <div class="cadena-text"><strong>Regente de Capricornio = Saturno.</strong> ¿Dónde está? En la casa 10 (vocación, destino) en Acuario. Confirma que el tema es profesional y vocacional. Saturno en Acuario habla de inercias que piden cambio — y Acuario está regido por Urano, el disruptor.</div>
+      </div>
+      <div class="cadena-step">
+        <div class="cadena-arrow">→</div>
+        <div class="cadena-text"><strong>Saturno (casa 10) en cuadratura con el Sol</strong> (casa 6 en Libra). Tensión entre la vocación/destino y la identidad cotidiana. El Sol intenta negociar. ¿Quién puede ser referente? El padre o la madre (eje 4-10).</div>
+      </div>
+      <div class="cadena-step">
+        <div class="cadena-arrow">→</div>
+        <div class="cadena-text"><strong>Sol regido por Venus</strong> (está en Libra). Volvemos a Venus → regente del Sol → Venus en Virgo en la carta. <em>Metodología, lo práctico, la utilidad</em>. El Sol quiere que las cosas sean prácticas, no utópicas. Sextil con Mercurio y Marte.</div>
+      </div>
+      <div class="cadena-step">
+        <div class="cadena-arrow">→</div>
+        <div class="cadena-text"><strong>Mercurio en Escorpio</strong> (casa 6) — mente investigativa y profunda. Regente de Escorpio = Plutón, en la casa 7 (posible socio, con desconfianza). <strong>Aquí se para:</strong> Mercurio ya hace cuadratura con Saturno → cerramos el círculo. La historia tiene coherencia.</div>
+      </div>
+    </div>
+    <div class="ejemplo-footer">Resumen: la ambición de emprender está dada (trígono de tierra), pero hay un autoboicot ("¿podré?") y una tensión entre seguridad laboral y libertad. Venus equilibra: no todo tiene que cambiar. Lo que necesita cambiar son las inercias. El dilema es real y consciente — seguridad vs. libertad emprendedora.</div>
+  </div>
+
+  <!-- JÚPITER EN TRÁNSITO -->
+  <div class="section-label">Júpiter en tránsito</div>
+  <div class="planeta-card p-jup">
+    <div class="planeta-header">
+      <div class="planeta-icono">♃</div>
+      <div>
+        <div class="planeta-nombre">Júpiter</div>
+        <div class="planeta-sub">Expansión · aumento · visión interna · abundancia · cuidado con las leyendas</div>
+      </div>
+    </div>
+    <div class="planeta-body">
+      <div class="planeta-fila"><div class="planeta-key">Qué hace</div><div class="planeta-val"><strong>Expansión o aumento de algo</strong> — no siempre positivo. Puede aumentar algo incómodo también (desborde emocional, perfeccionismo, enfermedad, virus). Júpiter amplifica lo que toca, sea lo que sea.</div></div>
+      <div class="planeta-fila"><div class="planeta-key">En cardinales</div><div class="planeta-val">Muy expansivo en proyectos — salen todas las posibilidades y oportunidades de golpe. Energía de inicio ampliado.</div></div>
+      <div class="planeta-fila"><div class="planeta-key">En fijos</div><div class="planeta-val">Aumenta la necesidad de <strong>seguridad</strong> del signo: material (Tauro), de pertenencia al grupo (Acuario), emocional (Escorpio), autoestima (Leo). Lo expande hacia adentro.</div></div>
+      <div class="planeta-fila"><div class="planeta-key">En mutables</div><div class="planeta-val">Aumenta la <strong>capacidad de adaptación y movimiento</strong>. Virgo: servicio, entrega, viajes para misiones. Piscis: sensibilidad extrema, fe religiosa, personas altamente sensibles (PAS). Géminis: hablar mucho, estudiar de todo. Sagitario: querer viajar constantemente.</div></div>
+      <div class="planeta-fila"><div class="planeta-key">Júpiter en Cáncer</div><div class="planeta-val">Actualmente (2026) está <strong>exaltado en Cáncer</strong>. Puede traer ampliación familiar (buenas noticias) pero también desborde emocional o historias familiares que se desbordan. Cáncer es el pueblo — Júpiter aquí amplifica lo sistémico y emocional.</div></div>
+      <div class="planeta-fila"><div class="planeta-key">Con Plutón</div><div class="planeta-val">Júpiter + Plutón: peligro de <strong>proliferación</strong> (celular, viral). En enfermedades como el cáncer, puede amplificar. También puede amplificar transformaciones profundas de forma masiva.</div></div>
+      <div class="planeta-fila"><div class="planeta-key">Júpiter en exilio</div><div class="planeta-val">En Virgo (exilio de Piscis): puede deformar lo beneficioso → perfeccionismo. A nivel de alma: gran capacidad de servicio, entrega humanitaria, distribución por múltiples canales.</div></div>
+    </div>
+    <div class="planeta-footer">Júpiter trae visión interna — "ahora ya veo lo que está pasando aquí." No confundir con Urano (que trae cambio externo disruptivo). Júpiter amplía la conciencia de algo.</div>
+  </div>
+
+  <!-- SATURNO EN TRÁNSITO -->
+  <div class="section-label">Saturno en tránsito</div>
+  <div class="planeta-card p-sat">
+    <div class="planeta-header">
+      <div class="planeta-icono">♄</div>
+      <div>
+        <div class="planeta-nombre">Saturno</div>
+        <div class="planeta-sub">Realidad · límites · disciplina · madurez · lo justo y necesario</div>
+      </div>
+    </div>
+    <div class="planeta-body">
+      <div class="planeta-fila"><div class="planeta-key">Qué trae</div><div class="planeta-val"><strong>Toque de realidad</strong> — te pone frente a lo que es. Estructura, responsabilidad, disciplina, límites. No "limita" si no te excedes — lo que hace es pedirte que te organices correctamente.</div></div>
+      <div class="planeta-fila"><div class="planeta-key">La leyenda</div><div class="planeta-val">El "terrible Saturno" es una creencia basada en la idea de que la libertad y los límites son opuestos. Saturno enseña que <strong>un límite puede ser lo que te da libertad</strong>. Las personas muy neptunianas lo sufren más porque viven sin estructura.</div></div>
+      <div class="planeta-fila"><div class="planeta-key">Retorno de Saturno</div><div class="planeta-val">~29-30 años. Trae <strong>madurez</strong> — no necesariamente crisis. Lo que parece crisis es la presión de crecer hacia algo más auténtico. Depende de cómo esté aspectado Saturno en la carta natal y del nivel de conciencia de la persona.</div></div>
+      <div class="planeta-fila"><div class="planeta-key">La austeridad</div><div class="planeta-val">Saturno enseña "lo justo y necesario" — no la pobreza, sino la <strong>austeridad consciente</strong>. Si necesitas dos, coger cuatro "por si acaso" es vivir en la carencia. Rico es quien no necesita nada (puede elegir).</div></div>
+    </div>
+    <div class="planeta-footer">Saturno en Piscis (ahora) → entra en Aries en pocos días. Preparar: cuando el Sol llegue al grado donde esté Saturno en Aries, comenzará el ciclo sinódico Sol-Saturno para todo el mundo.</div>
+  </div>
+
+  <!-- CICLO SINÓDICO SOL-SATURNO -->
+  <div class="section-label">Ciclo sinódico Sol-Saturno</div>
+  <div class="ciclo-bloque">
+    <div class="ciclo-header">
+      <div class="ciclo-titulo">El ciclo sinódico Sol-Saturno — el más contundente a nivel de tránsitos</div>
+      <div class="ciclo-sub">Empieza con la conjunción Sol-Saturno · dura un año · tiene fases como el ciclo lunar</div>
+    </div>
+    <div class="ciclo-body">
+      <div class="ciclo-fila"><div class="ciclo-key">Qué es</div><div class="ciclo-val">Cada vez que el Sol hace conjunción con Saturno comienza un nuevo ciclo de un año. <strong>Lo abre el Sol</strong> (es más rápido). Los momentos clave dentro del año son la conjunción, la cuadratura (~3 meses), la oposición (~6 meses) y la segunda cuadratura.</div></div>
+      <div class="ciclo-fila"><div class="ciclo-key">Próximo inicio</div><div class="ciclo-val">El 25 de marzo de 2026 ambos estarán en el grado 4 de Aries → inicio del ciclo sinódico Sol-Saturno para todo el mundo.</div></div>
+      <div class="ciclo-fila"><div class="ciclo-key">El personal</div><div class="ciclo-val">Además del ciclo colectivo, cada persona tiene su propio ciclo según dónde está su Saturno natal. Cuando el Sol en tránsito llega a ese punto, empieza el ciclo personal. Hay que calcular la fase natal (¿cuadratura? ¿oposición?) para saber desde dónde parte.</div></div>
+      <div class="ciclo-fila"><div class="ciclo-key">Por qué importa</div><div class="ciclo-val">Es <strong>más contundente que Plutón</strong> a nivel predictivo cotidiano. Las conjunciones, cuadraturas y oposiciones Sol-Saturno activan experiencias de madurez, responsabilidad y realidad en las áreas que tocan en la carta.</div></div>
+    </div>
+    <div class="ciclo-footer"><strong>Para seguirlo:</strong> buscar en la efemérides cuándo el Sol llega al grado donde está el Saturno natal. Esa es la fecha de inicio del ciclo personal. Luego calcular cuándo se dan las fases.</div>
+  </div>
+
+  <!-- CONCEPTO: TRASLACIÓN DE LUZ -->
+  <div class="section-label">Concepto clave</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">Traslación de luz — leer de dónde viene el planeta</span><span class="badge b-clave">técnica</span></div>
+    <div class="concepto-def">Antes de interpretar dónde está un planeta transitando ahora, mirar <strong>de qué signo viene</strong>. La experiencia anterior (el signo anterior) ha creado un contexto — una transformación previa, un aprendizaje — que ahora influye en cómo se vive el signo actual. Por ejemplo: Venus viniendo de Sagitario hacia Capricornio trae consigo una transformación previa en el sistema de creencias que ahora se quiere estructurar y consolidar. Es como leer la historia en movimiento, no solo el fotograma actual.</div>
+  </div>
+
+  <!-- PUNTOS A RETENER -->
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item"><div class="retener-num">1</div><div class="retener-texto"><span>Venus trae equilibrio, armonía y valoración — también económica.</span> El signo colorea el tipo de equilibrio: cardinales = impulso, fijos = profundidad, mutables = movimiento. Siempre cae en la misma casa para cada persona.</div></div>
+    <div class="retener-item"><div class="retener-num">2</div><div class="retener-texto"><span>Júpiter amplifica lo que toca — no siempre positivamente.</span> Puede aumentar tanto la buena aventura como el desborde emocional, el perfeccionismo o una enfermedad. Es visión interna, no cambio externo.</div></div>
+    <div class="retener-item"><div class="retener-num">3</div><div class="retener-texto"><span>Saturno no limita — te pide que te organices.</span> Un límite puede ser la fuente de libertad. El "terrible Saturno" es una leyenda basada en resistir la estructura. Lo justo y necesario es la clave.</div></div>
+    <div class="retener-item"><div class="retener-num">4</div><div class="retener-texto"><span>El método correlativo: tránsito → signo → casa → regente → dónde está → aspectos → para.</span> Se sigue la cadena hasta que la historia tiene coherencia y las piezas encajan.</div></div>
+    <div class="retener-item"><div class="retener-num">5</div><div class="retener-texto"><span>El ciclo sinódico Sol-Saturno es el más contundente a nivel predictivo.</span> Empieza con la conjunción, dura un año, tiene fases. El 25 de marzo 2026: inicio del nuevo ciclo colectivo en Aries grado 4.</div></div>
+  </div>
+
+</div>
+</body>
+</html>

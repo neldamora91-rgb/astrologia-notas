@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C10 · Tránsitos Mercurio y Venus</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9;
+      --text: #1a1a18; --text2: #4a4a46; --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+      --radius: 8px; --radius-lg: 12px;
+      --merc: #854F0B; --merc-bg: #FAEEDA; --merc-border: #EDCF9A;
+      --venus: #185FA5; --venus-bg: #E6F1FB; --venus-border: #B5D4F4;
+      --retro: #993C1D; --retro-bg: #FAECE7; --retro-border: #F0C4BA;
+      --purple: #534AB7; --purple-bg: #EEEDFE; --purple-border: #AFA9EC;
+      --verde: #3B6D11; --verde-bg: #EAF3DE; --verde-border: #C0DD97;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2a; --text: #e8e6de; --text2: #a8a6a0; --text3: #68665e; --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18); }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; padding: 2rem 1rem; }
+    .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; }
+
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .curso-badge { font-size: 11px; font-weight: 500; background: #e6f1fb; color: #185FA5; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tipo-badge { font-size: 11px; font-weight: 500; background: #EEEDFE; color: #534AB7; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); }
+
+    .section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 1.75rem; }
+
+    /* LENTE */
+    .lente { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+    .lente-header { padding: 10px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .lente-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lente-subtitulo { font-size: 12px; color: var(--text2); }
+    .lente-body { padding: 12px 16px; }
+    .lente-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; margin-bottom: 2px; }
+    .lente-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .lente-footer { padding: 10px 16px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lente-footer strong { font-weight: 500; color: var(--text); }
+
+    /* TARJETAS DE PLANETA */
+    .planeta-card { border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .planeta-header { padding: 10px 14px; display: flex; align-items: center; gap: 12px; }
+    .planeta-icono { font-size: 20px; flex-shrink: 0; }
+    .planeta-nombre { font-size: 14px; font-weight: 600; }
+    .planeta-sub { font-size: 11px; margin-top: 1px; }
+    .planeta-body { border-top: 1px solid; padding: 0; }
+    .planeta-fila { display: grid; grid-template-columns: 110px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .planeta-fila:last-child { border-bottom: none; }
+    .planeta-fila:nth-child(even) { background: var(--bg2); }
+    .planeta-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .planeta-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .planeta-val strong { font-weight: 500; color: var(--text); }
+    .planeta-footer { padding: 8px 14px; border-top: 1px solid; font-size: 12px; font-style: italic; line-height: 1.5; }
+
+    .p-merc { border: 1px solid var(--merc-border); }
+    .p-merc .planeta-header { background: var(--merc-bg); }
+    .p-merc .planeta-nombre { color: var(--merc); }
+    .p-merc .planeta-sub { color: #A0650F; }
+    .p-merc .planeta-body { border-color: var(--merc-border); }
+    .p-merc .planeta-footer { background: var(--merc-bg); border-color: var(--merc-border); color: #6B3C00; }
+
+    .p-venus { border: 1px solid var(--venus-border); }
+    .p-venus .planeta-header { background: var(--venus-bg); }
+    .p-venus .planeta-nombre { color: var(--venus); }
+    .p-venus .planeta-sub { color: #2E7ED4; }
+    .p-venus .planeta-body { border-color: var(--venus-border); }
+    .p-venus .planeta-footer { background: var(--venus-bg); border-color: var(--venus-border); color: #0C447C; }
+
+    /* RETROGRADACIÓN */
+    .retro-bloque { border: 1.5px solid var(--retro-border); border-radius: var(--radius-lg); overflow: hidden; }
+    .retro-header { padding: 10px 16px; background: var(--retro-bg); }
+    .retro-titulo { font-size: 14px; font-weight: 600; color: var(--retro); }
+    .retro-sub { font-size: 12px; color: #C05030; margin-top: 2px; }
+    .retro-body { border-top: 1px solid var(--retro-border); }
+    .retro-fila { display: grid; grid-template-columns: 110px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--border); }
+    .retro-fila:last-child { border-bottom: none; }
+    .retro-fila:nth-child(even) { background: var(--bg2); }
+    .retro-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .retro-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .retro-val strong { font-weight: 500; color: var(--text); }
+    .retro-footer { padding: 10px 16px; background: var(--retro-bg); border-top: 1px solid var(--retro-border); font-size: 12px; color: #7A2510; line-height: 1.5; }
+    .retro-footer strong { font-weight: 600; }
+
+    /* TABLA RETROGRADACIÓN */
+    .tabla-retro { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .tabla-header { padding: 7px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); }
+    .tabla-row { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 0.5px solid var(--border); }
+    .tabla-row:last-child { border-bottom: none; }
+    .tabla-row.head { background: var(--bg2); }
+    .tabla-cel { padding: 8px 12px; font-size: 12px; color: var(--text2); }
+    .tabla-cel.head-cel { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); }
+    .tabla-row:nth-child(even):not(.head) { background: var(--bg2); }
+    .tabla-footer { padding: 8px 14px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); }
+    .tabla-footer strong { font-weight: 500; color: var(--text); }
+
+    /* REVOLUCIÓN */
+    .rev-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .rev-header { padding: 8px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); }
+    .rev-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+    .rev-item { font-size: 12px; color: var(--text2); line-height: 1.6; padding-left: 12px; position: relative; }
+    .rev-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .rev-item strong { font-weight: 500; color: var(--text); }
+    .rev-footer { padding: 8px 14px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); }
+    .rev-footer strong { font-weight: 500; color: var(--text); }
+
+    /* PRÁCTICA CARTAS */
+    .practica-aviso { display: flex; gap: 10px; background: var(--purple-bg); border: 0.5px solid var(--purple-border); border-radius: var(--radius); padding: 10px 14px; margin-bottom: 10px; }
+    .practica-aviso-text { font-size: 12px; color: var(--purple); line-height: 1.5; }
+
+    .carta-card { border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 10px; }
+    .carta-header { display: flex; align-items: center; gap: 12px; padding: 10px 14px; }
+    .carta-icono { font-size: 18px; flex-shrink: 0; }
+    .carta-nombre { font-size: 14px; font-weight: 600; }
+    .carta-subtitulo { font-size: 12px; margin-top: 1px; }
+    .carta-body { border-top: 1px solid; }
+    .carta-fila { display: grid; grid-template-columns: 110px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .carta-fila:last-child { border-bottom: none; }
+    .carta-fila:nth-child(even) { background: var(--bg2); }
+    .carta-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .carta-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .carta-val strong { font-weight: 500; color: var(--text); }
+    .carta-footer { padding: 8px 14px; border-top: 1px solid; font-size: 12px; font-style: italic; line-height: 1.5; }
+
+    .c-jimena { border: 1px solid var(--merc-border); }
+    .c-jimena .carta-header { background: var(--merc-bg); }
+    .c-jimena .carta-nombre { color: var(--merc); }
+    .c-jimena .carta-subtitulo { color: #A0650F; }
+    .c-jimena .carta-body { border-color: var(--merc-border); }
+    .c-jimena .carta-footer { background: var(--merc-bg); border-color: var(--merc-border); color: #6B3C00; }
+
+    .c-nelda { border: 1px solid var(--verde-border); }
+    .c-nelda .carta-header { background: var(--verde-bg); }
+    .c-nelda .carta-nombre { color: var(--verde); }
+    .c-nelda .carta-subtitulo { color: #518F1A; }
+    .c-nelda .carta-body { border-color: var(--verde-border); }
+    .c-nelda .carta-footer { background: var(--verde-bg); border-color: var(--verde-border); color: #2A5000; }
+
+    /* CONCEPTO */
+    .concepto-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .concepto-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .concepto-nombre { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; }
+    .badge { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
+    .b-clave { background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text2); }
+    .concepto-def { padding: 12px 14px; font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .concepto-def strong { font-weight: 500; color: var(--text); }
+
+    /* NEPTUNO */
+    .neptuno-bloque { border: 1.5px solid var(--purple-border); border-radius: var(--radius-lg); overflow: hidden; }
+    .neptuno-header { padding: 10px 16px; background: var(--purple-bg); }
+    .neptuno-titulo { font-size: 14px; font-weight: 600; color: var(--purple); }
+    .neptuno-sub { font-size: 12px; color: #534AB7; margin-top: 2px; }
+    .neptuno-body { padding: 12px 14px; border-top: 1px solid var(--purple-border); }
+    .neptuno-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; margin-bottom: 3px; }
+    .neptuno-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .neptuno-item strong { font-weight: 500; color: var(--text); }
+    .neptuno-footer { padding: 10px 14px; background: var(--purple-bg); border-top: 1px solid var(--purple-border); font-size: 12px; color: var(--purple); line-height: 1.5; }
+    .neptuno-footer strong { font-weight: 600; }
+
+    /* RETENER */
+    .retener-list { display: flex; flex-direction: column; gap: 6px; }
+    .retener-item { display: flex; gap: 12px; align-items: flex-start; padding: 11px 14px; border-radius: var(--radius); border: 0.5px solid var(--border); }
+    .retener-num { font-size: 12px; font-weight: 500; color: var(--venus); min-width: 20px; padding-top: 2px; }
+    .retener-texto { font-size: 13px; color: var(--text); line-height: 1.6; }
+    .retener-texto span { font-weight: 500; }
+
+    .pill { display: inline-block; font-size: 11px; font-weight: 500; padding: 1px 7px; border-radius: 20px; margin-right: 4px; }
+    .pill-merc { background: var(--merc-bg); color: var(--merc); }
+    .pill-venus { background: var(--venus-bg); color: var(--venus); }
+    .pill-retro { background: var(--retro-bg); color: var(--retro); }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div class="curso-badge">Curso 4 · C10</div>
+      <div class="tipo-badge">Teoría + Práctica</div>
+    </div>
+    <div class="titulo">Tránsitos de Mercurio y Venus</div>
+    <div class="meta">28 de enero de 2026 &nbsp;·&nbsp; Tránsitos · Mercurio · Venus · Retrogradación · Efemérides · Neptuno en Aries</div>
+  </div>
+
+  <!-- LENTE -->
+  <div class="section-label">Lente de lectura</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">Los tránsitos como herramienta de acompañamiento, no solo de predicción</div>
+      <div class="lente-subtitulo">Levantar los tránsitos de hoy es leer el clima — no predecir el futuro</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">El tránsito no dice qué va a pasar — dice qué clima hay y qué tipo de experiencias están disponibles</div>
+      <div class="lente-item">En consulta: la persona habla de lo que le está pasando y tú reconoces en los tránsitos el por qué — no al revés</div>
+      <div class="lente-item">Los planetas lentos (Júpiter, Saturno) permiten prever: si están en el signo siguiente, ya sabes que llegarán</div>
+      <div class="lente-item">Los planetas rápidos (Mercurio, Venus) revelan el clima del momento — días o semanas</div>
+    </div>
+    <div class="lente-footer"><strong>Protocolo práctico:</strong> levanta los tránsitos, pregunta a la persona qué está pasando ahora, y vas reconociendo — "ah, esto es Mercurio en Acuario", "esto es Venus retrógrado". El tránsito confirma, no predice en frío.</div>
+  </div>
+
+  <!-- MERCURIO EN TRÁNSITO -->
+  <div class="section-label">Mercurio en tránsito</div>
+  <div class="planeta-card p-merc">
+    <div class="planeta-header">
+      <div class="planeta-icono">☿</div>
+      <div>
+        <div class="planeta-nombre">Mercurio</div>
+        <div class="planeta-sub">88 días para dar la vuelta · ~1 semana por signo</div>
+      </div>
+    </div>
+    <div class="planeta-body">
+      <div class="planeta-fila"><div class="planeta-key">Qué trae</div><div class="planeta-val">Comunicación, noticias, documentos, firmas, desplazamientos, pensamientos, hermanos, comercio</div></div>
+      <div class="planeta-fila"><div class="planeta-key">En Acuario</div><div class="planeta-val"><strong>Noticias sorpresivas e inesperadas</strong> · Avance en procesos de conciencia colectiva · Ideas innovadoras · Mentalidad abierta · Compartir puntos de vista distintos · Hermanos con perspectivas diferentes</div></div>
+      <div class="planeta-fila"><div class="planeta-key">Por qué Acuario</div><div class="planeta-val">Mercurio está <strong>exaltado en Acuario</strong> — relación natural entre el arquetipo mental y la conciencia colectiva. Acuario es fijo (opuesto Leo), por eso también trae ideas que se consolidan, no solo movimiento</div></div>
+      <div class="planeta-fila"><div class="planeta-key">En Piscis</div><div class="planeta-val"><strong>Confusión y malentendidos</strong> · Comunicación más emocional y sensible · Imaginación, inspiración, arte y música · Tendencia al silencio o al drama si no se gestiona bien · Puede idealizar lo que comunica</div></div>
+      <div class="planeta-fila"><div class="planeta-key">Mercurio ℞ en Piscis</div><div class="planeta-val">26 feb → 21 mar, grado 22 hasta grado 8 de Piscis · Retrograda hacia adentro: confusión mayor si no se conecta primero con el interior antes de hablar · Como si estuviera "en la barriga de mamá" — no sabe expresarse aún</div></div>
+      <div class="planeta-fila"><div class="planeta-key">Los 3 ℞ del año</div><div class="planeta-val">Los tres retrógrados de Mercurio en 2026 están en signos de <strong>agua</strong> (Piscis, Cáncer, Escorpio) → todo el año habla de revisar la parte emocional de la comunicación</div></div>
+    </div>
+    <div class="planeta-footer">Consejo de Ana: cuando Mercurio está retrógrado, ir hacia adentro primero. Sentir qué quiero decir antes de decirlo. Si no, la confusión y el drama se amplifican.</div>
+  </div>
+
+  <!-- TABLA RETROGRADACIÓN MERCURIO -->
+  <div class="section-label">Herramienta — tabla de retrogradación</div>
+  <div class="tabla-retro">
+    <div class="tabla-header">Cómo usar la tabla de retrogradación (Ana la hace en Excel)</div>
+    <div class="tabla-row head">
+      <div class="tabla-cel head-cel">Fase</div>
+      <div class="tabla-cel head-cel">Fecha / Grado</div>
+      <div class="tabla-cel head-cel">Significado</div>
+    </div>
+    <div class="tabla-row">
+      <div class="tabla-cel">Inicio ℞</div>
+      <div class="tabla-cel">Fecha + grado exacto</div>
+      <div class="tabla-cel">El tema/conflicto se presenta</div>
+    </div>
+    <div class="tabla-row">
+      <div class="tabla-cel">Punto directo</div>
+      <div class="tabla-cel">Fecha + grado exacto</div>
+      <div class="tabla-cel">La resolución o resultado</div>
+    </div>
+    <div class="tabla-row">
+      <div class="tabla-cel">Grados en amarillo</div>
+      <div class="tabla-cel">Mismo grado en ℞ y directo</div>
+      <div class="tabla-cel">Los días que se corresponden exactamente</div>
+    </div>
+  </div>
+  <div style="margin-top:6px; padding: 10px 14px; background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); font-size: 12px; color: var(--text2); line-height: 1.5;">
+    <strong style="color:var(--text)">Ejemplo real (Ana):</strong> durante un Mercurio ℞ en Tauro le cargaron algo extraño en la tarjeta. La fecha del cargo (℞) y la fecha de la devolución del banco (directo) coincidían exactamente en la misma línea de la tabla — mismo grado y minuto. <em>Retrógrado = conflicto sin resolver · Directo = llega la solución.</em>
+  </div>
+
+  <!-- VENUS EN TRÁNSITO -->
+  <div class="section-label">Venus en tránsito</div>
+  <div class="planeta-card p-venus">
+    <div class="planeta-header">
+      <div class="planeta-icono">♀</div>
+      <div>
+        <div class="planeta-nombre">Venus</div>
+        <div class="planeta-sub">~9 meses para dar la vuelta · tiene su propia revolución</div>
+      </div>
+    </div>
+    <div class="planeta-body">
+      <div class="planeta-fila"><div class="planeta-key">Qué trae</div><div class="planeta-val">Relaciones afectivas, pareja, armonía, economía, disfrute, valoración, sensualidad, recursos</div></div>
+      <div class="planeta-fila"><div class="planeta-key">En Acuario</div><div class="planeta-val"><strong>Amor por la humanidad, no solo amor personal</strong> · Clima afectivo más grupal · Estado social y económico a nivel mundial · Valoración de cambios sociales · Disfrute de encuentros con amigos · Inclusividad — cómo participo en el grupo</div></div>
+      <div class="planeta-fila"><div class="planeta-key">Venus ℞</div><div class="planeta-val">Puede traer de vuelta a alguien del pasado con intención de <strong>revalorar</strong> — no para reiniciar necesariamente. La R de retrógrado = la R de revisión. En lo económico: revisar inversiones y reequilibrar recursos</div></div>
+      <div class="planeta-fila"><div class="planeta-key">℞ Escorpio → Libra</div><div class="planeta-val">3 oct → 14 nov 2026. Inicia en Escorpio (fusión, celos, apego, exilio de Venus) y retrograda hasta Libra. <strong>Leer como historia:</strong> Escorpio pone el problema — Libra da la reflexión y el equilibrio — volver a Escorpio = la transformación ya ocurrió</div></div>
+      <div class="planeta-fila"><div class="planeta-key">Venus en Escorpio</div><div class="planeta-val">En <strong>exilio</strong> — busca relacionarse profundamente pero puede derivar en control, celos, traición, obsesión con la seguridad económica o emocional. La parte buena: los mejores gestores de dinero ajeno. Revisado internamente: relación profunda y desapegada</div></div>
+    </div>
+    <div class="planeta-footer">Venus en Escorpio también puede ser pérdida de dinero, robo o inversión perdida — es el eje financiero Tauro-Escorpio. La retrogradación en Libra es el momento de reequilibrar.</div>
+  </div>
+
+  <!-- REVOLUCIÓN DE VENUS -->
+  <div class="section-label">Concepto — revolución de Venus y de Marte</div>
+  <div class="rev-bloque">
+    <div class="rev-header">Revolución de Venus · ciclo de 9 meses</div>
+    <div class="rev-body">
+      <div class="rev-item">Cuando Venus vuelve al mismo grado en que está en tu carta natal, empieza una <strong>nueva revolución de Venus</strong> — dura ~9 meses.</div>
+      <div class="rev-item">Se levanta un mapa especial (en Astrosic, sección "retornos") y se superpone con la carta natal. La lectura de ese mapa es válida para esos 9 meses.</div>
+      <div class="rev-item"><strong>Cuándo usarla:</strong> cuando alguien quiere profundizar específicamente en lo afectivo o económico más allá de la revolución solar. También cuando alguien pregunta "¿cómo me irá el año con el dinero?" o "¿tendré pareja?"</div>
+      <div class="rev-item"><strong>Revolución de Marte:</strong> mismo concepto — sirve para ver el mapa de toma de decisiones y acciones durante ese ciclo de Marte.</div>
+    </div>
+    <div class="rev-footer"><strong>Combinación:</strong> revolución solar (visión general del año) + revolución de Venus (detalle afectivo/económico) + tránsitos + direcciones primarias. Son herramientas que se suman para una respuesta más completa.</div>
+  </div>
+
+  <!-- NEPTUNO EN ARIES -->
+  <div class="section-label">Neptuno entra en Aries — 27 enero 2026</div>
+  <div class="neptuno-bloque">
+    <div class="neptuno-header">
+      <div class="neptuno-titulo">Neptuno en Aries — proceso colectivo de 14 años</div>
+      <div class="neptuno-sub">Recién entrado · va quitando capas del yo · no es el momento de tomar decisiones</div>
+    </div>
+    <div class="neptuno-body">
+      <div class="neptuno-item"><strong>Qué hace Neptuno en Aries:</strong> va limpiando las asperezas del yo — las idealizaciones que construimos sobre nosotros mismos y sobre nuestra vida individual. Disuelve el yo de supervivencia.</div>
+      <div class="neptuno-item"><strong>Lo que sientes:</strong> no es un toque de realidad concreta (eso sería Saturno). Es darte cuenta de dónde idealizaste — qué imagen proyectaste que no era tan real como creías. Quita el velo, no da certeza.</div>
+      <div class="neptuno-item"><strong>Cuidado con Aries:</strong> Aries es impulsivo. Neptuno lo pide más lento — dejar que se disuelva, no actuar desde esa claridad inmediata. Esperar a que Saturno llegue en febrero para que el toque de realidad se concrete.</div>
+      <div class="neptuno-item"><strong>A nivel colectivo:</strong> busca que entendamos que todo forma parte de todo — unifica inconsciente, subconsciente y consciente. Lo individual y lo colectivo como una misma psique.</div>
+      <div class="neptuno-item">Entró, saldrá y volverá a entrar (retrógrado en abril, vuelve a Piscis). Primer ingreso: último día de marzo 2025 — mirar qué ocurrió entonces como referencia.</div>
+    </div>
+    <div class="neptuno-footer"><strong>Cómo reconocerlo:</strong> una sensación de "espera, ¿esto es tan bonito como lo pintaba?" — una primera capa que se disuelve. No actuar. Dejar que el proceso se asiente antes de decidir.</div>
+  </div>
+
+  <!-- PRÁCTICA CARTAS -->
+  <div class="section-label">Práctica — Mercurio y Venus en cartas</div>
+  <div class="practica-aviso">
+    <div class="practica-aviso-text">Práctica en vivo al final de la clase — Mercurio y Venus en tránsito superpuestos sobre las cartas de Jimena y Nelda. Lectura rápida de los aspectos que forman con planetas natales.</div>
+  </div>
+
+  <!-- JIMENA -->
+  <div class="carta-card c-jimena">
+    <div class="carta-header">
+      <div class="carta-icono">☿</div>
+      <div>
+        <div class="carta-nombre">Jimena</div>
+        <div class="carta-subtitulo">Mercurio y Venus en Acuario — casa 1</div>
+      </div>
+    </div>
+    <div class="carta-body">
+      <div class="carta-fila"><div class="carta-key">Mercurio + Venus</div><div class="carta-val">Ambos en <strong>Acuario</strong>, mismo grado, en conjunción, cayendo en la casa 1 de Jimena. Hablan de ella misma — cómo se comunica y cómo valora en este momento.</div></div>
+      <div class="carta-fila"><div class="carta-key">Cuadratura a Mercurio natal</div><div class="carta-val">Mercurio tránsito (Acuario) hace cuadratura al <strong>Mercurio natal en Tauro</strong> (casa 4, junto a Saturno). Tensión entre el hablar abierto y colectivo (Acuario) vs. el hablar lento, seguro y estructurado (Tauro). Saturno al lado puede hacer sentir limitada por las opiniones ajenas.</div></div>
+      <div class="carta-fila"><div class="carta-key">Aplicación práctica</div><div class="carta-val">Jimena está valorando cómo comunicarse con su familia sobre una decisión importante (reunión familiar, perdonar a Tomás, viaje en común). El Mercurio natal en Tauro le pide: estructurar lo que quiere decir → la lentitud de Tauro es una fortaleza, no un obstáculo.</div></div>
+      <div class="carta-fila"><div class="carta-key">Venus en Acuario casa 1</div><div class="carta-val">Valoración de lo grupal desde el yo — cómo me siento en el grupo familiar, cómo participo. Viene una reunión familiar con distintas perspectivas y diferencias de opinión.</div></div>
+    </div>
+    <div class="carta-footer">Consejo: usar el Saturno al revés — como estructura para comunicar con seguridad, no como freno. Escuchar despacio y decir lo que quiere decir, con calma de Tauro.</div>
+  </div>
+
+  <!-- NELDA -->
+  <div class="carta-card c-nelda">
+    <div class="carta-header">
+      <div class="carta-icono">♀</div>
+      <div>
+        <div class="carta-nombre">Nelda</div>
+        <div class="carta-subtitulo">Mercurio y Venus en Acuario — casa 10</div>
+      </div>
+    </div>
+    <div class="carta-body">
+      <div class="carta-fila"><div class="carta-key">Casa 10</div><div class="carta-val">Mercurio y Venus en Acuario caen en la casa 10 de Nelda — vocación, metas, destino, progenitores (eje 4-10). No aparece como profesión en este momento sino como el <strong>cuestionamiento de hacia dónde ir</strong>.</div></div>
+      <div class="carta-fila"><div class="carta-key">Mercurio = hermanos</div><div class="carta-val">Nelda está compartiendo puntos de vista con su hermana sobre el tema de volver a México — confirmado en clase. Mercurio son los hermanos, casa 10 son las metas.</div></div>
+      <div class="carta-fila"><div class="carta-key">Venus en Acuario casa 10</div><div class="carta-val">Valoración de la sociedad donde vivo — cómo se organiza, qué puedo construir aquí. También: un círculo de amigos (también extranjeros) cuestionando lo mismo colectivamente. Todo esto es el estelium en Acuario activando la conciencia colectiva sobre el dónde y el cómo.</div></div>
+      <div class="carta-fila"><div class="carta-key">Oposición con Quirón Leo casa 4</div><div class="carta-val">El tránsito en Acuario (metas, sociedad) hace oposición al Quirón natal en Leo (casa 4, familia de origen). La herida familiar se activa en relación con el destino — el cuestionamiento de volver toca el núcleo familiar y personal.</div></div>
+      <div class="carta-fila"><div class="carta-key">Neptuno en Aries</div><div class="carta-val">Confirmado: Nelda sintió el ingreso de Neptuno en Aries el lunes — golpe de realidad disolviendo la idealización que hacía de su vida en España. "¿Esto es tan perfecto como lo pintaba?" No es señal de actuar — es señal de dejar que se disuelva primero.</div></div>
+    </div>
+    <div class="carta-footer">Recomendación: no tomar decisiones bajo la entrada de Neptuno en Aries. Esperar a que Saturno llegue en febrero — entonces la claridad tendrá estructura.</div>
+  </div>
+
+  <!-- PUNTOS A RETENER -->
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item"><div class="retener-num">1</div><div class="retener-texto"><span>Mercurio en tránsito habla de comunicación, noticias, documentos, hermanos y desplazamientos.</span> El signo donde transita colorea el cómo. En Acuario: ideas innovadoras y noticias sorpresivas. En Piscis: confusión, emoción, inspiración.</div></div>
+    <div class="retener-item"><div class="retener-num">2</div><div class="retener-texto"><span>La R de retrógrado = la R de revisión.</span> En Mercurio ℞: hay que ir hacia adentro antes de comunicar. En Venus ℞: revalorar, no solo reiniciar. Los conflictos que aparecen en ℞ se resuelven cuando el planeta se pone directo en el mismo grado.</div></div>
+    <div class="retener-item"><div class="retener-num">3</div><div class="retener-texto"><span>Venus en tránsito habla de lo afectivo y lo económico.</span> Retrógrado en Escorpio–Libra: primero el problema de apego/celos/pérdida (Escorpio), luego la reflexión y el equilibrio (Libra), luego la transformación al volver a Escorpio.</div></div>
+    <div class="retener-item"><div class="retener-num">4</div><div class="retener-texto"><span>La revolución de Venus (9 meses) profundiza en lo afectivo y económico.</span> Se combina con la revolución solar para una lectura más completa. La revolución de Marte hace lo mismo con las decisiones y acciones.</div></div>
+    <div class="retener-item"><div class="retener-num">5</div><div class="retener-texto"><span>Neptuno en Aries disuelve idealizaciones del yo — no da certeza concreta.</span> No actuar inmediatamente. Esperar a que Saturno (febrero) dé estructura a lo que Neptuno disuelve.</div></div>
+  </div>
+
+</div>
+</body>
+</html>
