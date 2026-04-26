@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C12 · Repaso tránsitos · Saturno · Transpersonales</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9;
+      --text: #1a1a18; --text2: #4a4a46; --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+      --radius: 8px; --radius-lg: 12px;
+      --merc: #854F0B; --merc-bg: #FAEEDA; --merc-border: #EDCF9A;
+      --venus: #185FA5; --venus-bg: #E6F1FB; --venus-border: #B5D4F4;
+      --jup: #3B6D11; --jup-bg: #EAF3DE; --jup-border: #C0DD97;
+      --sat: #534AB7; --sat-bg: #EEEDFE; --sat-border: #AFA9EC;
+      --urano: #1A7A8A; --urano-bg: #E0F4F7; --urano-border: #9AD5DF;
+      --neptuno: #6B3CB5; --neptuno-bg: #F0E8FC; --neptuno-border: #C9A8EF;
+      --pluton: #993C1D; --pluton-bg: #FAECE7; --pluton-border: #F0C4BA;
+      --rojo: #993C1D; --rojo-bg: #FAECE7; --rojo-border: #F0C4BA;
+      --azul: #185FA5; --azul-bg: #E6F1FB; --azul-border: #B5D4F4;
+      --verde: #3B6D11; --verde-bg: #EAF3DE; --verde-border: #C0DD97;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2a; --text: #e8e6de; --text2: #a8a6a0; --text3: #68665e; --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18); }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; padding: 2rem 1rem; }
+    .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; }
+
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .curso-badge { font-size: 11px; font-weight: 500; background: #e6f1fb; color: #185FA5; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tipo-badge { font-size: 11px; font-weight: 500; background: #EEEDFE; color: #534AB7; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); }
+    .section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 1.75rem; }
+
+    /* BLOQUE DIVISOR */
+    .bloque-titulo { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; padding: 6px 12px; border-radius: var(--radius); display: inline-block; margin-top: 2rem; margin-bottom: 12px; }
+    .bloque-repaso { background: var(--bg2); color: var(--text3); border: 0.5px solid var(--border2); }
+    .bloque-sat { background: var(--sat-bg); color: var(--sat); }
+    .bloque-trans { background: var(--pluton-bg); color: var(--pluton); }
+
+    /* TABLA RESUMEN DE PLANETAS */
+    .tabla-planetas { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .tabla-header-row { display: grid; grid-template-columns: 90px 1fr 1fr; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .tabla-row { display: grid; grid-template-columns: 90px 1fr 1fr; border-bottom: 0.5px solid var(--border); }
+    .tabla-row:last-child { border-bottom: none; }
+    .tabla-row:nth-child(even) { background: var(--bg2); }
+    .tabla-cel { padding: 8px 12px; font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .tabla-cel.head { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); }
+    .tabla-cel.planeta { font-weight: 600; font-size: 12px; }
+    .tabla-cel.planeta.merc { color: var(--merc); }
+    .tabla-cel.planeta.venus { color: var(--venus); }
+    .tabla-cel.planeta.jup { color: var(--jup); }
+    .tabla-cel.planeta.sat { color: var(--sat); }
+    .tabla-cel.planeta.urano { color: var(--urano); }
+    .tabla-cel.planeta.neptuno { color: var(--neptuno); }
+    .tabla-cel.planeta.pluton { color: var(--pluton); }
+
+    /* ASPECTOS EXPLICADOS */
+    .aspectos-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .aspectos-header { padding: 8px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); }
+    .aspecto-row { display: grid; grid-template-columns: 130px 1fr; border-bottom: 0.5px solid var(--border); }
+    .aspecto-row:last-child { border-bottom: none; }
+    .aspecto-row:nth-child(even) { background: var(--bg2); }
+    .aspecto-key { padding: 9px 12px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .aspecto-val { padding: 9px 12px; font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .aspecto-val strong { font-weight: 500; color: var(--text); }
+    .a-rojo { color: var(--rojo); }
+    .a-azul { color: var(--azul); }
+    .a-verde { color: var(--verde); }
+    .pill-rojo { background: var(--rojo-bg); color: var(--rojo); font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 20px; }
+    .pill-azul { background: var(--azul-bg); color: var(--azul); font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 20px; }
+    .pill-verde { background: var(--verde-bg); color: var(--verde); font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 20px; }
+
+    /* SATURNO */
+    .sat-bloque { border: 1.5px solid var(--sat-border); border-radius: var(--radius-lg); overflow: hidden; }
+    .sat-header { padding: 10px 16px; background: var(--sat-bg); }
+    .sat-titulo { font-size: 14px; font-weight: 600; color: var(--sat); }
+    .sat-sub { font-size: 12px; color: #6B60C8; margin-top: 2px; }
+    .sat-body { border-top: 1px solid var(--sat-border); }
+    .sat-fila { display: grid; grid-template-columns: 130px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .sat-fila:last-child { border-bottom: none; }
+    .sat-fila:nth-child(even) { background: var(--bg2); }
+    .sat-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .sat-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .sat-val strong { font-weight: 500; color: var(--text); }
+    .sat-footer { padding: 10px 16px; background: var(--sat-bg); border-top: 1px solid var(--sat-border); font-size: 12px; color: var(--sat); line-height: 1.5; }
+    .sat-footer strong { font-weight: 600; }
+
+    /* PRÁCTICA CARTAS */
+    .practica-aviso { display: flex; gap: 10px; background: var(--sat-bg); border: 0.5px solid var(--sat-border); border-radius: var(--radius); padding: 10px 14px; margin-bottom: 10px; }
+    .practica-aviso-text { font-size: 12px; color: var(--sat); line-height: 1.5; }
+
+    .carta-card { border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 10px; }
+    .carta-header { display: flex; align-items: center; gap: 12px; padding: 10px 14px; }
+    .carta-icono { font-size: 18px; flex-shrink: 0; }
+    .carta-nombre { font-size: 14px; font-weight: 600; }
+    .carta-subtitulo { font-size: 12px; margin-top: 1px; }
+    .carta-body { border-top: 1px solid; }
+    .carta-fila { display: grid; grid-template-columns: 120px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .carta-fila:last-child { border-bottom: none; }
+    .carta-fila:nth-child(even) { background: var(--bg2); }
+    .carta-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .carta-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .carta-val strong { font-weight: 500; color: var(--text); }
+    .carta-footer { padding: 8px 14px; border-top: 1px solid; font-size: 12px; font-style: italic; line-height: 1.5; }
+
+    .c-jimena { border: 1px solid var(--merc-border); }
+    .c-jimena .carta-header { background: var(--merc-bg); }
+    .c-jimena .carta-nombre { color: var(--merc); }
+    .c-jimena .carta-subtitulo { color: #A0650F; }
+    .c-jimena .carta-body { border-color: var(--merc-border); }
+    .c-jimena .carta-footer { background: var(--merc-bg); border-color: var(--merc-border); color: #6B3C00; }
+
+    .c-nelda { border: 1px solid var(--verde-border); }
+    .c-nelda .carta-header { background: var(--verde-bg); }
+    .c-nelda .carta-nombre { color: var(--verde); }
+    .c-nelda .carta-subtitulo { color: #518F1A; }
+    .c-nelda .carta-body { border-color: var(--verde-border); }
+    .c-nelda .carta-footer { background: var(--verde-bg); border-color: var(--verde-border); color: #2A5000; }
+
+    /* TRANSPERSONALES */
+    .trans-grid { display: flex; flex-direction: column; gap: 8px; }
+    .trans-card { border-radius: var(--radius-lg); overflow: hidden; }
+    .trans-header { padding: 10px 14px; display: flex; align-items: center; gap: 10px; }
+    .trans-icono { font-size: 18px; flex-shrink: 0; }
+    .trans-nombre { font-size: 14px; font-weight: 600; }
+    .trans-sub { font-size: 11px; margin-top: 1px; }
+    .trans-body { border-top: 1px solid; }
+    .trans-fila { display: grid; grid-template-columns: 120px 1fr; gap: 8px; padding: 8px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .trans-fila:last-child { border-bottom: none; }
+    .trans-fila:nth-child(even) { background: var(--bg2); }
+    .trans-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .trans-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .trans-val strong { font-weight: 500; color: var(--text); }
+    .trans-footer { padding: 8px 14px; border-top: 1px solid; font-size: 12px; font-style: italic; line-height: 1.5; }
+
+    .t-urano { border: 1px solid var(--urano-border); }
+    .t-urano .trans-header { background: var(--urano-bg); }
+    .t-urano .trans-nombre { color: var(--urano); }
+    .t-urano .trans-sub { color: #267A8A; }
+    .t-urano .trans-body { border-color: var(--urano-border); }
+    .t-urano .trans-footer { background: var(--urano-bg); border-color: var(--urano-border); color: #0F5060; }
+
+    .t-neptuno { border: 1px solid var(--neptuno-border); }
+    .t-neptuno .trans-header { background: var(--neptuno-bg); }
+    .t-neptuno .trans-nombre { color: var(--neptuno); }
+    .t-neptuno .trans-sub { color: #8A58C8; }
+    .t-neptuno .trans-body { border-color: var(--neptuno-border); }
+    .t-neptuno .trans-footer { background: var(--neptuno-bg); border-color: var(--neptuno-border); color: #4A2080; }
+
+    .t-pluton { border: 1px solid var(--pluton-border); }
+    .t-pluton .trans-header { background: var(--pluton-bg); }
+    .t-pluton .trans-nombre { color: var(--pluton); }
+    .t-pluton .trans-sub { color: #C05030; }
+    .t-pluton .trans-body { border-color: var(--pluton-border); }
+    .t-pluton .trans-footer { background: var(--pluton-bg); border-color: var(--pluton-border); color: #7A2510; }
+
+    /* CONCEPTO */
+    .concepto-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .concepto-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .concepto-nombre { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; }
+    .badge { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
+    .b-clave { background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text2); }
+    .concepto-def { padding: 12px 14px; font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .concepto-def strong { font-weight: 500; color: var(--text); }
+
+    /* RETENER */
+    .retener-list { display: flex; flex-direction: column; gap: 6px; }
+    .retener-item { display: flex; gap: 12px; align-items: flex-start; padding: 11px 14px; border-radius: var(--radius); border: 0.5px solid var(--border); }
+    .retener-num { font-size: 12px; font-weight: 500; color: var(--sat); min-width: 20px; padding-top: 2px; }
+    .retener-texto { font-size: 13px; color: var(--text); line-height: 1.6; }
+    .retener-texto span { font-weight: 500; }
+
+    .separador { border: none; border-top: 2px dashed var(--border); margin: 2rem 0; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div class="curso-badge">Curso 4 · C12</div>
+      <div class="tipo-badge">Teoría + Práctica</div>
+    </div>
+    <div class="titulo">Repaso tránsitos · Saturno · Entramos en transpersonales</div>
+    <div class="meta">18 de febrero de 2026 &nbsp;·&nbsp; Tránsitos · Saturno · Urano · Neptuno · Plutón · Aspectos en carta</div>
+  </div>
+
+  <!-- BLOQUE 1: REPASO -->
+  <div class="bloque-titulo bloque-repaso">Parte 1 — Repaso del PowerPoint de tránsitos personales</div>
+
+  <div class="section-label">Resumen de planetas en tránsito</div>
+  <div class="tabla-planetas">
+    <div class="tabla-header-row">
+      <div class="tabla-cel head">Planeta</div>
+      <div class="tabla-cel head">Qué activa</div>
+      <div class="tabla-cel head">Ojo con</div>
+    </div>
+    <div class="tabla-row">
+      <div class="tabla-cel planeta merc">☿ Mercurio</div>
+      <div class="tabla-cel">Comunicación, transacciones, movimiento, firmas, hermanos, pensamientos</div>
+      <div class="tabla-cel">Malentendidos si mal aspectado con Neptuno · los aspectos cambian todo</div>
+    </div>
+    <div class="tabla-row">
+      <div class="tabla-cel planeta venus">♀ Venus</div>
+      <div class="tabla-cel">Equilibrio, armonía, valoración, afecto, economía, sensualidad, estética</div>
+      <div class="tabla-cel">Ley de afinidad bloqueada si mal aspectado · todo lo contrario con aspectos difíciles</div>
+    </div>
+    <div class="tabla-row">
+      <div class="tabla-cel planeta jup">♃ Júpiter</div>
+      <div class="tabla-cel">Expansión, aumentos, herencias, fe, benevolencia, oportunidades</div>
+      <div class="tabla-cel">Puede aferrarse a una verdad absoluta · amplifica lo que toca (también lo negativo)</div>
+    </div>
+    <div class="tabla-row">
+      <div class="tabla-cel planeta sat">♄ Saturno</div>
+      <div class="tabla-cel">Toque de realidad, responsabilidad, estructura, madurez, disciplina</div>
+      <div class="tabla-cel">Sentirse limitado/frenado si no se ha sido realista · experiencias duras si hay disociación</div>
+    </div>
+  </div>
+
+  <!-- LOS ASPECTOS CAMBIAN TODO -->
+  <div class="section-label">Los aspectos lo cambian todo</div>
+  <div class="aspectos-bloque">
+    <div class="aspectos-header">Un mismo tránsito puede vivirse de forma opuesta según el aspecto</div>
+    <div class="aspecto-row">
+      <div class="aspecto-key"><span class="pill-azul">Trígono / Sextil</span></div>
+      <div class="aspecto-val"><strong>Favorables:</strong> el tránsito se vive en su mejor expresión. Fluidez, talento que se activa, oportunidad que llega con facilidad.</div>
+    </div>
+    <div class="aspecto-row">
+      <div class="aspecto-key"><span class="pill-rojo">Cuadratura</span></div>
+      <div class="aspecto-val"><strong>Reto y decisión:</strong> el tránsito exige un cambio. Puede ser incómodo pero lleva a una resolución. A veces lo más fructífero a largo plazo.</div>
+    </div>
+    <div class="aspecto-row">
+      <div class="aspecto-key"><span class="pill-rojo">Oposición</span></div>
+      <div class="aspecto-val"><strong>Estímulo externo:</strong> algo o alguien activa el proceso desde fuera. Más visible que la cuadratura pero puede haber ambivalencia.</div>
+    </div>
+    <div class="aspecto-row">
+      <div class="aspecto-key"><span class="pill-verde">Quincuncio</span></div>
+      <div class="aspecto-val"><strong>Punto ciego:</strong> "sí tengo que hacerlo, pero no siento hacerlo." Cambio de perspectiva necesario. Puede ser más difícil de resolver que la cuadratura.</div>
+    </div>
+    <div class="aspecto-row">
+      <div class="aspecto-key">Doble dimensión</div>
+      <div class="aspecto-val">Siempre mirar <strong>dos capas</strong>: cómo está el tránsito en el cielo ahora + cómo cae en tu carta natal. Si te cae bien aspectado aunque el cielo sea difícil, puedes vivir incluso lo "negativo" de forma favorable.</div>
+    </div>
+  </div>
+
+  <!-- CONCEPTO: NIVEL DE CONCIENCIA -->
+  <div class="section-label">Concepto clave</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">El nivel de conciencia amortigua el impacto de los tránsitos</span><span class="badge b-clave">filosófico</span></div>
+    <div class="concepto-def">Cuando uno vive en la <strong>observación y la presencia</strong>, las experiencias que traen los tránsitos no son sorpresivas — ya se estaban viendo venir. La misma experiencia vivida con anticipación vs. de golpe se siente completamente diferente (como saber que alguien está enfermo vs. que muera de repente). Los tres transpersonales (Urano, Neptuno, Plutón) se notan más cuando no somos conscientes de ellos porque actúan directamente en el campo psíquico. Trabajarse individualmente facilita que el tránsito sea una oportunidad de observar, no un golpe inesperado.</div>
+  </div>
+
+  <hr class="separador">
+
+  <!-- BLOQUE 2: SATURNO -->
+  <div class="bloque-titulo bloque-sat">♄ Saturno en tránsito — profundización</div>
+
+  <div class="sat-bloque">
+    <div class="sat-header">
+      <div class="sat-titulo">Saturno en tránsito — lo que hace realmente</div>
+      <div class="sat-sub">No es "el maléfico" — es el gran maestro que trae lo justo y necesario</div>
+    </div>
+    <div class="sat-body">
+      <div class="sat-fila"><div class="sat-key">Toque de realidad</div><div class="sat-val">Nos enfrenta a lo que realmente está pasando. Si hemos sido realistas, el Saturno confirma — si no, es un jarro de agua fría. El que tiene Neptuno muy fuerte lo sentirá como una ruptura de ilusión.</div></div>
+      <div class="sat-fila"><div class="sat-key">Los límites</div><div class="sat-val">Un <strong>límite puede ser la fuente de libertad</strong>. Saturno no limita por limitar — te pide que te organices correctamente. Si la desorganización te limita, Saturno es la solución, no el problema.</div></div>
+      <div class="sat-fila"><div class="sat-key">Lo justo y necesario</div><div class="sat-val">Rico es quien no necesita nada (puede elegir). Si necesitas dos, coger cuatro "por si acaso" es vivir en la <strong>carencia</strong>. La austeridad no es pobreza — es exactamente lo que corresponde, ni más ni menos.</div></div>
+      <div class="sat-fila"><div class="sat-key">Con Venus (cuadratura)</div><div class="sat-val">Frialdad en el ambiente, incomodidad en el relacionarse. Lo que normalmente fluye con los demás se siente bloqueado. Puede traer un <strong>momento crítico relacional</strong> — o un compromiso si es conjunción.</div></div>
+      <div class="sat-fila"><div class="sat-key">Signos y casas</div><div class="sat-val">Como está 3 años por signo, madura esa área. Saturno en Aries (actual): nuevo inicio de identidad, límite interno, responsabilidad con uno mismo. En caída en Aries → mayor dificultad para mantener el límite interno.</div></div>
+      <div class="sat-fila"><div class="sat-key">Con Neptuno (conjunción)</div><div class="sat-val">Neptuno disuelve lo que ya no corresponde. <strong>Saturno sostiene</strong> durante ese proceso — como un peeling: Neptuno quita la piel muerta, Saturno te dice "aguanta, que hay que quitarla." Protocolo Neptuno: confusión → deshacimiento → clarificación y orden.</div></div>
+      <div class="sat-fila"><div class="sat-key">Cómo calcular aspectos</div><div class="sat-val">Un signo = 30°. Semisextil = 30° (1 signo). Sextil = 60° (2 signos). Cuadratura = 90° (3 signos). Trígono = 120° (4 signos). Quincuncio = 150° (5 signos). Oposición = 180° (6 signos). Orbe habitual: ~4-7°.</div></div>
+    </div>
+    <div class="sat-footer"><strong>Gran maestro:</strong> Saturno enseña lo justo y necesario. El retorno de Saturno (~29 años) no es una crisis — es una madurez. Lo que se percibe como crisis es la presión de crecer hacia algo más auténtico.</div>
+  </div>
+
+  <!-- PRÁCTICA SATURNO -->
+  <div class="section-label">Práctica — Saturno en tránsito sobre cartas</div>
+  <div class="practica-aviso">
+    <div class="practica-aviso-text">Saturno en Aries grado 0 (conjunción con Neptuno) — lecturas en vivo sobre cartas de Jimena y Nelda. Se identifican aspectos con planetas natales y se interpreta cada uno.</div>
+  </div>
+
+  <!-- JIMENA -->
+  <div class="carta-card c-jimena">
+    <div class="carta-header">
+      <div class="carta-icono">♄</div>
+      <div>
+        <div class="carta-nombre">Jimena</div>
+        <div class="carta-subtitulo">Saturno tránsito en Aries grado 0 · casa 3</div>
+      </div>
+    </div>
+    <div class="carta-body">
+      <div class="carta-fila"><div class="carta-key">Posición</div><div class="carta-val">Saturno en tránsito cae en la <strong>casa 3</strong> de Jimena (comunicación, entorno cercano, hermanos). Está con Neptuno → protocolo Neptuno activo.</div></div>
+      <div class="carta-fila"><div class="carta-key">Saturno + Neptuno en casa 3</div><div class="carta-val">Neptuno trabajará una mejor versión de la comunicación de Jimena — para ello tiene que disolver algo que se lo impide. Saturno sostiene ese proceso. Tiene que ver con la herida Aries (Quirón en Aries) — el lugar que ocupa como individuo.</div></div>
+      <div class="carta-fila"><div class="carta-key">☐ Cuadratura con Marte (Géminis)</div><div class="carta-val">Reto en la comunicación. Confirma que el área de experiencia tiene que ver con comunicarse con el entorno. Marte en casa 6 → ámbito laboral y día a día.</div></div>
+      <div class="carta-fila"><div class="carta-key">☍ Oposición con Urano</div><div class="carta-val">Urano desestructura el Saturno desde fuera. "Me cambian el poste de sitio" — alguien (o los propios pensamientos, casa 9) dice blanco y luego negro. Dificulta poner el límite interno.</div></div>
+      <div class="carta-fila"><div class="carta-key">⚻ Quincuncio con Neptuno</div><div class="carta-val">Cambio de perspectiva necesario en cómo se comunica — sobre todo en el área de amistades y relaciones sociales. Más profundidad para comunicarse mejor.</div></div>
+      <div class="carta-fila"><div class="carta-key">Resumen</div><div class="carta-val">Saturno le pide aprender a poner un límite interno — y comunicarlo. Como es la casa 3: no solo sentirlo, sino decirlo. El autoboicot con Urano (pensamientos propios) puede dificultarlo.</div></div>
+    </div>
+    <div class="carta-footer">El límite interno en Aries: si siento que no, es que no. Y como es la casa 3 — hay que aprenderlo a comunicar.</div>
+  </div>
+
+  <!-- NELDA -->
+  <div class="carta-card c-nelda">
+    <div class="carta-header">
+      <div class="carta-icono">♄</div>
+      <div>
+        <div class="carta-nombre">Nelda</div>
+        <div class="carta-subtitulo">Saturno tránsito en Aries grado 0 · casa 12</div>
+      </div>
+    </div>
+    <div class="carta-body">
+      <div class="carta-fila"><div class="carta-key">Posición</div><div class="carta-val">Saturno en tránsito cae en la <strong>casa 12</strong> (retiro, mundo interno, espiritualidad). Saturno en la 12 está "en su gozo" — le gusta el aislamiento y la introversión.</div></div>
+      <div class="carta-fila"><div class="carta-key">Saturno + Neptuno</div><div class="carta-val">Neptuno es el regente de la casa 12 → está en su propia casa. Saturno acompaña el proceso de disolución espiritual. Nueva estructura del yo, fase más espiritual e introspectiva. Neptuno estará 13 años ahí.</div></div>
+      <div class="carta-fila"><div class="carta-key">✶ Sextil con Saturno natal</div><div class="carta-val">De momento hay equilibrio entre el estado zen introspectivo y las responsabilidades profesionales. Esto puede mantenerse — es el sextil quien lo sostiene por ahora.</div></div>
+      <div class="carta-fila"><div class="carta-key">⚻ Quincuncio con Marte + Mercurio</div><div class="carta-val">Marte en Escorpio (casa 6) en quincuncio con Saturno → cambio de rutinas diarias que no acaba de verse claro. "Sí tengo que volver al trabajo, pero no siento hacerlo." El quincuncio es eso: la obligación sin la gana.</div></div>
+      <div class="carta-fila"><div class="carta-key">Manifestación</div><div class="carta-val">Nelda está en un estado zen con Ema — no quiere salir de ese espacio tranquilo. El tránsito lo confirma: la casa 12 pide retiro, espacio propio, introspección. El quincuncio con Marte es exactamente la tensión entre ese estado y la vuelta al trabajo.</div></div>
+    </div>
+    <div class="carta-footer">El quincuncio puede ser más difícil que la cuadratura: no hay una decisión clara — es "sí pero no" de forma sostenida mientras Saturno y Neptuno siguen ahí (años).</div>
+  </div>
+
+  <hr class="separador">
+
+  <!-- BLOQUE 3: TRANSPERSONALES -->
+  <div class="bloque-titulo bloque-trans">Parte 3 — Introducción a los transpersonales</div>
+
+  <div class="section-label">Los tres transpersonales en tránsito</div>
+  <div class="trans-grid">
+
+    <!-- URANO -->
+    <div class="trans-card t-urano">
+      <div class="trans-header">
+        <div class="trans-icono">♅</div>
+        <div>
+          <div class="trans-nombre">Urano · 7 años por signo</div>
+          <div class="trans-sub">Descubierto el 13/03/1781 · Revolución Francesa y Revolución Industrial</div>
+        </div>
+      </div>
+      <div class="trans-body">
+        <div class="trans-fila"><div class="trans-key">Qué hace</div><div class="trans-val"><strong>Despierta</strong> los planetas con los que entra en contacto — como encender un sistema nervioso. Cambios inesperados, aceleración mental, conciencia que se abre. Es rompedor y genera el cambio drásticamente.</div></div>
+        <div class="trans-fila"><div class="trans-key">Por qué despierta</div><div class="trans-val">Urano rige Acuario — viene a decirle a Saturno que deje las inercias. Cuando hay una cristalización (algo llegó a su forma final y no puede más), Urano llega y lo rompe para que pueda avanzar.</div></div>
+        <div class="trans-fila"><div class="trans-key">En Géminis (mayo 2026)</div><div class="trans-val">Cambios en la comunicación, aceleración mental, mentalidad más abierta. <strong>Ojo con el sistema nervioso central</strong> — alimentarse correctamente para que el canal esté libre para la energía entrante. Eje psicointestinal (Virgo-Piscis nodal).</div></div>
+        <div class="trans-fila"><div class="trans-key">Sensible con</div><div class="trans-val">Rebeldes y disruptivos con las inercias — nos sentimos con ganas de cambiar lo que estaba fijo. Si nos sorprende, el cambio es drástico e inesperado.</div></div>
+      </div>
+      <div class="trans-footer">Urano en Géminis afectará especialmente a quienes tienen planetas en Géminis — Urano y el Sol pueden hacer conjunción próximamente (Jimena).</div>
+    </div>
+
+    <!-- NEPTUNO -->
+    <div class="trans-card t-neptuno">
+      <div class="trans-header">
+        <div class="trans-icono">♆</div>
+        <div>
+          <div class="trans-nombre">Neptuno · 13 años por signo</div>
+          <div class="trans-sub">Descubierto el 23/09/1846 · primer uso del éter como anestésico · romanticismo</div>
+        </div>
+      </div>
+      <div class="trans-body">
+        <div class="trans-fila"><div class="trans-key">Protocolo</div><div class="trans-val">1. <strong>Confusión</strong> — algo no está claro. 2. <strong>Deshacimiento</strong> — se deshace para reconvertirse (no se elimina). 3. <strong>Clarificación y orden</strong> — sale una versión más limpia.</div></div>
+        <div class="trans-fila"><div class="trans-key">Qué hace</div><div class="trans-val"><strong>Adormece</strong> los planetas que toca. Disuelve fronteras, trabaja la psique y el no-yo. Amor incondicional, voluntad de ayudar. Puede generar gran confusión y desorientación si no hay anclaje.</div></div>
+        <div class="trans-fila"><div class="trans-key">Activa los centros</div><div class="trans-val">Activa el centro corazón, el laringeo y el agna (por encima del diafragma) — los que aportan mayor nivel de conciencia. Necesita limpieza previa para acceder a ellos.</div></div>
+        <div class="trans-fila"><div class="trans-key">En Aries (2026)</div><div class="trans-val">Disuelve idealizaciones del yo — lo que proyectamos sobre nosotros mismos. Limpia el ego de supervivencia. No es toque de realidad concreto (eso es Saturno) — es darse cuenta de dónde idealizaste.</div></div>
+      </div>
+      <div class="trans-footer">Neptuno en la casa 12 es Neptuno en su propia casa — el proceso de disolución espiritual es especialmente profundo y duradero (13 años).</div>
+    </div>
+
+    <!-- PLUTÓN -->
+    <div class="trans-card t-pluton">
+      <div class="trans-header">
+        <div class="trans-icono">♇</div>
+        <div>
+          <div class="trans-nombre">Plutón · 11 a 21 años por signo</div>
+          <div class="trans-sub">Descubierto el 18/02/1930 · salida de la caída del banco federal de EEUU</div>
+        </div>
+      </div>
+      <div class="trans-body">
+        <div class="trans-fila"><div class="trans-key">Qué hace</div><div class="trans-val"><strong>Intensifica</strong> los planetas que toca. Transformación y renacimiento. Procesos de muerte simbólica — cambios de estado de conciencia. Opera en el inconsciente, hace visible lo que estaba oculto (secretos, sombra).</div></div>
+        <div class="trans-fila"><div class="trans-key">Efecto Perséfone</div><div class="trans-val">El "secuestro" de Plutón es en realidad <strong>liberarnos de nuestro autosecuestro</strong>. Lo que parece un bloqueo es Plutón trabajando en el inconsciente para hacer visible la sombra. Posiblemente períodos de 6 meses de bloqueo / 6 meses de poder (retrógrados).</div></div>
+        <div class="trans-fila"><div class="trans-key">Ojo con</div><div class="trans-val">Pensamientos oscuros, obsesión, paranoia. Destruye para soltar lo que ya no es necesario. Con Júpiter: riesgo de proliferación (celular, viral). Su potencia es proporcional a cuánto tiempo estuvo invisible para nosotros.</div></div>
+        <div class="trans-fila"><div class="trans-key">En Acuario (hasta ~2043)</div><div class="trans-val">Transforma la conciencia de la sociedad — cómo nos organizamos, qué es el bien común. Saca a la luz corrupción sistémica. Pueden emerger sociedades clandestinas. Transición de lo que fue Capricornio (estructuras de poder) a lo que será Acuario (el pueblo y la sociedad).</div></div>
+        <div class="trans-fila"><div class="trans-key">Duración variable</div><div class="trans-val">Plutón orbita inclinado respecto al sistema solar: 11 años por signo cuando está cerca del Sol (Escorpio), hasta 21 años cuando está lejos (Acuario/Piscis). Por eso Acuario tendrá 21 años de Plutón.</div></div>
+      </div>
+      <div class="trans-footer">El próximo día se trabajará con los aspectos de los tres transpersonales sobre cartas concretas — verificando contactos con planetas personales.</div>
+    </div>
+
+  </div>
+
+  <!-- PUNTOS A RETENER -->
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item"><div class="retener-num">1</div><div class="retener-texto"><span>Los aspectos lo cambian todo.</span> Un tránsito "difícil" que cae bien en tu carta puede vivirse favorablemente. Un tránsito "bueno" que cae mal puede traer confusión. Siempre mirar el doble nivel: cielo + carta.</div></div>
+    <div class="retener-item"><div class="retener-num">2</div><div class="retener-texto"><span>Saturno trae lo justo y necesario — no es el maléfico.</span> El quincuncio puede ser más difícil que la cuadratura: "sí tengo que hacerlo, pero no siento hacerlo." La cuadratura al menos fuerza una decisión.</div></div>
+    <div class="retener-item"><div class="retener-num">3</div><div class="retener-texto"><span>Neptuno: confusión → deshacimiento → clarificación.</span> Adormece lo que toca para reconvertirlo. Saturno sostiene ese proceso cuando están juntos. Activa los centros energéticos superiores.</div></div>
+    <div class="retener-item"><div class="retener-num">4</div><div class="retener-texto"><span>Urano despierta y rompe inercias — ojo con el sistema nervioso en Géminis.</span> 7 años por signo. Alimentarse bien y tener el canal libre para procesar la energía entrante.</div></div>
+    <div class="retener-item"><div class="retener-num">5</div><div class="retener-texto"><span>Plutón intensifica e ilumina lo que estaba oculto.</span> 11 a 21 años por signo según su distancia al Sol. El "secuestro" de Plutón es liberación del autosecuestro — hace visible la sombra para transformarla.</div></div>
+  </div>
+
+</div>
+</body>
+</html>
