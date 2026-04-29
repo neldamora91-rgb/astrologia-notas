@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C1 · Estructura de la carta natal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1C1917;
+      --ink2: #44403C;
+      --ink3: #78716C;
+      --paper: #FAF8F5;
+      --paper2: #F2EFE9;
+      --paper3: #E8E2D8;
+      --gold: #92712A;
+      --gold-light: #C9A84C;
+      --gold-bg: #FDF6E3;
+      --terra: #8B3A2A;
+      --terra-bg: #FBF0ED;
+      --sage: #4A6741;
+      --sage-bg: #EFF4EE;
+      --sky: #2D5478;
+      --sky-bg: #EBF2F8;
+      --amber: #8B5E0A;
+      --amber-bg: #FDF3E0;
+      --radius: 10px;
+      --radius-lg: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.6;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .page { max-width: 760px; margin: 0 auto; }
+
+    /* HEADER */
+    .header {
+      border-bottom: 1px solid var(--paper3);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .header-top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+    .badge {
+      font-size: 10px; font-weight: 500; padding: 3px 10px; border-radius: 20px;
+      text-transform: uppercase; letter-spacing: 0.07em;
+    }
+    .b-curso { background: var(--gold-bg); color: var(--gold); border: 0.5px solid #D4A843; }
+    .b-tipo  { background: var(--paper2); color: var(--ink3); border: 0.5px solid var(--paper3); }
+    .titulo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px; font-weight: 600; color: var(--ink);
+      line-height: 1.2; margin-bottom: 6px;
+    }
+    .meta { font-size: 12px; color: var(--ink3); }
+
+    /* SECTION LABEL */
+    .section-label {
+      font-size: 10px; font-weight: 500; color: var(--ink3);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-top: 2rem; margin-bottom: 10px;
+    }
+
+    /* INTRO CARD */
+    .intro-card {
+      background: var(--paper2); border: 1px solid var(--paper3);
+      border-radius: var(--radius-lg); padding: 16px 18px;
+      font-size: 13px; color: var(--ink2); line-height: 1.7;
+    }
+    .intro-card strong { font-weight: 500; color: var(--ink); }
+
+    /* ZODIACO CIRCULAR — SVG */
+    .zodiaco-wrap {
+      display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .zodiaco-svg-box {
+      flex: 0 0 260px;
+      background: white; border: 1px solid var(--paper3);
+      border-radius: var(--radius-lg); padding: 12px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .zodiaco-legend {
+      flex: 1; min-width: 220px;
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .zl-row {
+      display: grid; grid-template-columns: 26px 24px 1fr 80px;
+      gap: 6px; align-items: center;
+      padding: 5px 8px; border-radius: 6px;
+      font-size: 11.5px;
+    }
+    .zl-row:nth-child(even) { background: var(--paper2); }
+    .zl-num { font-size: 10px; color: var(--ink3); font-weight: 500; text-align: right; }
+    .zl-glifo { font-size: 16px; text-align: center; }
+    .zl-nombre { font-weight: 500; color: var(--ink); }
+    .zl-fecha { font-size: 10px; color: var(--ink3); }
+
+    /* COLORES ELEMENTOS */
+    .el-fuego  { color: #8B3A2A; }
+    .el-tierra { color: #4A6741; }
+    .el-aire   { color: #8B5E0A; }
+    .el-agua   { color: #2D5478; }
+
+    /* BLOQUES CONCEPTUALES */
+    .concepto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media(max-width:520px){ .concepto-grid { grid-template-columns: 1fr; } }
+
+    .concepto-card {
+      border-radius: var(--radius-lg); overflow: hidden;
+      border: 1px solid;
+    }
+    .concepto-header {
+      padding: 10px 14px; display: flex; align-items: center; gap: 8px;
+    }
+    .concepto-icono { font-size: 18px; flex-shrink: 0; }
+    .concepto-titulo { font-size: 13px; font-weight: 500; }
+    .concepto-body { padding: 10px 14px; border-top: 1px solid; }
+    .concepto-body p { font-size: 12px; color: var(--ink2); line-height: 1.6; margin-bottom: 6px; }
+    .concepto-body p:last-child { margin-bottom: 0; }
+    .concepto-body strong { font-weight: 500; color: var(--ink); }
+
+    .c-gold  { border-color: #D4A843; }
+    .c-gold .concepto-header { background: var(--gold-bg); }
+    .c-gold .concepto-titulo { color: var(--gold); }
+    .c-gold .concepto-body { border-color: #E8D5A0; }
+
+    .c-terra { border-color: #DBA090; }
+    .c-terra .concepto-header { background: var(--terra-bg); }
+    .c-terra .concepto-titulo { color: var(--terra); }
+    .c-terra .concepto-body { border-color: #DBA090; }
+
+    .c-sage  { border-color: #A8C2A5; }
+    .c-sage .concepto-header { background: var(--sage-bg); }
+    .c-sage .concepto-titulo { color: var(--sage); }
+    .c-sage .concepto-body { border-color: #A8C2A5; }
+
+    .c-sky   { border-color: #A0BFDA; }
+    .c-sky .concepto-header { background: var(--sky-bg); }
+    .c-sky .concepto-titulo { color: var(--sky); }
+    .c-sky .concepto-body { border-color: #A0BFDA; }
+
+    .c-amber { border-color: #D4A030; }
+    .c-amber .concepto-header { background: var(--amber-bg); }
+    .c-amber .concepto-titulo { color: var(--amber); }
+    .c-amber .concepto-body { border-color: #D4C080; }
+
+    /* CARTA ESTRUCTURA — SVG GRANDE */
+    .carta-wrap {
+      display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap;
+    }
+    .carta-svg-box {
+      flex: 0 0 280px;
+      background: white; border: 1px solid var(--paper3);
+      border-radius: var(--radius-lg); padding: 14px;
+    }
+    .carta-explicacion { flex: 1; min-width: 220px; }
+
+    /* HEMISFERIOS */
+    .hem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+    .hem-card {
+      border-radius: var(--radius); padding: 12px 14px;
+      border: 1px solid;
+    }
+    .hem-titulo { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+    .hem-desc { font-size: 11.5px; color: var(--ink2); line-height: 1.5; }
+    .hem-desc strong { font-weight: 500; color: var(--ink); }
+
+    .h-izq  { background: #FDF8F2; border-color: #D4A843; }
+    .h-izq .hem-titulo { color: var(--gold); }
+    .h-der  { background: #F2F6FD; border-color: #A0BFDA; }
+    .h-der .hem-titulo { color: var(--sky); }
+    .h-sup  { background: #F2F8F2; border-color: #A8C2A5; }
+    .h-sup .hem-titulo { color: var(--sage); }
+    .h-inf  { background: #FDF2F0; border-color: #DBA090; }
+    .h-inf .hem-titulo { color: var(--terra); }
+
+    /* CUADRANTES */
+    .cuad-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .cuad-card {
+      border-radius: var(--radius); padding: 12px 14px;
+      border: 1px solid var(--paper3); background: var(--paper2);
+    }
+    .cuad-num { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink3); margin-bottom: 4px; }
+    .cuad-nombre { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+    .cuad-zona { font-size: 10px; color: var(--ink3); margin-bottom: 6px; font-style: italic; }
+    .cuad-desc { font-size: 11.5px; color: var(--ink2); line-height: 1.5; }
+    .cuad-desc strong { font-weight: 500; color: var(--ink); }
+
+    /* GRADOS */
+    .grado-bloque {
+      background: var(--paper2); border: 1px solid var(--paper3);
+      border-radius: var(--radius-lg); overflow: hidden;
+    }
+    .grado-header {
+      padding: 10px 16px; background: var(--gold-bg);
+      border-bottom: 1px solid #E8D5A0;
+      font-size: 12px; font-weight: 500; color: var(--gold);
+    }
+    .grado-body { padding: 14px 16px; }
+    .grado-fila { display: grid; grid-template-columns: 130px 1fr; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--paper3); align-items: start; }
+    .grado-fila:last-child { border-bottom: none; }
+    .grado-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink3); padding-top: 2px; }
+    .grado-val { font-size: 12px; color: var(--ink2); line-height: 1.5; }
+    .grado-val strong { font-weight: 500; color: var(--ink); }
+
+    /* ELEMENTOS */
+    .elem-bloque { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--paper3); }
+    .elem-header { padding: 8px 14px; background: var(--paper2); border-bottom: 1px solid var(--paper3); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink3); }
+    .elem-grid { display: grid; grid-template-columns: 1fr 1fr; }
+    .elem-card { padding: 12px 14px; border-bottom: 1px solid var(--paper3); border-right: 1px solid var(--paper3); }
+    .elem-card:nth-child(2n) { border-right: none; }
+    .elem-card:nth-last-child(-n+2) { border-bottom: none; }
+    .elem-nombre { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+    .elem-signos { font-size: 11px; color: var(--ink3); margin-bottom: 6px; }
+    .elem-desc { font-size: 11.5px; color: var(--ink2); line-height: 1.5; }
+    .e-fuego  .elem-nombre { color: var(--terra); }
+    .e-fuego  { background: #FFF8F6; }
+    .e-tierra .elem-nombre { color: var(--sage); }
+    .e-tierra { background: #F6FBF5; }
+    .e-aire   .elem-nombre { color: var(--amber); }
+    .e-aire   { background: #FDFAF0; }
+    .e-agua   .elem-nombre { color: var(--sky); }
+    .e-agua   { background: #F2F7FD; }
+
+    /* RETENER */
+    .retener-list { display: flex; flex-direction: column; gap: 6px; }
+    .retener-item {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 12px 14px; border-radius: var(--radius);
+      border: 1px solid var(--paper3); background: var(--paper);
+    }
+    .retener-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px; font-weight: 600; color: var(--gold-light);
+      min-width: 24px; line-height: 1.4;
+    }
+    .retener-texto { font-size: 13px; color: var(--ink); line-height: 1.6; }
+    .retener-texto span { font-weight: 500; }
+
+    /* SEPARADOR */
+    .sep { border: none; border-top: 1px dashed var(--paper3); margin: 2rem 0; }
+
+    /* EJERCICIO */
+    .ejercicio {
+      background: var(--gold-bg); border: 1px solid #D4A843;
+      border-radius: var(--radius-lg); padding: 14px 16px;
+    }
+    .ejercicio-titulo { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gold); margin-bottom: 8px; }
+    .ejercicio-texto { font-size: 12.5px; color: var(--ink2); line-height: 1.7; }
+    .ejercicio-texto strong { font-weight: 500; color: var(--ink); }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <span class="badge b-curso">Curso 1 · C1</span>
+      <span class="badge b-tipo">Fundamentos · Teoría</span>
+    </div>
+    <div class="titulo">Estructura de la carta natal</div>
+    <div class="meta">6 de marzo de 2024 &nbsp;·&nbsp; El zodiaco · La eclíptica · Hemisferios · Cuadrantes · Grados</div>
+  </div>
+
+  <!-- POR QUÉ ASTROLOGÍA -->
+  <div class="section-label">Para qué sirve esto</div>
+  <div class="intro-card">
+    La astrología es un <strong>lenguaje simbólico</strong> que interpreta la relación entre los movimientos planetarios y la experiencia humana. Es una herramienta de autoconocimiento: permite reconocer patrones, potenciales y áreas de crecimiento. No es predictiva en sentido determinista, sino orientadora. <strong>La carta natal es el mapa del momento del nacimiento</strong> — la fotografía del cielo desde el lugar donde naciste en el instante en que llegaste al mundo.
+  </div>
+
+  <hr class="sep">
+
+  <!-- EL ZODIACO -->
+  <div class="section-label">Los 12 signos del zodiaco</div>
+  <div class="zodiaco-wrap">
+
+    <div class="zodiaco-svg-box">
+      <svg viewBox="0 0 240 240" width="236" height="236" xmlns="http://www.w3.org/2000/svg">
+        <!-- Círculo exterior -->
+        <circle cx="120" cy="120" r="112" fill="white" stroke="#E8E2D8" stroke-width="1.5"/>
+        <circle cx="120" cy="120" r="88" fill="white" stroke="#E8E2D8" stroke-width="1"/>
+        <circle cx="120" cy="120" r="60" fill="#FAF8F5" stroke="#E8E2D8" stroke-width="0.8"/>
+
+        <!-- 12 sectores de 30° cada uno — líneas divisorias -->
+        <!-- Empezamos desde Aries (0°) en la posición del este (izquierda del círculo, eje horizontal) -->
+        <!-- En astrología: Aries a la izquierda, dirección antihoraria -->
+        <g stroke="#D4C8B0" stroke-width="0.8">
+          <!-- Líneas cada 30° desde el centro a r=112 -->
+          <!-- 0° = derecha (3h) → pero en carta astro Aries está a la izquierda (9h) = 180° en coord estándar -->
+          <!-- Usamos: signo N en posición angular = (N * 30 + 180) mod 360 en SVG coords -->
+          <!-- Generamos líneas con transform rotate -->
+          <line x1="120" y1="8" x2="120" y2="232" transform="rotate(0, 120, 120)"/>
+          <line x1="120" y1="8" x2="120" y2="232" transform="rotate(30, 120, 120)"/>
+          <line x1="120" y1="8" x2="120" y2="232" transform="rotate(60, 120, 120)"/>
+          <line x1="120" y1="8" x2="120" y2="232" transform="rotate(90, 120, 120)"/>
+          <line x1="120" y1="8" x2="120" y2="232" transform="rotate(120, 120, 120)"/>
+          <line x1="120" y1="8" x2="120" y2="232" transform="rotate(150, 120, 120)"/>
+        </g>
+
+        <!-- Sectores coloreados por elemento (radio 88→112) -->
+        <!-- Fuego: Aries(1), Leo(5), Sagitario(9) — rojo -->
+        <!-- Tierra: Tauro(2), Virgo(6), Capricornio(10) — verde -->
+        <!-- Aire: Géminis(3), Libra(7), Acuario(11) — ámbar -->
+        <!-- Agua: Cáncer(4), Escorpio(8), Piscis(12) — azul -->
+
+        <!-- Helper: sector desde ángulo start a end, radio r1 a r2 -->
+        <!-- En SVG: 0° = derecha, crece clockwise. Aries en carta = izquierda, vamos anticlockwise -->
+        <!-- Aries: SVG ang 150° a 180° (o usamos transform) -->
+        <!-- Simplificamos: posición SVG = 180 - (signo_idx * 30) para el centro del sector -->
+        <!-- Sectores: Aries=150-180, Tauro=120-150, Géminis=90-120, Cáncer=60-90, Leo=30-60, Virgo=0-30 -->
+        <!--           Libra=330-360, Escorpio=300-330, Sag=270-300, Cap=240-270, Acuario=210-240, Piscis=180-210 -->
+
+        <!-- Función arc path: M x1 y1 A r r 0 large-arc sweep x2 y2 L cx cy Z -->
+        <!-- r=112 outer, r=88 inner, cx=120, cy=120 -->
+
+        <!-- Macros para cada sector -->
+        <!-- ARIES (fuego, rojo) 150°→180° SVG -->
+        <path d="M 217.8 60.5 A 112 112 0 0 1 232 120 L 208 120 A 88 88 0 0 0 199.6 72.4 Z" fill="#FBF0ED" opacity="0.9"/>
+        <!-- LEO (fuego) 30°→60° SVG -->
+        <path d="M 217.8 179.5 A 112 112 0 0 1 176.5 217.8 L 162 196.2 A 88 88 0 0 0 199.6 167.6 Z" fill="#FBF0ED" opacity="0.9"/>
+        <!-- SAGITARIO (fuego) 270°→300° SVG -->
+        <path d="M 63.5 217.8 A 112 112 0 0 1 8 120 L 32 120 A 88 88 0 0 0 77.8 196.2 Z" fill="#FBF0ED" opacity="0.9"/>
+
+        <!-- TAURO (tierra, verde) 120°→150° SVG -->
+        <path d="M 176.5 22.2 A 112 112 0 0 1 217.8 60.5 L 199.6 72.4 A 88 88 0 0 0 162 43.8 Z" fill="#EFF4EE" opacity="0.9"/>
+        <!-- VIRGO (tierra) 0°→30° SVG -->
+        <path d="M 232 120 A 112 112 0 0 1 217.8 179.5 L 199.6 167.6 A 88 88 0 0 0 208 120 Z" fill="#EFF4EE" opacity="0.9"/>
+        <!-- CAPRICORNIO (tierra) 240°→270° SVG -->
+        <path d="M 8 120 A 112 112 0 0 1 63.5 22.2 L 77.8 43.8 A 88 88 0 0 0 32 120 Z" fill="#EFF4EE" opacity="0.9"/>
+
+        <!-- GÉMINIS (aire, ámbar) 90°→120° SVG -->
+        <path d="M 120 8 A 112 112 0 0 1 176.5 22.2 L 162 43.8 A 88 88 0 0 0 120 32 Z" fill="#FDF3E0" opacity="0.9"/>
+        <!-- LIBRA (aire) 330°→360° SVG = 330°→0°  -->
+        <path d="M 176.5 217.8 A 112 112 0 0 1 120 232 L 120 208 A 88 88 0 0 0 162 196.2 Z" fill="#FDF3E0" opacity="0.9"/>
+        <!-- ACUARIO (aire) 210°→240° SVG -->
+        <path d="M 63.5 22.2 A 112 112 0 0 1 120 8 L 120 32 A 88 88 0 0 0 77.8 43.8 Z" fill="#FDF3E0" opacity="0.9"/>
+
+        <!-- CÁNCER (agua, azul) 60°→90° SVG -->
+        <path d="M 232 120 A 112 112 0 0 0 176.5 22.2 L 162 43.8 A 88 88 0 0 1 208 120 Z" fill="#EBF2F8" opacity="0.9" transform="rotate(0,120,120)"/>
+        <!-- Lo calculo mejor con coords directas -->
+
+        <!-- Círculo interior limpio -->
+        <circle cx="120" cy="120" r="60" fill="#FAF8F5" stroke="#E8E2D8" stroke-width="0.8"/>
+
+        <!-- Texto signos — posición a radio 100 (entre 88 y 112) -->
+        <!-- ángulo centro sector en SVG: Aries=165, Tauro=135, Géminis=105, Cáncer=75, Leo=45, Virgo=15 -->
+        <!--                              Libra=345, Escorpio=315, Sag=285, Cap=255, Acuario=225, Piscis=195 -->
+        <g text-anchor="middle" dominant-baseline="central" font-family="sans-serif">
+          <!-- Aries ♈ 165° -->
+          <text x="120" y="120" font-size="13" fill="#8B3A2A" transform="rotate(165,120,120) translate(0,-100)">♈</text>
+          <!-- Tauro ♉ 135° -->
+          <text x="120" y="120" font-size="13" fill="#4A6741" transform="rotate(135,120,120) translate(0,-100)">♉</text>
+          <!-- Géminis ♊ 105° -->
+          <text x="120" y="120" font-size="13" fill="#8B5E0A" transform="rotate(105,120,120) translate(0,-100)">♊</text>
+          <!-- Cáncer ♋ 75° -->
+          <text x="120" y="120" font-size="13" fill="#2D5478" transform="rotate(75,120,120) translate(0,-100)">♋</text>
+          <!-- Leo ♌ 45° -->
+          <text x="120" y="120" font-size="13" fill="#8B3A2A" transform="rotate(45,120,120) translate(0,-100)">♌</text>
+          <!-- Virgo ♍ 15° -->
+          <text x="120" y="120" font-size="13" fill="#4A6741" transform="rotate(15,120,120) translate(0,-100)">♍</text>
+          <!-- Libra ♎ 345° -->
+          <text x="120" y="120" font-size="13" fill="#8B5E0A" transform="rotate(345,120,120) translate(0,-100)">♎</text>
+          <!-- Escorpio ♏ 315° -->
+          <text x="120" y="120" font-size="13" fill="#2D5478" transform="rotate(315,120,120) translate(0,-100)">♏</text>
+          <!-- Sagitario ♐ 285° -->
+          <text x="120" y="120" font-size="13" fill="#8B3A2A" transform="rotate(285,120,120) translate(0,-100)">♐</text>
+          <!-- Capricornio ♑ 255° -->
+          <text x="120" y="120" font-size="13" fill="#4A6741" transform="rotate(255,120,120) translate(0,-100)">♑</text>
+          <!-- Acuario ♒ 225° -->
+          <text x="120" y="120" font-size="13" fill="#8B5E0A" transform="rotate(225,120,120) translate(0,-100)">♒</text>
+          <!-- Piscis ♓ 195° -->
+          <text x="120" y="120" font-size="13" fill="#2D5478" transform="rotate(195,120,120) translate(0,-100)">♓</text>
+        </g>
+
+        <!-- Eje horizontal (ASC-DESC) -->
+        <line x1="8" y1="120" x2="232" y2="120" stroke="#B0A090" stroke-width="1" stroke-dasharray="4,3"/>
+        <!-- Eje vertical (MC-IC) -->
+        <line x1="120" y1="8" x2="120" y2="232" stroke="#B0A090" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- Labels -->
+        <text x="14" y="115" font-size="8" fill="#92712A" font-family="sans-serif" font-weight="600">ASC</text>
+        <text x="212" y="115" font-size="8" fill="#92712A" font-family="sans-serif" font-weight="600">DSC</text>
+        <text x="111" y="18" font-size="7" fill="#78716C" font-family="sans-serif">MC</text>
+        <text x="112" y="232" font-size="7" fill="#78716C" font-family="sans-serif">IC</text>
+
+        <!-- Leyenda interior -->
+        <text x="120" y="108" text-anchor="middle" font-size="8" fill="#78716C" font-family="'DM Sans', sans-serif">360° ÷ 12</text>
+        <text x="120" y="122" text-anchor="middle" font-size="11" fill="#44403C" font-family="'DM Sans', sans-serif" font-weight="500">= 30° cada signo</text>
+        <text x="120" y="135" text-anchor="middle" font-size="8" fill="#78716C" font-family="'DM Sans', sans-serif">1° = 1 día de vida del sol</text>
+      </svg>
+    </div>
+
+    <div class="zodiaco-legend">
+      <div class="zl-row"><span class="zl-num">1</span><span class="zl-glifo el-fuego">♈</span><span class="zl-nombre">Aries</span><span class="zl-fecha">21 mar – 19 abr</span></div>
+      <div class="zl-row"><span class="zl-num">2</span><span class="zl-glifo el-tierra">♉</span><span class="zl-nombre">Tauro</span><span class="zl-fecha">20 abr – 20 may</span></div>
+      <div class="zl-row"><span class="zl-num">3</span><span class="zl-glifo el-aire">♊</span><span class="zl-nombre">Géminis</span><span class="zl-fecha">21 may – 20 jun</span></div>
+      <div class="zl-row"><span class="zl-num">4</span><span class="zl-glifo el-agua">♋</span><span class="zl-nombre">Cáncer</span><span class="zl-fecha">21 jun – 22 jul</span></div>
+      <div class="zl-row"><span class="zl-num">5</span><span class="zl-glifo el-fuego">♌</span><span class="zl-nombre">Leo</span><span class="zl-fecha">23 jul – 22 ago</span></div>
+      <div class="zl-row"><span class="zl-num">6</span><span class="zl-glifo el-tierra">♍</span><span class="zl-nombre">Virgo</span><span class="zl-fecha">23 ago – 22 sep</span></div>
+      <div class="zl-row"><span class="zl-num">7</span><span class="zl-glifo el-aire">♎</span><span class="zl-nombre">Libra</span><span class="zl-fecha">23 sep – 22 oct</span></div>
+      <div class="zl-row"><span class="zl-num">8</span><span class="zl-glifo el-agua">♏</span><span class="zl-nombre">Escorpio</span><span class="zl-fecha">23 oct – 21 nov</span></div>
+      <div class="zl-row"><span class="zl-num">9</span><span class="zl-glifo el-fuego">♐</span><span class="zl-nombre">Sagitario</span><span class="zl-fecha">22 nov – 21 dic</span></div>
+      <div class="zl-row"><span class="zl-num">10</span><span class="zl-glifo el-tierra">♑</span><span class="zl-nombre">Capricornio</span><span class="zl-fecha">22 dic – 19 ene</span></div>
+      <div class="zl-row"><span class="zl-num">11</span><span class="zl-glifo el-aire">♒</span><span class="zl-nombre">Acuario</span><span class="zl-fecha">20 ene – 18 feb</span></div>
+      <div class="zl-row"><span class="zl-num">12</span><span class="zl-glifo el-agua">♓</span><span class="zl-nombre">Piscis</span><span class="zl-fecha">19 feb – 20 mar</span></div>
+      <div style="padding: 4px 8px; font-size:10px; color:var(--ink3); margin-top:4px;">
+        🔴 Fuego &nbsp; 🟢 Tierra &nbsp; 🟡 Aire &nbsp; 🔵 Agua
+      </div>
+    </div>
+  </div>
+
+  <!-- GRADOS Y CÁLCULO -->
+  <div class="section-label">Los grados — cómo funciona el cálculo</div>
+  <div class="grado-bloque">
+    <div class="grado-header">360° ÷ 12 signos = 30° por signo · el sol recorre 1° por día</div>
+    <div class="grado-body">
+      <div class="grado-fila">
+        <div class="grado-key">El día del nacimiento</div>
+        <div class="grado-val">Indica en qué signo solar estás. El sol entra en cada signo en una fecha concreta (el equinoccio de primavera marca el inicio de Aries el 21 de marzo).</div>
+      </div>
+      <div class="grado-fila">
+        <div class="grado-key">Cómo calcular el grado</div>
+        <div class="grado-val"><strong>Fórmula:</strong> día de entrada al signo + grado = fecha de nacimiento. Ej: Géminis empieza el 21 may. Sol en grado 9 → 21 + 9 = <strong>30 de mayo</strong>.</div>
+      </div>
+      <div class="grado-fila">
+        <div class="grado-key">Signos límite</div>
+        <div class="grado-val">Nacer el día 19–21 del mes puede ser uno u otro signo según la <strong>hora exacta</strong>. El sol cambia de signo en el grado 29° 59' del signo anterior — minutos cuentan.</div>
+      </div>
+      <div class="grado-fila">
+        <div class="grado-key">Para qué necesita la hora</div>
+        <div class="grado-val">La <strong>hora de nacimiento</strong> determina el ascendente y las 12 casas. Sin hora, no hay ascendente fiable. Afecta especialmente las técnicas de predicción. 4 minutos puede cambiar el grado del ascendente.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- LOS DOS EJES -->
+  <div class="section-label">La estructura de la carta — los dos ejes</div>
+  <div class="carta-wrap">
+
+    <div class="carta-svg-box">
+      <svg viewBox="0 0 260 260" width="252" height="252" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="130" cy="130" r="115" fill="white" stroke="#E8E2D8" stroke-width="1.5"/>
+        <circle cx="130" cy="130" r="80" fill="#FAF8F5" stroke="#E8E2D8" stroke-width="0.8"/>
+
+        <!-- Hemisferio izquierdo (yo) - dorado suave -->
+        <path d="M 130 15 A 115 115 0 0 0 130 245 L 130 210 A 80 80 0 0 1 130 50 Z" fill="#FDF8F2" opacity="0.7"/>
+        <!-- Hemisferio derecho (tú) - azul suave -->
+        <path d="M 130 15 A 115 115 0 0 1 130 245 L 130 210 A 80 80 0 0 0 130 50 Z" fill="#F2F6FD" opacity="0.7"/>
+
+        <!-- Hemisferio superior (consciente) - verde suave -->
+        <path d="M 15 130 A 115 115 0 0 1 245 130 L 210 130 A 80 80 0 0 0 50 130 Z" fill="#F2F8F2" opacity="0.5"/>
+        <!-- Hemisferio inferior (inconsciente) - terra suave -->
+        <path d="M 15 130 A 115 115 0 0 0 245 130 L 210 130 A 80 80 0 0 1 50 130 Z" fill="#FDF2F0" opacity="0.5"/>
+
+        <!-- Círculo interior -->
+        <circle cx="130" cy="130" r="80" fill="none" stroke="#E8E2D8" stroke-width="0.8"/>
+        <circle cx="130" cy="130" r="115" fill="none" stroke="#D4C8B0" stroke-width="1.5"/>
+
+        <!-- Eje horizontal (ASC-DESC) -->
+        <line x1="15" y1="130" x2="245" y2="130" stroke="#92712A" stroke-width="2"/>
+        <!-- Eje vertical (MC-IC) -->
+        <line x1="130" y1="15" x2="130" y2="245" stroke="#78716C" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+        <!-- Labels ejes -->
+        <text x="22" y="125" font-size="9" fill="#92712A" font-family="sans-serif" font-weight="700">ASC</text>
+        <text x="220" y="125" font-size="9" fill="#92712A" font-family="sans-serif" font-weight="700">DSC</text>
+        <text x="122" y="27" font-size="8" fill="#78716C" font-family="sans-serif" font-weight="600">MC</text>
+        <text x="122" y="252" font-size="8" fill="#78716C" font-family="sans-serif" font-weight="600">IC</text>
+
+        <!-- Etiquetas cuadrantes -->
+        <text x="58" y="175" text-anchor="middle" font-size="8.5" fill="#8B3A2A" font-family="sans-serif">Cuad. 1</text>
+        <text x="58" y="186" text-anchor="middle" font-size="8" fill="#8B3A2A" font-family="sans-serif">impulso</text>
+        <text x="200" y="175" text-anchor="middle" font-size="8.5" fill="#2D5478" font-family="sans-serif">Cuad. 2</text>
+        <text x="200" y="186" text-anchor="middle" font-size="8" fill="#2D5478" font-family="sans-serif">instinto</text>
+        <text x="200" y="88" text-anchor="middle" font-size="8.5" fill="#8B5E0A" font-family="sans-serif">Cuad. 3</text>
+        <text x="200" y="99" text-anchor="middle" font-size="8" fill="#8B5E0A" font-family="sans-serif">pensamiento</text>
+        <text x="58" y="88" text-anchor="middle" font-size="8.5" fill="#4A6741" font-family="sans-serif">Cuad. 4</text>
+        <text x="58" y="99" text-anchor="middle" font-size="8" fill="#4A6741" font-family="sans-serif">ser</text>
+
+        <!-- Centro -->
+        <circle cx="130" cy="130" r="3" fill="#92712A"/>
+
+        <!-- Leyenda hemisferios -->
+        <text x="130" y="108" text-anchor="middle" font-size="7.5" fill="#78716C" font-family="sans-serif">CONSCIENTE · día</text>
+        <text x="130" y="158" text-anchor="middle" font-size="7.5" fill="#78716C" font-family="sans-serif">INCONSCIENTE · noche</text>
+        <text x="38" y="133" text-anchor="middle" font-size="7" fill="#92712A" font-family="sans-serif" transform="rotate(-90,38,133)">YO</text>
+        <text x="222" y="133" text-anchor="middle" font-size="7" fill="#2D5478" font-family="sans-serif" transform="rotate(90,222,133)">TÚ</text>
+      </svg>
+    </div>
+
+    <div class="carta-explicacion">
+      <p style="font-size:12.5px; color:var(--ink2); line-height:1.7; margin-bottom:12px;">La carta se divide por <strong>dos ejes principales</strong>. Cada eje crea dos hemisferios, y los dos ejes juntos crean cuatro cuadrantes. La posición de los planetas en estos hemisferios da la primera lectura de energías dominantes.</p>
+
+      <div class="hem-grid">
+        <div class="hem-card h-izq">
+          <div class="hem-titulo">Izquierda — Yo</div>
+          <div class="hem-desc">Planetas más <strong>personales, individualistas</strong>. Impulso propio. La identidad que necesita desarrollarse desde adentro.</div>
+        </div>
+        <div class="hem-card h-der">
+          <div class="hem-titulo">Derecha — Tú</div>
+          <div class="hem-desc">Planetas orientados al <strong>encuentro con el otro</strong>. El aprendizaje llega a través de relaciones externas.</div>
+        </div>
+        <div class="hem-card h-sup">
+          <div class="hem-titulo">Arriba — Consciente</div>
+          <div class="hem-desc">Planetas <strong>visibles, entendidos</strong> por uno mismo. Corresponde al día, a la luz. El sol sube hasta el MC.</div>
+        </div>
+        <div class="hem-card h-inf">
+          <div class="hem-titulo">Abajo — Inconsciente</div>
+          <div class="hem-desc">Planetas que <strong>viven de forma más inconsciente</strong> hasta los ~36 años. El sol se pone y entra la noche.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUADRANTES -->
+  <div class="section-label">Los cuatro cuadrantes</div>
+  <div class="cuad-grid">
+    <div class="cuad-card">
+      <div class="cuad-num">Cuadrante 1</div>
+      <div class="cuad-nombre">Impulso</div>
+      <div class="cuad-zona">Yo inconsciente · abajo-izquierda</div>
+      <div class="cuad-desc">El impulso emerge de forma <strong>inconsciente</strong> y lo gestiona la identidad personal. Energía que "aparece" antes de pensarla.</div>
+    </div>
+    <div class="cuad-card">
+      <div class="cuad-num">Cuadrante 2</div>
+      <div class="cuad-nombre">Instinto</div>
+      <div class="cuad-zona">Tú inconsciente · abajo-derecha</div>
+      <div class="cuad-desc">Instintivamente buscamos relacionarnos con el mundo externo para cubrir <strong>necesidades de supervivencia</strong>. Sin saberlo, vamos hacia fuera.</div>
+    </div>
+    <div class="cuad-card">
+      <div class="cuad-num">Cuadrante 3</div>
+      <div class="cuad-nombre">Pensamiento</div>
+      <div class="cuad-zona">Tú consciente · arriba-derecha</div>
+      <div class="cuad-desc">Tengo consciencia: pienso y entonces <strong>decido relacionarme</strong> desde otro lugar. La mente participa en el encuentro con el otro.</div>
+    </div>
+    <div class="cuad-card">
+      <div class="cuad-num">Cuadrante 4</div>
+      <div class="cuad-nombre">Ser</div>
+      <div class="cuad-zona">Yo consciente · arriba-izquierda</div>
+      <div class="cuad-desc">El cuadrante más <strong>espiritual</strong>. Un yo que ya es consciente de sí mismo. El plano del ser.</div>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- LOS CUATRO ELEMENTOS -->
+  <div class="section-label">Los cuatro elementos — cómo colorear el zodiaco</div>
+  <div class="elem-bloque">
+    <div class="elem-header">Cuatro grupos de tres signos · cada uno con un color para registrar en papel</div>
+    <div class="elem-grid">
+      <div class="elem-card e-fuego">
+        <div class="elem-nombre">🔴 Fuego</div>
+        <div class="elem-signos">Aries · Leo · Sagitario</div>
+        <div class="elem-desc">Cardinal + Fijo + Mutable. Energía activa, expansiva, creativa. Propósito, vitalidad, entusiasmo. Color: <strong>rojo</strong>.</div>
+      </div>
+      <div class="elem-card e-tierra">
+        <div class="elem-nombre">🟢 Tierra</div>
+        <div class="elem-signos">Tauro · Virgo · Capricornio</div>
+        <div class="elem-desc">Cardinal + Fijo + Mutable. Energía concreta, material, estructurada. Estabilidad, practicidad, recursos. Color: <strong>verde</strong>.</div>
+      </div>
+      <div class="elem-card e-aire">
+        <div class="elem-nombre">🟡 Aire</div>
+        <div class="elem-signos">Géminis · Libra · Acuario</div>
+        <div class="elem-desc">Cardinal + Fijo + Mutable. Energía mental, relacional, social. Comunicación, ideas, conexión. Color: <strong>amarillo/naranja</strong>.</div>
+      </div>
+      <div class="elem-card e-agua">
+        <div class="elem-nombre">🔵 Agua</div>
+        <div class="elem-signos">Cáncer · Escorpio · Piscis</div>
+        <div class="elem-desc">Cardinal + Fijo + Mutable. Energía emocional, intuitiva, psíquica. Sensibilidad, profundidad, memoria. Color: <strong>azul</strong>.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONCEPTOS CLAVE -->
+  <div class="section-label">Conceptos a integrar</div>
+  <div class="concepto-grid">
+    <div class="concepto-card c-gold">
+      <div class="concepto-header"><div class="concepto-icono">🌍</div><div class="concepto-titulo">La eclíptica</div></div>
+      <div class="concepto-body">
+        <p>La trayectoria aparente del sol alrededor de la Tierra (desde nuestro punto de vista). Es por donde se mueven todos los planetas del sistema solar. Los 12 signos son los 12 sectores de esa banda.</p>
+        <p>Hay que saber que en realidad es la Tierra la que gira alrededor del Sol — pero como observadores desde la Tierra, vemos el movimiento solar.</p>
+      </div>
+    </div>
+    <div class="concepto-card c-terra">
+      <div class="concepto-header"><div class="concepto-icono">⬆️</div><div class="concepto-titulo">El ascendente (ASC)</div></div>
+      <div class="concepto-body">
+        <p>El signo que estaba saliendo por el horizonte este en el momento del nacimiento. Es el punto cardinal izquierdo de la carta. Cambia cada ~2 horas — es por eso que la hora de nacimiento es fundamental.</p>
+        <p>Define las casas. Define cómo nos mostramos al mundo. Es junto al Sol y la Luna una de las tres posiciones más relevantes de la carta.</p>
+      </div>
+    </div>
+    <div class="concepto-card c-sage">
+      <div class="concepto-header"><div class="concepto-icono">🏠</div><div class="concepto-titulo">Las 12 casas</div></div>
+      <div class="concepto-body">
+        <p>Las casas son <strong>áreas de experiencia de vida</strong> — no son iguales en tamaño porque dependen de la hora y la zona geográfica. En casa con planetas: hay experiencias que se vivirán en ese área. Sin planetas en una casa: no hay que tener experiencias obligadas allí.</p>
+        <p>Las casas más anchas = más tiempo y espacio de vivencia. Las más estrechas = experiencias más intensas y seguidas.</p>
+      </div>
+    </div>
+    <div class="concepto-card c-sky">
+      <div class="concepto-header"><div class="concepto-icono">🌐</div><div class="concepto-titulo">Hemisferio norte/sur del globo</div></div>
+      <div class="concepto-body">
+        <p>Las estaciones son inversas: cuando en el hemisferio norte es primavera (Aries, 21 mar), en el sur es otoño. El sol en el hemisferio norte "sube" hacia el sur, y viceversa.</p>
+        <p>Las constelaciones visibles también cambian según el hemisferio. Esto es astronomía — la astrología trabaja con los mismos 12 signos para todos.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- EJERCICIO DE CLASE -->
+  <div class="section-label">Ejercicio de clase</div>
+  <div class="ejercicio">
+    <div class="ejercicio-titulo">Recuento de planetas en tu carta natal</div>
+    <div class="ejercicio-texto">
+      Con tu carta natal impresa, cuenta los planetas (solo los símbolos de planetas, no los signos del borde) en cada hemisferio y anota los resultados:
+      <br><br>
+      <strong>Izquierda (yo) / Derecha (tú):</strong> ¿dónde hay más? → indica si tu aprendizaje viene más del interior o del encuentro con los demás.<br>
+      <strong>Arriba (consciente) / Abajo (inconsciente):</strong> ¿dónde hay más? → indica qué parte de tu energía vives ya conscientemente y cuál está más en el subconsciente.<br><br>
+      Los resultados no se excluyen — se combinan. "Más planetas abajo + más a la derecha" = energía inconsciente que aprende a través del otro.
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- PUNTOS A RETENER -->
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item">
+      <div class="retener-num">1</div>
+      <div class="retener-texto"><span>La carta natal es el mapa del cielo en el momento y lugar exacto de tu nacimiento.</span> El punto de observación somos nosotros, desde la Tierra. Es un sistema geocéntrico (la Tierra como centro) aunque astronómicamente el Sol sea el centro del sistema solar.</div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">2</div>
+      <div class="retener-texto"><span>12 signos × 30° = 360°. El sol recorre 1° por día.</span> Aries siempre empieza el 21 de marzo (equinoccio de primavera en el norte). A partir de ahí, puedes calcular en qué grado está cualquier sol con una resta simple.</div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">3</div>
+      <div class="retener-texto"><span>Tres datos básicos de cualquier persona: Sol (signo solar), Luna, Ascendente.</span> El Sol = esencia. La Luna = mundo emocional. El Ascendente = cómo te muestras. Son las tres posiciones más relevantes de una carta.</div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">4</div>
+      <div class="retener-texto"><span>La carta tiene dos ejes que crean cuatro cuadrantes.</span> Eje vertical (meridiano): izquierda = yo, derecha = tú. Eje horizontal (ascendente): arriba = consciente/día, abajo = inconsciente/noche.</div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">5</div>
+      <div class="retener-texto"><span>Los cuatro elementos agrupan los signos de tres en tres.</span> Fuego (rojo) · Tierra (verde) · Aire (amarillo) · Agua (azul). Siempre en el mismo orden dentro del zodiaco. Son la base del sistema de colores para aprender la rueda.</div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">6</div>
+      <div class="retener-texto"><span>La hora de nacimiento es fundamental para el ascendente y las casas.</span> Sin hora exacta no hay ascendente fiable. 4 minutos de diferencia pueden cambiar el grado del ascendente — y para predicción es imprescindible.</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
