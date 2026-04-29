@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C16 · Luna nueva en Piscis · Cómo leer una lunación</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9;
+      --text: #1a1a18; --text2: #4a4a46; --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+      --radius: 8px; --radius-lg: 12px;
+      --luna: #185FA5; --luna-bg: #E6F1FB; --luna-border: #B5D4F4;
+      --piscis: #6B3CB5; --piscis-bg: #F0E8FC; --piscis-border: #C9A8EF;
+      --aries: #993C1D; --aries-bg: #FAECE7; --aries-border: #F0C4BA;
+      --merc: #854F0B; --merc-bg: #FAEEDA; --merc-border: #EDCF9A;
+      --verde: #3B6D11; --verde-bg: #EAF3DE; --verde-border: #C0DD97;
+      --rojo: #993C1D; --azul: #185FA5;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2a; --text: #e8e6de; --text2: #a8a6a0; --text3: #68665e; --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18); }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; padding: 2rem 1rem; }
+    .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; }
+
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .curso-badge { font-size: 11px; font-weight: 500; background: #e6f1fb; color: #185FA5; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tipo-badge { font-size: 11px; font-weight: 500; background: #EEEDFE; color: #534AB7; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); }
+    .section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 1.75rem; }
+
+    /* LENTE */
+    .lente { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+    .lente-header { padding: 10px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .lente-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lente-subtitulo { font-size: 12px; color: var(--text2); }
+    .lente-body { padding: 12px 16px; }
+    .lente-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; margin-bottom: 2px; }
+    .lente-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .lente-footer { padding: 10px 16px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lente-footer strong { font-weight: 500; color: var(--text); }
+
+    /* MERCURIO EN PISCIS */
+    .merc-bloque { border: 1.5px solid var(--merc-border); border-radius: var(--radius-lg); overflow: hidden; }
+    .merc-header { padding: 10px 16px; background: var(--merc-bg); }
+    .merc-titulo { font-size: 14px; font-weight: 600; color: var(--merc); }
+    .merc-sub { font-size: 12px; color: #A0650F; margin-top: 2px; }
+    .merc-body { border-top: 1px solid var(--merc-border); }
+    .merc-fila { display: grid; grid-template-columns: 120px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .merc-fila:last-child { border-bottom: none; }
+    .merc-fila:nth-child(even) { background: var(--bg2); }
+    .merc-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .merc-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .merc-val strong { font-weight: 500; color: var(--text); }
+    .merc-footer { padding: 10px 16px; background: var(--merc-bg); border-top: 1px solid var(--merc-border); font-size: 12px; color: #6B3C00; line-height: 1.5; }
+
+    /* PROTOCOLO LUNACIÓN */
+    .protocolo-bloque { border: 1.5px solid var(--luna-border); border-radius: var(--radius-lg); overflow: hidden; }
+    .protocolo-header { padding: 10px 16px; background: var(--luna-bg); }
+    .protocolo-titulo { font-size: 14px; font-weight: 600; color: var(--luna); }
+    .protocolo-sub { font-size: 12px; color: #2E7ED4; margin-top: 2px; }
+    .protocolo-pasos { border-top: 1px solid var(--luna-border); }
+    .protocolo-paso { display: grid; grid-template-columns: 28px 1fr; gap: 10px; padding: 10px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .protocolo-paso:last-child { border-bottom: none; }
+    .protocolo-paso:nth-child(even) { background: var(--bg2); }
+    .protocolo-num { font-size: 12px; font-weight: 700; color: var(--luna); padding-top: 2px; }
+    .protocolo-texto { font-size: 12px; color: var(--text2); line-height: 1.6; }
+    .protocolo-texto strong { font-weight: 500; color: var(--text); }
+    .protocolo-footer { padding: 10px 16px; background: var(--luna-bg); border-top: 1px solid var(--luna-border); font-size: 12px; color: #0C447C; line-height: 1.5; }
+    .protocolo-footer strong { font-weight: 600; }
+
+    /* LUNA NUEVA EN PISCIS */
+    .lunacion-bloque { border: 1.5px solid var(--piscis-border); border-radius: var(--radius-lg); overflow: hidden; }
+    .lunacion-header { padding: 12px 16px; background: var(--piscis-bg); display: flex; align-items: center; gap: 10px; }
+    .lunacion-icono { font-size: 22px; }
+    .lunacion-titulo { font-size: 15px; font-weight: 600; color: var(--piscis); }
+    .lunacion-sub { font-size: 12px; color: #8A58C8; margin-top: 2px; }
+    .lunacion-body { border-top: 1px solid var(--piscis-border); }
+    .lunacion-fila { display: grid; grid-template-columns: 130px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .lunacion-fila:last-child { border-bottom: none; }
+    .lunacion-fila:nth-child(even) { background: var(--bg2); }
+    .lunacion-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .lunacion-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lunacion-val strong { font-weight: 500; color: var(--text); }
+    .lunacion-footer { padding: 10px 16px; background: var(--piscis-bg); border-top: 1px solid var(--piscis-border); font-size: 12px; color: #4A2080; line-height: 1.5; }
+    .lunacion-footer strong { font-weight: 600; }
+
+    /* GRIETA CÓSMICA */
+    .grieta-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .grieta-row { display: flex; align-items: stretch; }
+    .grieta-col { flex: 1; padding: 14px 16px; text-align: center; }
+    .grieta-col.piscis { background: var(--piscis-bg); border-right: 2px dashed var(--piscis-border); }
+    .grieta-col.aries { background: var(--aries-bg); }
+    .grieta-signo { font-size: 22px; margin-bottom: 4px; }
+    .grieta-nombre { font-size: 13px; font-weight: 700; }
+    .grieta-col.piscis .grieta-nombre { color: var(--piscis); }
+    .grieta-col.aries .grieta-nombre { color: var(--aries); }
+    .grieta-desc { font-size: 11px; color: var(--text2); margin-top: 4px; line-height: 1.5; }
+    .grieta-footer { padding: 10px 14px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .grieta-footer strong { font-weight: 500; color: var(--text); }
+
+    /* ASPECTOS AL ASC Y MC */
+    .asc-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .asc-header { padding: 8px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); }
+    .asc-fila { display: grid; grid-template-columns: 130px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .asc-fila:last-child { border-bottom: none; }
+    .asc-fila:nth-child(even) { background: var(--bg2); }
+    .asc-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .asc-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .asc-val strong { font-weight: 500; color: var(--text); }
+
+    /* CONCEPTO */
+    .concepto-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .concepto-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .concepto-nombre { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; }
+    .badge { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
+    .b-clave { background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text2); }
+    .b-nuevo { background: #EEEDFE; color: #534AB7; }
+    .concepto-def { padding: 12px 14px; font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .concepto-def strong { font-weight: 500; color: var(--text); }
+
+    /* RETENER */
+    .retener-list { display: flex; flex-direction: column; gap: 6px; }
+    .retener-item { display: flex; gap: 12px; align-items: flex-start; padding: 11px 14px; border-radius: var(--radius); border: 0.5px solid var(--border); }
+    .retener-num { font-size: 12px; font-weight: 500; color: var(--luna); min-width: 20px; padding-top: 2px; }
+    .retener-texto { font-size: 13px; color: var(--text); line-height: 1.6; }
+    .retener-texto span { font-weight: 500; }
+
+    .pill { display: inline-block; font-size: 11px; font-weight: 500; padding: 1px 7px; border-radius: 20px; margin-right: 3px; }
+    .p-rojo { background: var(--aries-bg); color: var(--aries); }
+    .p-azul { background: var(--luna-bg); color: var(--luna); }
+    .p-verde { background: var(--verde-bg); color: var(--verde); }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div class="curso-badge">Curso 4 · C16</div>
+      <div class="tipo-badge">Teoría + Práctica</div>
+    </div>
+    <div class="titulo">Luna nueva en Piscis · Cómo leer una lunación</div>
+    <div class="meta">18 de marzo de 2026 &nbsp;·&nbsp; Lunaciones · Mercurio ℞ · Protocolo de lectura · Grieta cósmica · Semicuadratura</div>
+  </div>
+
+  <!-- LENTE -->
+  <div class="section-label">Lente de lectura</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">Las lunaciones como práctica habitual — el clima de cada 28 días</div>
+      <div class="lente-subtitulo">Luna nueva y luna llena cada 15 días · mirar el grado, el signo, la casa y los aspectos</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">Las lunaciones sirven para familiarizarnos con la astrología en el día a día — leer el clima del momento, no hacer predicciones</div>
+      <div class="lente-item">La luna nueva siembra una semilla · la luna llena la refleja · el cuarto creciente y menguante marcan el proceso</div>
+      <div class="lente-item">En <strong>tiempo universal</strong> (meridiano de Greenwich) la carta es para todo el planeta. Cada persona la personalizará poniéndola bajo su ascendente</div>
+      <div class="lente-item">Lo que cambia de lunación a lunación son los planetas rápidos (Sol, Luna, Mercurio, Venus, Marte). Los lentos prácticamente no se mueven</div>
+    </div>
+    <div class="lente-footer"><strong>Cómo practicar:</strong> sacar la carta de la luna nueva, hacer la lectura, y a los 28 días comparar con lo que ocurrió en ese período. Seguir el ciclo: luna nueva → cuarto creciente → luna llena → cuarto menguante → siguiente luna nueva.</div>
+  </div>
+
+  <!-- MERCURIO EN PISCIS RETRÓGRADO -->
+  <div class="section-label">Mercurio en Piscis retrógrado — vivencia en tiempo real</div>
+  <div class="merc-bloque">
+    <div class="merc-header">
+      <div class="merc-titulo">☿ Mercurio en Piscis retrógrado (26 feb → 20 mar)</div>
+      <div class="merc-sub">En exilio en Piscis · dificultad para dar forma al pensamiento en palabra</div>
+    </div>
+    <div class="merc-body">
+      <div class="merc-fila"><div class="merc-key">Por qué es difícil</div><div class="merc-val">Mercurio rige Virgo — en Piscis está en exilio. Está acostumbrado a concretar, estructurar, nombrar. En Piscis prefiere el silencio, la ensoñación, el mundo interior. <strong>Dar forma en palabras a lo que se piensa requiere esfuerzo extra.</strong></div></div>
+      <div class="merc-fila"><div class="merc-key">Manifestaciones reales</div><div class="merc-val">Malentendidos en cadena (el médico dice A, luego resulta ser B, nadie se coordinó). Perder cosas (llaves dentro, móvil extraviado). Pereza mental — no encontrar palabras para explicar algo, aunque haya mucho que contar. Nebulosa mental.</div></div>
+      <div class="merc-fila"><div class="merc-key">El retrógrado</div><div class="merc-val">Amplifica todo lo anterior. Agrega: mayor emocionalidad al comunicar, tendencia a idealizar lo que se dice o piensa. Si hay una carga emocional no procesada, aparece al intentar hablar — el bloqueo en la comunicación es casi siempre una carga emocional.</div></div>
+      <div class="merc-fila"><div class="merc-key">El consejo</div><div class="merc-val">Poner voluntad en <strong>elegir las palabras</strong> antes de hablar. Ir hacia adentro primero. Mercurio en Piscis necesita la conexión interna con el alma para poder comunicar — si se lanza a hablar sin ese paso previo, sale confuso o dramático.</div></div>
+      <div class="merc-fila"><div class="merc-key">Cuándo termina</div><div class="merc-val">Se pone estacionario el día 19 (pausa) y directo el 20 de marzo. Sale de Piscis el 16 de abril. Hasta entonces: sigue siendo Piscis, pero sin el retrógrado el flujo mejora notablemente.</div></div>
+    </div>
+    <div class="merc-footer">El día estacionario (19 mar) es el momento de transición — como cuando un planeta hace así y cambia de dirección. Se siente como un paréntesis, un parar antes de retomar.</div>
+  </div>
+
+  <!-- PROTOCOLO DE LECTURA DE UNA LUNACIÓN -->
+  <div class="section-label">Protocolo — cómo leer una lunación</div>
+  <div class="protocolo-bloque">
+    <div class="protocolo-header">
+      <div class="protocolo-titulo">Pasos para leer una luna nueva o llena</div>
+      <div class="protocolo-sub">Siempre empezar por la luna · luego lo colateral · recordar que todo dura 28 días</div>
+    </div>
+    <div class="protocolo-pasos">
+      <div class="protocolo-paso"><div class="protocolo-num">1</div><div class="protocolo-texto"><strong>Grado exacto:</strong> ¿en qué grado está la luna? El grado habla de cuánto queda del signo y de cuán cerca está el decanato siguiente.</div></div>
+      <div class="protocolo-paso"><div class="protocolo-num">2</div><div class="protocolo-texto"><strong>Signo y decanato:</strong> ¿qué signo es? ¿qué decanato? El decanato añade el matiz del segundo signo. Ej: grado 28 Piscis = decanato de Piscis (último) — Piscis piscis.</div></div>
+      <div class="protocolo-paso"><div class="protocolo-num">3</div><div class="protocolo-texto"><strong>Casa en tiempo universal:</strong> en la carta mundial (meridiano de Greenwich) ¿en qué casa cae? Eso dice el área temática global. Cada persona la trasladará a su propia carta.</div></div>
+      <div class="protocolo-paso"><div class="protocolo-num">4</div><div class="protocolo-texto"><strong>¿Qué se siembra?</strong> Combinar signo + decanato + casa para identificar la semilla. ¿Qué se está iniciando? ¿Qué se está cerrando? (En una luna nueva en grado final: inicio de un final.)</div></div>
+      <div class="protocolo-paso"><div class="protocolo-num">5</div><div class="protocolo-texto"><strong>Regente de la casa:</strong> ¿qué planeta rige esa casa? ¿Dónde está? ¿Cómo está aspectado? El regente amplía y especifica el mensaje. Puede confirmar o añadir un matiz clave.</div></div>
+      <div class="protocolo-paso"><div class="protocolo-num">6</div><div class="protocolo-texto"><strong>Aspectos que salen de la luna nueva:</strong> solo los que parten del grado exacto de la luna. Todo lo demás es el escenario — forma parte del clima pero no del núcleo del mensaje.</div></div>
+      <div class="protocolo-paso"><div class="protocolo-num">7</div><div class="protocolo-texto"><strong>Aspectos al ascendente y al medio cielo:</strong> si hay planetas que aspectan al ascendente o al MC de la carta mundial, eso habla del propósito del ciclo y de los asuntos de justicia, vocación y dirección.</div></div>
+      <div class="protocolo-paso"><div class="protocolo-num">8</div><div class="protocolo-texto"><strong>Lo colateral:</strong> el resto de planetas en el cielo forman el escenario de esos 28 días. Contexto, no protagonismo.</div></div>
+    </div>
+    <div class="protocolo-footer"><strong>Regla de oro:</strong> cuando empiezas a decir lo que estás viendo, la narrativa empieza a salir. No hay que tener un ABC fijo — hay que atreverse a entrar, equivocarse y seguir. Cada frase que haces te lleva a la siguiente.</div>
+  </div>
+
+  <!-- LUNA NUEVA EN PISCIS GRADO 28 -->
+  <div class="section-label">Ejemplo — luna nueva en Piscis grado 28 (19 marzo 2026)</div>
+  <div class="lunacion-bloque">
+    <div class="lunacion-header">
+      <div class="lunacion-icono">🌑</div>
+      <div>
+        <div class="lunacion-titulo">Luna nueva en Piscis grado 28 · decanato Piscis</div>
+        <div class="lunacion-sub">Casa 3 en tiempo universal · Mercurio retrógrado como regente · Urano en Tauro en sextil</div>
+      </div>
+    </div>
+    <div class="lunacion-body">
+      <div class="lunacion-fila"><div class="lunacion-key">El grado</div><div class="lunacion-val">Grado 28 = antepenúltimo grado de Piscis. <strong>Inicio de un final</strong> — estamos en el umbral. Una luna nueva normalmente inaugura, pero aquí inaugura el cierre de un ciclo.</div></div>
+      <div class="lunacion-fila"><div class="lunacion-key">Decanato</div><div class="lunacion-val">Grado 28 = tercer decanato = <strong>Piscis-Piscis</strong>. Doble Piscis: máxima expresión de la sensibilidad, la imaginación, la comprensión emocional, el amor incondicional. También máxima sombra: victimismo, sacrificio.</div></div>
+      <div class="lunacion-fila"><div class="lunacion-key">¿Qué se siembra?</div><div class="lunacion-val">Una comprensión emocional profunda antes de iniciar algo nuevo. Semilla de sensibilidad, intuición, espiritualidad, empatía. Salir del victimismo o el sacrificio para poder iniciar desde un lugar más limpio.</div></div>
+      <div class="lunacion-fila"><div class="lunacion-key">Casa 3 (universal)</div><div class="lunacion-val">La mente y la comunicación. La comprensión que se siembra viene a través del pensamiento — entender algo a nivel mental para poder cerrar. La comprensión, de hecho, <em>viene</em> de la mente (no solo del corazón).</div></div>
+      <div class="lunacion-fila"><div class="lunacion-key">Regente: Mercurio</div><div class="lunacion-val">Mercurio, regente de la casa 3, está <strong>retrógrado en Piscis</strong> también. Confirma: cuesta dar forma en palabras a lo que se está procesando emocionalmente. Nebulosa mental. Esperar al día 20 para que empiece a aclararse.</div></div>
+      <div class="lunacion-fila"><div class="lunacion-key"><span class="pill p-azul">Sextil</span> Urano (Tauro)</div><div class="lunacion-val">La comprensión emocional se <strong>concretará</strong> (el sextil materializa). Para lograrlo: cambiar la forma en que nos relacionamos con nuestra propia emocionalidad. Dejar de identificarse con la emoción como verdad absoluta. Valorar la emoción de otra manera — Tauro.</div></div>
+      <div class="lunacion-fila"><div class="lunacion-key">Neptuno + Saturno</div><div class="lunacion-val">Neptuno (regente de Piscis) hace conjunción con la luna → el deshacimiento es parte de la semilla. Saturno la sostiene durante el proceso. La conjunción entra dentro de la lunación.</div></div>
+    </div>
+    <div class="lunacion-footer"><strong>Síntesis:</strong> esta luna nueva siembra comprensión emocional — el tipo de comprensión que viene de haber integrado la emocionalidad de Piscis (sensibilidad, amor incondicional, salir del victimismo) para poder dar inicio a la nueva versión del individuo que llega con Aries. Es el último cierre antes de la gran apertura.</div>
+  </div>
+
+  <!-- LA GRIETA CÓSMICA -->
+  <div class="section-label">La grieta cósmica Piscis–Aries</div>
+  <div class="grieta-bloque">
+    <div class="grieta-row">
+      <div class="grieta-col piscis">
+        <div class="grieta-signo">♓</div>
+        <div class="grieta-nombre">Piscis · El final</div>
+        <div class="grieta-desc">Último signo del zodiaco. Comprensión emocional, disolución, integración. Sin este cierre no puede haber un inicio limpio.</div>
+      </div>
+      <div class="grieta-col aries">
+        <div class="grieta-signo">♈</div>
+        <div class="grieta-nombre">Aries · El inicio</div>
+        <div class="grieta-desc">Primer signo del zodiaco. Nueva versión del individuo. Sin el cierre de Piscis el inicio de Aries arrastra todo lo que no se entendió.</div>
+      </div>
+    </div>
+    <div class="grieta-footer"><strong>La grieta cósmica</strong> es el espacio entre Piscis y Aries — la única frontera del zodiaco sin signo entre medias. Una finalización y un inicio absolutos. Esta luna nueva en grado 28 de Piscis está exactamente en ese umbral: <em>inicio de un final para que pueda nacer un inicio</em>. Coincide además con el equinoccio de primavera.</div>
+  </div>
+
+  <!-- ASPECTOS AL ASC Y MC -->
+  <div class="section-label">Aspectos al ascendente y al medio cielo</div>
+  <div class="asc-bloque">
+    <div class="asc-header">Cuando un planeta aspeta al ascendente o al medio cielo de la carta mundial</div>
+    <div class="asc-fila"><div class="asc-key">Ascendente</div><div class="asc-val">Es el propósito del ciclo — la energía de salida, la intención. En la carta mundial en Sagitario: propósito de buscar una verdad propia. El decanato de Tauro en Sagitario puede derivar en aferrarse a un sistema de creencias (fanatismo) o bien valorar la propia verdad con discernimiento.</div></div>
+    <div class="asc-fila"><div class="asc-key">Medio cielo</div><div class="asc-val">Es el destino, la vocación, la dirección. Lo más visible de la carta. Aspectos al MC pueden boicotear o favorecer el destino colectivo. En la carta mundial en Libra (decanato Escorpio): equilibrio de los recursos compartidos, deuda, acuerdos sobre valoración económica. El MC es donde se dirimen las leyes y los grandes acuerdos.</div></div>
+    <div class="asc-fila"><div class="asc-key">T cuadrada</div><div class="asc-val">Cuando hay un planeta que forma cuadratura tanto al MC como a su opuesto (IC), se crea una T cuadrada. Esto intensifica el conflicto y la presión para resolverlo. En esta lunación: Júpiter en Cáncer cuadrado al MC en Libra = las leyes del sistema en conflicto con los intereses personales del pueblo.</div></div>
+  </div>
+
+  <!-- CONCEPTO: SEMICUADRATURA -->
+  <div class="section-label">Concepto clave — la semicuadratura</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">Semicuadratura (45°) y sesquicuadratura (135°) — aspectos menores</span><span class="badge b-nuevo">nuevo</span></div>
+    <div class="concepto-def">La <strong>semicuadratura</strong> es la mitad de una cuadratura (45°). Contiene la simiente de la energía de la cuadratura — la reacción, la creencia, el efecto. Hay quien los usa, hay quien no, pero cuando aparecen pueden "ponerte los pelos de gallina" por su potencia simbólica.<br><br><strong>Creciente:</strong> el planeta más rápido se aleja del más lento después de una conjunción. Estás <em>sembrando karma</em> — la acción que tendrá consecuencias.<br><strong>Menguante:</strong> el planeta más rápido se acerca al más lento camino hacia la siguiente conjunción. Estás <em>pagando o resolviendo karma</em> — las consecuencias de acciones anteriores.<br><br>Para saber cuál es creciente: imagina la conjunción previa. El planeta más rápido es el que se ha alejado. Si va por delante = creciente. Si va cerrando el ángulo = menguante.</div>
+  </div>
+
+  <!-- PUNTOS A RETENER -->
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item"><div class="retener-num">1</div><div class="retener-texto"><span>Mercurio en Piscis retrógrado = nebulosa mental y dificultad para dar forma en palabras.</span> No es incapacidad — es que Mercurio prefiere el mundo interior de Piscis. Ir hacia adentro primero, luego hablar.</div></div>
+    <div class="retener-item"><div class="retener-num">2</div><div class="retener-texto"><span>Protocolo de lunación: grado → decanato → signo → casa → regente → aspectos de la luna → aspectos al ASC y MC → colateral.</span> La narrativa sale al empezar a hablar, no antes.</div></div>
+    <div class="retener-item"><div class="retener-num">3</div><div class="retener-texto"><span>La grieta cósmica entre Piscis y Aries es el único umbral absoluto del zodiaco.</span> Sin el cierre emocional de Piscis no puede nacer la nueva versión del individuo en Aries. Luna nueva en grado 28 = inicio de un final.</div></div>
+    <div class="retener-item"><div class="retener-num">4</div><div class="retener-texto"><span>Aspectos al ascendente = propósito del ciclo. Aspectos al medio cielo = destino, vocación, leyes, grandes acuerdos.</span> Son las puertas de entrada del ciclo de 28 días a los temas más importantes.</div></div>
+    <div class="retener-item"><div class="retener-num">5</div><div class="retener-texto"><span>Semicuadratura creciente = siembras karma · menguante = pagas karma.</span> Aspecto menor pero potente. Simiente de la energía de la cuadratura.</div></div>
+  </div>
+
+</div>
+</body>
+</html>
