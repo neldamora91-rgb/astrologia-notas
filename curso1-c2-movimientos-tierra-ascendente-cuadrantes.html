@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C2 · Movimientos de la Tierra · Ascendente · Cuadrantes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1C1917; --ink2: #44403C; --ink3: #78716C;
+      --paper: #FAF8F5; --paper2: #F2EFE9; --paper3: #E8E2D8;
+      --gold: #92712A; --gold-light: #C9A84C; --gold-bg: #FDF6E3;
+      --terra: #8B3A2A; --terra-bg: #FBF0ED; --terra-border: #DBA090;
+      --sage: #4A6741; --sage-bg: #EFF4EE; --sage-border: #A8C2A5;
+      --sky: #2D5478; --sky-bg: #EBF2F8; --sky-border: #A0BFDA;
+      --amber: #8B5E0A; --amber-bg: #FDF3E0; --amber-border: #D4A030;
+      --radius: 10px; --radius-lg: 16px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); line-height: 1.6; padding: 2rem 1rem 4rem; }
+    .page { max-width: 760px; margin: 0 auto; }
+
+    .header { border-bottom: 1px solid var(--paper3); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+    .header-top { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+    .badge { font-size: 10px; font-weight: 500; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.07em; }
+    .b-curso { background: var(--gold-bg); color: var(--gold); border: 0.5px solid #D4A843; }
+    .b-tipo  { background: var(--paper2); color: var(--ink3); border: 0.5px solid var(--paper3); }
+    .titulo { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; line-height: 1.2; margin-bottom: 6px; }
+    .meta { font-size: 12px; color: var(--ink3); }
+    .section-label { font-size: 10px; font-weight: 500; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2rem; margin-bottom: 10px; }
+
+    /* MOVIMIENTOS */
+    .mov-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media(max-width:520px){ .mov-grid { grid-template-columns: 1fr; } }
+    .mov-card { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid; }
+    .mov-header { padding: 10px 14px; }
+    .mov-titulo { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+    .mov-sub { font-size: 11px; }
+    .mov-body { padding: 10px 14px; border-top: 1px solid; }
+    .mov-body p { font-size: 12px; color: var(--ink2); line-height: 1.6; margin-bottom: 5px; }
+    .mov-body p:last-child { margin-bottom: 0; }
+    .mov-body strong { font-weight: 500; color: var(--ink); }
+
+    .m-rot { border-color: var(--terra-border); }
+    .m-rot .mov-header { background: var(--terra-bg); }
+    .m-rot .mov-titulo { color: var(--terra); }
+    .m-rot .mov-sub { color: #B05040; }
+    .m-rot .mov-body { border-color: var(--terra-border); }
+
+    .m-tras { border-color: var(--sky-border); }
+    .m-tras .mov-header { background: var(--sky-bg); }
+    .m-tras .mov-titulo { color: var(--sky); }
+    .m-tras .mov-sub { color: #3A6080; }
+    .m-tras .mov-body { border-color: var(--sky-border); }
+
+    .m-prec { border-color: var(--amber-border); }
+    .m-prec .mov-header { background: var(--amber-bg); }
+    .m-prec .mov-titulo { color: var(--amber); }
+    .m-prec .mov-sub { color: #A07020; }
+    .m-prec .mov-body { border-color: var(--amber-border); }
+
+    .m-nut { border-color: var(--sage-border); }
+    .m-nut .mov-header { background: var(--sage-bg); }
+    .m-nut .mov-titulo { color: var(--sage); }
+    .m-nut .mov-sub { color: #5A8050; }
+    .m-nut .mov-body { border-color: var(--sage-border); }
+
+    /* ASC SECTION */
+    .asc-wrap { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+    .asc-svg { flex: 0 0 220px; background: white; border: 1px solid var(--paper3); border-radius: var(--radius-lg); padding: 12px; }
+    .asc-texto { flex: 1; min-width: 200px; }
+
+    .info-bloque { border: 1px solid var(--paper3); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .info-row { display: grid; grid-template-columns: 110px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--paper3); align-items: start; }
+    .info-row:last-child { border-bottom: none; }
+    .info-row:nth-child(even) { background: var(--paper2); }
+    .info-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink3); padding-top: 2px; }
+    .info-val { font-size: 12px; color: var(--ink2); line-height: 1.5; }
+    .info-val strong { font-weight: 500; color: var(--ink); }
+
+    /* 4 EJES CARDINALES */
+    .ejes-bloque { border: 1px solid var(--paper3); border-radius: var(--radius-lg); overflow: hidden; }
+    .ejes-header { padding: 8px 14px; background: var(--paper2); border-bottom: 0.5px solid var(--paper3); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink3); }
+    .ejes-grid { display: grid; grid-template-columns: 1fr 1fr; }
+    .eje-cell { padding: 12px 14px; border-bottom: 0.5px solid var(--paper3); border-right: 0.5px solid var(--paper3); }
+    .eje-cell:nth-child(2n) { border-right: none; }
+    .eje-cell:nth-last-child(-n+2) { border-bottom: none; }
+    .eje-punto { font-size: 12px; font-weight: 600; margin-bottom: 3px; }
+    .eje-signo { font-size: 11px; color: var(--ink3); margin-bottom: 5px; }
+    .eje-desc { font-size: 11.5px; color: var(--ink2); line-height: 1.5; }
+    .eje-desc strong { font-weight: 500; color: var(--ink); }
+    .e-asc .eje-punto { color: var(--gold); }
+    .e-dsc .eje-punto { color: var(--sky); }
+    .e-mc .eje-punto { color: var(--sage); }
+    .e-ic .eje-punto { color: var(--terra); }
+
+    /* CUADRANTES TABLA */
+    .cuad-container { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; margin-top: 10px; }
+    .cuad-svg-box { flex: 0 0 240px; background: white; border: 1px solid var(--paper3); border-radius: var(--radius-lg); padding: 12px; }
+    .cuad-tabla { flex: 1; min-width: 240px; }
+
+    .cuad-card { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid; margin-bottom: 8px; }
+    .cuad-header { padding: 10px 14px; display: flex; align-items: center; gap: 10px; }
+    .cuad-num { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; flex-shrink: 0; line-height: 1; }
+    .cuad-info { flex: 1; }
+    .cuad-nombre { font-size: 13px; font-weight: 600; margin-bottom: 1px; }
+    .cuad-zona { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .cuad-body { padding: 10px 14px; border-top: 1px solid; }
+    .cuad-signos { font-size: 12px; font-weight: 500; margin-bottom: 5px; }
+    .cuad-desc { font-size: 12px; color: var(--ink2); line-height: 1.6; }
+    .cuad-desc strong { font-weight: 500; color: var(--ink); }
+
+    .q1 { border-color: var(--terra-border); }
+    .q1 .cuad-header { background: var(--terra-bg); }
+    .q1 .cuad-num { color: var(--terra); }
+    .q1 .cuad-nombre { color: var(--terra); }
+    .q1 .cuad-zona { color: #B05040; }
+    .q1 .cuad-body { border-color: var(--terra-border); }
+    .q1 .cuad-signos { color: var(--terra); }
+
+    .q2 { border-color: var(--sage-border); }
+    .q2 .cuad-header { background: var(--sage-bg); }
+    .q2 .cuad-num { color: var(--sage); }
+    .q2 .cuad-nombre { color: var(--sage); }
+    .q2 .cuad-zona { color: #5A8050; }
+    .q2 .cuad-body { border-color: var(--sage-border); }
+    .q2 .cuad-signos { color: var(--sage); }
+
+    .q3 { border-color: var(--amber-border); }
+    .q3 .cuad-header { background: var(--amber-bg); }
+    .q3 .cuad-num { color: var(--amber); }
+    .q3 .cuad-nombre { color: var(--amber); }
+    .q3 .cuad-zona { color: #A07020; }
+    .q3 .cuad-body { border-color: var(--amber-border); }
+    .q3 .cuad-signos { color: var(--amber); }
+
+    .q4 { border-color: var(--sky-border); }
+    .q4 .cuad-header { background: var(--sky-bg); }
+    .q4 .cuad-num { color: var(--sky); }
+    .q4 .cuad-nombre { color: var(--sky); }
+    .q4 .cuad-zona { color: #3A6080; }
+    .q4 .cuad-body { border-color: var(--sky-border); }
+    .q4 .cuad-signos { color: var(--sky); }
+
+    /* VACÍO ATRACTOR */
+    .vacio-bloque { background: var(--paper2); border: 1px solid var(--paper3); border-radius: var(--radius-lg); padding: 14px 16px; font-size: 12.5px; color: var(--ink2); line-height: 1.7; }
+    .vacio-bloque strong { font-weight: 500; color: var(--ink); }
+
+    /* ASCENDENTE COMO PROPÓSITO */
+    .prop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media(max-width:520px){ .prop-grid { grid-template-columns: 1fr; } }
+    .prop-card { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--paper3); }
+    .prop-header { padding: 9px 14px; background: var(--paper2); border-bottom: 0.5px solid var(--paper3); display: flex; gap: 8px; align-items: center; }
+    .prop-asc { font-size: 13px; font-weight: 600; }
+    .prop-quien { font-size: 11px; color: var(--ink3); }
+    .prop-body { padding: 10px 14px; font-size: 12px; color: var(--ink2); line-height: 1.6; }
+    .prop-body strong { font-weight: 500; color: var(--ink); }
+
+    /* RETENER */
+    .retener-list { display: flex; flex-direction: column; gap: 6px; }
+    .retener-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: var(--radius); border: 1px solid var(--paper3); background: var(--paper); }
+    .retener-num { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: var(--gold-light); min-width: 24px; line-height: 1.4; }
+    .retener-texto { font-size: 13px; color: var(--ink); line-height: 1.6; }
+    .retener-texto span { font-weight: 500; }
+
+    .sep { border: none; border-top: 1px dashed var(--paper3); margin: 2rem 0; }
+
+    /* Colores elemento en signos */
+    .s-fuego  { color: var(--terra); }
+    .s-tierra { color: var(--sage); }
+    .s-aire   { color: var(--amber); }
+    .s-agua   { color: var(--sky); }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-top">
+      <span class="badge b-curso">Curso 1 · C2</span>
+      <span class="badge b-tipo">Fundamentos · Práctica</span>
+    </div>
+    <div class="titulo">El ascendente · Los cuatro puntos cardinales · Cuadrantes con signos</div>
+    <div class="meta">13 de marzo de 2024 &nbsp;·&nbsp; Ejercicio en carta propia · ASC·DSC·MC·IC · Cuadrantes con sus signos correspondientes</div>
+  </div>
+
+  <!-- LOS 4 PUNTOS CARDINALES EN LA CARTA -->
+  <div class="section-label">Los cuatro puntos cardinales — ASC · DSC · MC · IC</div>
+  <div class="asc-wrap">
+
+    <div class="asc-svg">
+      <svg viewBox="0 0 220 220" width="196" height="196" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="110" cy="110" r="100" fill="#FAF8F5" stroke="#E8E2D8" stroke-width="1.5"/>
+        <circle cx="110" cy="110" r="65" fill="white" stroke="#E8E2D8" stroke-width="0.8"/>
+
+        <!-- Cuadrantes coloreados -->
+        <!-- Q1: abajo-izquierda (yo inconsciente) — terra -->
+        <path d="M 110 110 L 10 110 A 100 100 0 0 0 110 210 Z" fill="#FBF0ED" opacity="0.6"/>
+        <!-- Q2: abajo-derecha (tú inconsciente) — sage -->
+        <path d="M 110 110 L 110 210 A 100 100 0 0 0 210 110 Z" fill="#EFF4EE" opacity="0.6"/>
+        <!-- Q3: arriba-derecha (tú consciente) — amber -->
+        <path d="M 110 110 L 210 110 A 100 100 0 0 0 110 10 Z" fill="#FDF3E0" opacity="0.6"/>
+        <!-- Q4: arriba-izquierda (yo consciente) — sky -->
+        <path d="M 110 110 L 110 10 A 100 100 0 0 0 10 110 Z" fill="#EBF2F8" opacity="0.6"/>
+
+        <!-- Círculo interior -->
+        <circle cx="110" cy="110" r="65" fill="none" stroke="#E8E2D8" stroke-width="0.8"/>
+
+        <!-- Eje horizontal — gold (ASC-DSC) -->
+        <line x1="10" y1="110" x2="210" y2="110" stroke="#92712A" stroke-width="2"/>
+        <!-- Eje vertical — gris (MC-IC) -->
+        <line x1="110" y1="10" x2="110" y2="210" stroke="#78716C" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+        <!-- Labels puntos cardinales -->
+        <text x="16" y="105" font-size="9" fill="#92712A" font-family="sans-serif" font-weight="700">ASC</text>
+        <text x="181" y="105" font-size="9" fill="#2D5478" font-family="sans-serif" font-weight="700">DSC</text>
+        <text x="102" y="22" font-size="8" fill="#78716C" font-family="sans-serif" font-weight="600">MC</text>
+        <text x="103" y="215" font-size="8" fill="#78716C" font-family="sans-serif" font-weight="600">IC</text>
+
+        <!-- Puntos cardinales geográficos -->
+        <text x="14" y="135" font-size="7" fill="#8B3A2A" font-family="sans-serif">E</text>
+        <text x="196" y="135" font-size="7" fill="#8B5E0A" font-family="sans-serif">O</text>
+        <text x="103" y="42" font-size="7" fill="#4A6741" font-family="sans-serif">S</text>
+        <text x="103" y="195" font-size="7" fill="#2D5478" font-family="sans-serif">N</text>
+
+        <!-- Etiquetas cuadrantes -->
+        <text x="55" y="168" text-anchor="middle" font-size="7.5" fill="#8B3A2A" font-family="sans-serif">C1 impulso</text>
+        <text x="166" y="168" text-anchor="middle" font-size="7.5" fill="#4A6741" font-family="sans-serif">C2 instinto</text>
+        <text x="166" y="68" text-anchor="middle" font-size="7.5" fill="#8B5E0A" font-family="sans-serif">C3 pensamiento</text>
+        <text x="55" y="68" text-anchor="middle" font-size="7.5" fill="#2D5478" font-family="sans-serif">C4 ser</text>
+
+        <!-- Oriente/Occidente -->
+        <text x="110" y="108" text-anchor="middle" font-size="6.5" fill="#78716C" font-family="sans-serif">CONSCIENTE · día</text>
+        <text x="110" y="120" text-anchor="middle" font-size="6.5" fill="#78716C" font-family="sans-serif">INCONSCIENTE · noche</text>
+
+        <!-- Centro -->
+        <circle cx="110" cy="110" r="3" fill="#92712A"/>
+      </svg>
+    </div>
+
+    <div class="asc-texto">
+      <div class="ejes-bloque">
+        <div class="ejes-header">Los 4 puntos angulares de la carta</div>
+        <div class="ejes-grid">
+          <div class="eje-cell e-asc">
+            <div class="eje-punto">ASC — Ascendente</div>
+            <div class="eje-signo">Este · Oriente · "nacer"</div>
+            <div class="eje-desc">El signo que <strong>asciende por el horizonte</strong> en el momento del nacimiento. Cambia cada 2 horas. Requiere la hora exacta. Es el propósito del alma en esta encarnación. Lo que la persona viene a <strong>recordar y desarrollar</strong>.</div>
+          </div>
+          <div class="eje-cell e-dsc">
+            <div class="eje-punto">DSC — Descendente</div>
+            <div class="eje-signo">Oeste · Occidente · "morir"</div>
+            <div class="eje-desc">El opuesto exacto al ascendente. El punto de la puesta de sol — la <strong>muerte de la conciencia del día</strong>. Tiene que ver con el tipo de relación y el otro que atraemos. Siempre el signo opuesto al ASC.</div>
+          </div>
+          <div class="eje-cell e-mc">
+            <div class="eje-punto">MC — Medio Cielo</div>
+            <div class="eje-signo">Sur · Mediodía · máximo del sol</div>
+            <div class="eje-desc">El punto más alto del sol en su trayectoria diaria. Marca el <strong>sur</strong> en la carta. Tiene que ver con la vocación, el destino, la profesión, el destino público. Lo más visible de ti al mundo.</div>
+          </div>
+          <div class="eje-cell e-ic">
+            <div class="eje-punto">IC — Imum Coeli</div>
+            <div class="eje-signo">Norte · "bajo cielo"</div>
+            <div class="eje-desc">El opuesto al MC. Lo más privado, las raíces, el hogar, la familia de origen, los fundamentos psicológicos. Lo que <strong>está en la oscuridad</strong> — la parte más inconsciente de la identidad.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EL ASCENDENTE — CÓMO NACE -->
+  <div class="section-label">El ascendente — cómo se determina y qué significa</div>
+  <div class="info-bloque">
+    <div class="info-row"><div class="info-key">Qué es</div><div class="info-val">El signo del zodiaco que estaba cruzando el horizonte este (el Ecuador Celeste) en el instante y lugar del nacimiento. Es literalmente el signo que <strong>asciende</strong> en ese momento.</div></div>
+    <div class="info-row"><div class="info-key">Por qué cambia</div><div class="info-val">La rueda zodiacal gira continuamente. El ascendente cambia de signo <strong>cada ~2 horas</strong>. En 24 horas pasan los 12 signos por el ascendente.</div></div>
+    <div class="info-row"><div class="info-key">Por qué importa la hora</div><div class="info-val">Sin la hora, no podemos saber qué signo estaba ascendiendo. 4 minutos de diferencia pueden cambiar el grado. Nacer a las 18:54 es diferente a las 19:05. Si no hay hora, no hay ascendente fiable.</div></div>
+    <div class="info-row"><div class="info-key">Qué representa</div><div class="info-val">Es <strong>el propósito del alma</strong> en esta encarnación. No es algo que debemos aprender desde cero, sino algo que ya sabemos a nivel de alma y que vamos <em>recordando</em> a través de las experiencias de vida. Como conducir: integramos los mecanismos sin pensar en cada uno.</div></div>
+    <div class="info-row"><div class="info-key">Sol y ascendente</div><div class="info-val">Si el sol está abajo (en la zona nocturna) es porque naciste cuando ya era de noche. Si está arriba, naciste durante el día. El ascendente marca el Horizonte — el sol sube por el este, llega al mediodía en el MC, baja y se pone en el DSC.</div></div>
+  </div>
+
+  <!-- ASCENDENTES DE CLASE -->
+  <div class="section-label">Ascendentes en práctica — los dos signos de tierra de la clase</div>
+  <div class="prop-grid">
+    <div class="prop-card">
+      <div class="prop-header">
+        <div>
+          <div class="prop-asc">♉ ASC Tauro — Nelda</div>
+          <div class="prop-quien">Nacida a las 18:54 · Ya era noche</div>
+        </div>
+      </div>
+      <div class="prop-body">El alma viene a explorar <strong>cómo generar recursos y valorar las cosas</strong>. Tauro es la materia prima — el primer signo de tierra. Saber qué recursos tiene a disposición, cómo priorizarlos y cómo generar abundancia (material y espiritual). La sensorialidad, la belleza y el valor son el campo de exploración del alma.</div>
+    </div>
+    <div class="prop-card">
+      <div class="prop-header">
+        <div>
+          <div class="prop-asc">♑ ASC Capricornio — Jimena</div>
+          <div class="prop-quien">Nacida a las 21:15 · Noche avanzada</div>
+        </div>
+      </div>
+      <div class="prop-body">El alma viene a explorar el <strong>proceso completo de materialización</strong>: de la idea a la manifestación concreta. Capricornio es el tercer signo de tierra — el que completa el proceso (Tauro = materia prima · Virgo = elaboración · Capricornio = el producto terminado). Conoce todo el proceso y por eso dirige.</div>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- LOS 4 CUADRANTES CON SIGNOS -->
+  <div class="section-label">Los cuatro cuadrantes — con sus signos correspondientes</div>
+  <p style="font-size:12.5px; color:var(--ink2); line-height:1.7; margin-bottom:14px;">Los 12 signos del zodiaco corresponden a los cuatro cuadrantes en grupos de tres, siguiendo el orden Aries→Piscis. Cada cuadrante tiene una energía (impulso, instinto, pensamiento, ser) que también resuena en los signos que lo habitan.</p>
+
+  <div class="cuad-card q1">
+    <div class="cuad-header">
+      <div class="cuad-num">1</div>
+      <div class="cuad-info">
+        <div class="cuad-nombre">Impulso</div>
+        <div class="cuad-zona">Yo inconsciente · abajo-izquierda · Este</div>
+      </div>
+    </div>
+    <div class="cuad-body">
+      <div class="cuad-signos"><span class="s-fuego">♈ Aries</span> · <span class="s-tierra">♉ Tauro</span> · <span class="s-aire">♊ Géminis</span></div>
+      <div class="cuad-desc">
+        <strong>Aries:</strong> el impulso de encarnar, de nacer — la primera identidad aparece.<br>
+        <strong>Tauro:</strong> el impulso de alimentarse, de sobrevivir — necesito recursos para existir.<br>
+        <strong>Géminis:</strong> el impulso de comunicarme — veo que hay un otro y quiero establecer contacto.<br><br>
+        El impulso es inconsciente porque <strong>no se decide</strong> — simplemente emerge. Es el primer movimiento de la vida.
+      </div>
+    </div>
+  </div>
+
+  <div class="cuad-card q2">
+    <div class="cuad-header">
+      <div class="cuad-num">2</div>
+      <div class="cuad-info">
+        <div class="cuad-nombre">Instinto</div>
+        <div class="cuad-zona">Tú inconsciente · abajo-derecha · Norte</div>
+      </div>
+    </div>
+    <div class="cuad-body">
+      <div class="cuad-signos"><span class="s-agua">♋ Cáncer</span> · <span class="s-fuego">♌ Leo</span> · <span class="s-tierra">♍ Virgo</span></div>
+      <div class="cuad-desc">
+        <strong>Cáncer:</strong> me relaciono con la familia — el árbol genealógico me condiciona, aprendo comportamientos emocionales y tradiciones sin elegirlos.<br>
+        <strong>Leo:</strong> "Yo soy" — me doy cuenta de quién soy y cómo me relaciono con el mundo. También los hijos.<br>
+        <strong>Virgo:</strong> me relaciono con el cuerpo (salud, hábitos) y el trabajo cotidiano.<br><br>
+        Es el tú inconsciente porque <strong>llego a este campo sin elegirlo</strong> — la familia, el cuerpo, el trabajo me suceden.
+      </div>
+    </div>
+  </div>
+
+  <div class="cuad-card q3">
+    <div class="cuad-header">
+      <div class="cuad-num">3</div>
+      <div class="cuad-info">
+        <div class="cuad-nombre">Pensamiento</div>
+        <div class="cuad-zona">Tú consciente · arriba-derecha · Oeste</div>
+      </div>
+    </div>
+    <div class="cuad-body">
+      <div class="cuad-signos"><span class="s-aire">♎ Libra</span> · <span class="s-agua">♏ Escorpio</span> · <span class="s-fuego">♐ Sagitario</span></div>
+      <div class="cuad-desc">
+        <strong>Libra:</strong> me vinculo, tomo decisiones, establezco acuerdos — relación consciente y equilibrada con el otro.<br>
+        <strong>Escorpio:</strong> me relaciono con los valores ajenos (dinero del otro, pareja), la intimidad, la sexualidad y el compromiso.<br>
+        <strong>Sagitario:</strong> me relaciono con el mundo a través de mi sistema de creencias, la filosofía, la ética y mi visión del mundo.<br><br>
+        Es el tú consciente porque <strong>decido relacionarme</strong> — el pensamiento participa en cada vínculo.
+      </div>
+    </div>
+  </div>
+
+  <div class="cuad-card q4">
+    <div class="cuad-header">
+      <div class="cuad-num">4</div>
+      <div class="cuad-info">
+        <div class="cuad-nombre">Ser</div>
+        <div class="cuad-zona">Yo consciente · arriba-izquierda · Sur</div>
+      </div>
+    </div>
+    <div class="cuad-body">
+      <div class="cuad-signos"><span class="s-tierra">♑ Capricornio</span> · <span class="s-aire">♒ Acuario</span> · <span class="s-agua">♓ Piscis</span></div>
+      <div class="cuad-desc">
+        <strong>Capricornio:</strong> madurez, responsabilidad con uno mismo — tomo las riendas de mi destino, me emancipo de todos los vínculos de apego.<br>
+        <strong>Acuario:</strong> comparto proyectos con otros desde mi yo maduro — participación consciente en el colectivo.<br>
+        <strong>Piscis:</strong> me disuelvo en la fuente — el yo personal se deshace para conectar de nuevo con el origen espiritual.<br><br>
+        Es el yo consciente más espiritual — <strong>ya no dependo del otro para definirme</strong>.
+      </div>
+    </div>
+  </div>
+
+  <!-- EL VACÍO ATRACTOR -->
+  <div class="section-label">Concepto: el vacío atractor</div>
+  <div class="vacio-bloque">
+    La zona de la carta que tiene <strong>menos planetas no es un hueco inerte</strong> — es un punto atractor. El hemisferio vacío "llama" al exterior para llenarse. Ejemplo: si tengo muchos planetas en el lado del tú (derecha) y pocos en el yo (izquierda), el mundo externo y las relaciones me atraen constantemente para aportarme información que luego integro en mi identidad. Si la concentración es al revés (muchos planetas en el yo), el mundo externo puede llegar a resultar recargante. Lo importante es que la distribución no determina si eres "más social" o "más antisocial" — eso depende también de los planetas específicos y sus signos.
+  </div>
+
+  <hr class="sep">
+
+  <!-- PUNTOS A RETENER -->
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item">
+      <div class="retener-num">1</div>
+      <div class="retener-texto"><span>Los 4 movimientos de la Tierra — solo dos son prácticos en astrología.</span> Rotación (da el día/noche y el eje yo/tú) y Traslación (da los 12 signos y las estaciones). La Precesión da las eras astrológicas (~25.920 años · ~2.160 por era) y va en sentido inverso al zodiaco: de Piscis a Acuario.</div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">2</div>
+      <div class="retener-texto"><span>Los 4 puntos cardinales de la carta: ASC · DSC · MC · IC.</span> ASC = este, nacer, propósito del alma. DSC = oeste, morir simbólico, el tipo de otro que atraemos. MC = sur, mediodía, vocación y destino público. IC = norte, raíces, lo más privado.</div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">3</div>
+      <div class="retener-texto"><span>El ascendente cambia cada ~2 horas → la hora de nacimiento es imprescindible.</span> Es el signo que ascendía por el horizonte este en el momento exacto del nacimiento. No es algo que se aprende — es algo que el alma <em>recuerda</em> a través de las experiencias.</div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">4</div>
+      <div class="retener-texto"><span>Los 4 cuadrantes con sus signos: C1 impulso (Aries·Tauro·Géminis) · C2 instinto (Cáncer·Leo·Virgo) · C3 pensamiento (Libra·Escorpio·Sagitario) · C4 ser (Capricornio·Acuario·Piscis).</span> El orden es siempre el mismo: de Aries a Piscis, en grupos de tres.</div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">5</div>
+      <div class="retener-texto"><span>El vacío en la carta atrae, no paraliza.</span> El hemisferio con menos planetas es un punto atractor — el mundo externo llena ese vacío. Dónde tenemos más planetas es donde nos sentimos más cómodas naturalmente.</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
