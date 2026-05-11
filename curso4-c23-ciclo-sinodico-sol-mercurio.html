@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C23 · Ciclo Sinódico Sol-Mercurio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1C1917; --ink2: #44403C; --ink3: #78716C;
+      --paper: #FAF8F5; --paper2: #F2EFE9; --paper3: #E8E2D8;
+      --gold: #92712A; --gold-light: #C9A84C; --gold-bg: #FDF6E3;
+      --merc: #1A4F72; --merc-bg: #E8F4FB; --merc-border: #A8CDE0;
+      --sol: #8B5E0A; --sol-bg: #FDF3E0; --sol-border: #D4A030;
+      --acuario: #3B2E7A; --acuario-bg: #EEEAF8; --acuario-border: #A89EDA;
+      --piscis: #185FA5; --piscis-bg: #E6F1FB; --piscis-border: #B5D4F4;
+      --verde: #3B6D11; --verde-bg: #EAF3DE; --verde-border: #C0DD97;
+      --terra: #8B3A2A; --terra-bg: #FBF0ED; --terra-border: #DBA090;
+      --radius: 10px; --radius-lg: 16px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); line-height: 1.6; padding: 2rem 1rem 4rem; }
+    .page { max-width: 760px; margin: 0 auto; }
+
+    .header { border-bottom: 1px solid var(--paper3); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+    .header-top { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+    .badge { font-size: 10px; font-weight: 500; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.07em; }
+    .b-curso { background: var(--gold-bg); color: var(--gold); border: 0.5px solid #D4A843; }
+    .b-tipo  { background: var(--paper2); color: var(--ink3); border: 0.5px solid var(--paper3); }
+    .titulo { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; line-height: 1.2; margin-bottom: 6px; }
+    .meta { font-size: 12px; color: var(--ink3); }
+    .section-label { font-size: 10px; font-weight: 500; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2rem; margin-bottom: 10px; }
+
+    /* INTRO */
+    .intro-card { background: var(--paper2); border: 1px solid var(--paper3); border-radius: var(--radius-lg); padding: 16px 18px; font-size: 13px; color: var(--ink2); line-height: 1.7; }
+    .intro-card strong { font-weight: 500; color: var(--ink); }
+
+    /* ERA */
+    .era-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media(max-width:520px){ .era-grid { grid-template-columns: 1fr; } }
+    .era-card { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid; }
+    .era-header { padding: 10px 14px; }
+    .era-titulo { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .era-sub { font-size: 11px; }
+    .era-body { padding: 10px 14px; border-top: 1px solid; font-size: 12px; color: var(--ink2); line-height: 1.6; }
+    .era-body strong { font-weight: 500; color: var(--ink); }
+    .e-piscis { border-color: var(--piscis-border); }
+    .e-piscis .era-header { background: var(--piscis-bg); }
+    .e-piscis .era-titulo { color: var(--piscis); }
+    .e-piscis .era-sub { color: #2A70B8; }
+    .e-piscis .era-body { border-color: var(--piscis-border); }
+    .e-acuario { border-color: var(--acuario-border); }
+    .e-acuario .era-header { background: var(--acuario-bg); }
+    .e-acuario .era-titulo { color: var(--acuario); }
+    .e-acuario .era-sub { color: #5040A0; }
+    .e-acuario .era-body { border-color: var(--acuario-border); }
+
+    /* MERCURIO EXALTADO */
+    .merc-bloque { border: 1.5px solid var(--merc-border); border-radius: var(--radius-lg); overflow: hidden; }
+    .merc-header { padding: 12px 16px; background: var(--merc-bg); }
+    .merc-titulo { font-size: 15px; font-weight: 600; color: var(--merc); }
+    .merc-sub { font-size: 12px; color: #2A6888; margin-top: 2px; }
+    .merc-body { border-top: 1px solid var(--merc-border); }
+    .merc-fila { display: grid; grid-template-columns: 130px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--paper3); align-items: start; }
+    .merc-fila:last-child { border-bottom: none; }
+    .merc-fila:nth-child(even) { background: var(--paper2); }
+    .merc-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink3); padding-top: 2px; }
+    .merc-val { font-size: 12px; color: var(--ink2); line-height: 1.5; }
+    .merc-val strong { font-weight: 500; color: var(--ink); }
+
+    /* CICLO SINÓDICO — SVG */
+    .ciclo-wrap { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+    .ciclo-svg-box { flex: 0 0 260px; background: white; border: 1px solid var(--paper3); border-radius: var(--radius-lg); padding: 12px; }
+    .ciclo-texto { flex: 1; min-width: 220px; }
+
+    /* FASES */
+    .fases-grid { display: flex; flex-direction: column; gap: 8px; }
+    .fase-card { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid; }
+    .fase-header { padding: 10px 14px; display: flex; align-items: center; gap: 12px; }
+    .fase-num { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; flex-shrink: 0; line-height: 1; }
+    .fase-info { flex: 1; }
+    .fase-nombre { font-size: 14px; font-weight: 600; margin-bottom: 1px; }
+    .fase-sub { font-size: 11px; }
+    .fase-body { padding: 10px 14px; border-top: 1px solid; }
+    .fase-desc { font-size: 12px; color: var(--ink2); line-height: 1.6; }
+    .fase-desc strong { font-weight: 500; color: var(--ink); }
+    .fase-fecha { font-size: 11px; margin-top: 5px; font-style: italic; }
+
+    .f1 { border-color: #A89EDA; }
+    .f1 .fase-header { background: #EEEAF8; }
+    .f1 .fase-num { color: var(--acuario); }
+    .f1 .fase-nombre { color: var(--acuario); }
+    .f1 .fase-sub { color: #5040A0; }
+    .f1 .fase-body { border-color: #A89EDA; }
+    .f1 .fase-fecha { color: #5040A0; }
+
+    .f2 { border-color: var(--merc-border); }
+    .f2 .fase-header { background: var(--merc-bg); }
+    .f2 .fase-num { color: var(--merc); }
+    .f2 .fase-nombre { color: var(--merc); }
+    .f2 .fase-sub { color: #2A6888; }
+    .f2 .fase-body { border-color: var(--merc-border); }
+    .f2 .fase-fecha { color: #2A6888; }
+
+    .f4 { border-color: var(--terra-border); }
+    .f4 .fase-header { background: var(--terra-bg); }
+    .f4 .fase-num { color: var(--terra); }
+    .f4 .fase-nombre { color: var(--terra); }
+    .f4 .fase-sub { color: #B05040; }
+    .f4 .fase-body { border-color: var(--terra-border); }
+    .f4 .fase-fecha { color: #B05040; }
+
+    .f6 { border-color: var(--sol-border); }
+    .f6 .fase-header { background: var(--sol-bg); }
+    .f6 .fase-num { color: var(--sol); }
+    .f6 .fase-nombre { color: var(--sol); }
+    .f6 .fase-sub { color: #A07020; }
+    .f6 .fase-body { border-color: var(--sol-border); }
+    .f6 .fase-fecha { color: #A07020; }
+
+    /* BINOMIOS */
+    .binomio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media(max-width:520px){ .binomio-grid { grid-template-columns: 1fr; } }
+    .binomio-card { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--paper3); }
+    .binomio-header { padding: 9px 14px; background: var(--paper2); border-bottom: 0.5px solid var(--paper3); }
+    .binomio-titulo { font-size: 12px; font-weight: 600; color: var(--ink2); }
+    .binomio-body { padding: 10px 14px; font-size: 12px; color: var(--ink2); line-height: 1.6; }
+    .binomio-body strong { font-weight: 500; color: var(--ink); }
+
+    /* CONCEPTO */
+    .concepto { background: var(--acuario-bg); border: 1px solid var(--acuario-border); border-radius: var(--radius-lg); padding: 14px 16px; font-size: 12.5px; color: var(--ink2); line-height: 1.7; }
+    .concepto strong { font-weight: 500; color: var(--acuario); }
+
+    /* RETENER */
+    .retener-list { display: flex; flex-direction: column; gap: 6px; }
+    .retener-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: var(--radius); border: 1px solid var(--paper3); background: var(--paper); }
+    .retener-num { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: var(--gold-light); min-width: 24px; line-height: 1.4; }
+    .retener-texto { font-size: 13px; color: var(--ink); line-height: 1.6; }
+    .retener-texto span { font-weight: 500; }
+
+    .sep { border: none; border-top: 1px dashed var(--paper3); margin: 2rem 0; }
+    .pill { display: inline-block; font-size: 11px; font-weight: 500; padding: 1px 7px; border-radius: 20px; margin-right: 3px; }
+    .p-merc { background: var(--merc-bg); color: var(--merc); }
+    .p-sol { background: var(--sol-bg); color: var(--sol); }
+    .p-acuario { background: var(--acuario-bg); color: var(--acuario); }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-top">
+      <span class="badge b-curso">Curso 4 · C23</span>
+      <span class="badge b-tipo">Teoría</span>
+    </div>
+    <div class="titulo">Ciclo Sinódico Sol-Mercurio — Parte 1</div>
+    <div class="meta">6 de mayo de 2026 &nbsp;·&nbsp; Era de Acuario · Mercurio exaltado · Las 6 fases del ciclo · Compilador · Epimeteico · Modelador · Prometeico</div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="section-label">Qué es el ciclo sinódico</div>
+  <div class="intro-card">
+    <strong>Sinódico</strong> siempre implica el Sol. El ciclo sinódico de Mercurio es la relación cíclica entre el Sol y Mercurio vista desde la Tierra. Junto con el ciclo Sol-Venus y Sol-Saturno, es uno de los tres ciclos sinódicos más estudiados y potentes. Se considera una herramienta <strong>más potente que los tránsitos ordinarios</strong> para entender el procesamiento mental y la evolución de la conciencia. Cada ciclo dura aproximadamente 117 días y se compone de 6 fases, de las cuales 4 son principales.
+  </div>
+
+  <hr class="sep">
+
+  <!-- ERA DE ACUARIO — CONTEXTO -->
+  <div class="section-label">Contexto — la era de Piscis a la era de Acuario</div>
+  <div class="era-grid">
+    <div class="era-card e-piscis">
+      <div class="era-header">
+        <div class="era-titulo">♓ Era de Piscis — lo que sembró</div>
+        <div class="era-sub">~2.000 años · Venus exaltado en Piscis</div>
+      </div>
+      <div class="era-body">Venus exaltado en Piscis trajo el <strong>surgimiento del amor</strong> en el reino humano — cómo el amor se aprende como experiencia encarnada. Su legado máximo es el amor incondicional, que ya está "a disposición" como potencial accesible según el nivel de conciencia de la persona.</div>
+    </div>
+    <div class="era-card e-acuario">
+      <div class="era-header">
+        <div class="era-titulo">♒ Era de Acuario — lo que trae</div>
+        <div class="era-sub">~2.000 años · Mercurio exaltado en Acuario</div>
+      </div>
+      <div class="era-body">Mercurio exaltado en Acuario trae la <strong>sabiduría</strong> — el desarrollo de la mente hacia mayor conciencia. La humanidad pasa de lo mutable (dualidad, aprendizaje repetitivo) a lo fijo. El lema: <em>amor + sabiduría</em>. Señales: conjunción Júpiter-Saturno en Acuario, Plutón en Acuario, Urano entrando en Géminis.</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 8px;" class="concepto">
+    <strong>La transición entre eras dura ~500 años</strong>, gobernada por el signo de Libra (equilibrio de opuestos, trabajo en relaciones). No es que Piscis "acaba" — su simiente ya fue sembrada. Lo que cambia es qué energía pasa a ser prioritaria. El tiempo no es exacto: diferentes astrólogos dan diferentes fechas (2.160 o 2.083 años por era), pero la precesión de los equinoccios — que va en dirección contraria al zodiaco — es lo que lo marca.
+  </div>
+
+  <hr class="sep">
+
+  <!-- MERCURIO EXALTADO EN ACUARIO -->
+  <div class="section-label">☿ Mercurio — de mutable a fijo</div>
+  <div class="merc-bloque">
+    <div class="merc-header">
+      <div class="merc-titulo">☿ Mercurio exaltado en Acuario — el procesador neurológico</div>
+      <div class="merc-sub">De Géminis y Virgo (mutables) a Acuario (fijo) — un cambio de nivel de conciencia</div>
+    </div>
+    <div class="merc-body">
+      <div class="merc-fila"><div class="merc-key">Mercurio en Géminis</div><div class="merc-val">Aprendizaje, curiosidad, comunicación, dualidad. Cruz mutable: aprende a través de experiencias repetitivas ("otra vez me pasa esto"). El mensajero de los dioses.</div></div>
+      <div class="merc-fila"><div class="merc-key">Mercurio en Virgo</div><div class="merc-val">Detalle, precisión, practicidad, análisis. La parte concreta del procesamiento. También mutable — aprendizaje por iteración.</div></div>
+      <div class="merc-fila"><div class="merc-key">Mercurio en Acuario</div><div class="merc-val"><strong>Signo fijo</strong>: ya no aprendizaje repetitivo sino un nuevo nivel de conciencia estabilizado. Mentalidad abierta, no-dualidad, mayor velocidad de procesamiento, simultaneidad. El "procesador neurológico" de la era.</div></div>
+      <div class="merc-fila"><div class="merc-key">La mente abierta</div><div class="merc-val">No juzgar — observar. Mentalidad abierta no es solo procesar más información sino hacerlo sin juicio: observo lo que estoy pensando, sintiendo, haciendo, sin convertirlo en problema. La atención como herramienta.</div></div>
+      <div class="merc-fila"><div class="merc-key">Neurodiversidad</div><div class="merc-val">La hiperactividad, el espectro autista, el TDAH son <strong>formas diferentes de procesar la información</strong> — no enfermedades. La era de Acuario los mostrará como precursores de nuevas formas mentales. Cambios en el ADN neurológico que se van acumulando en generaciones.</div></div>
+      <div class="merc-fila"><div class="merc-key">Cuidado práctico</div><div class="merc-val">Mayor velocidad mental = mayor cortisol posible. Compensar con: rutinas físicas, ejercicio, buena alimentación, buena respiración, buen sueño. El tiempo lineal (rutinas) es el ancla que permite gestionar el tiempo simultáneo que trae Acuario.</div></div>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- EL CICLO — DIAGRAMA Y EXPLICACIÓN -->
+  <div class="section-label">El ciclo Sol-Mercurio — cómo funciona</div>
+  <div class="ciclo-wrap">
+
+    <div class="ciclo-svg-box">
+      <svg viewBox="0 0 260 240" width="236" height="218" xmlns="http://www.w3.org/2000/svg">
+        <!-- Fondo -->
+        <rect width="260" height="240" fill="white"/>
+
+        <!-- Órbita de Mercurio alrededor del Sol -->
+        <ellipse cx="100" cy="120" rx="70" ry="70" fill="none" stroke="#E8D5A0" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+        <!-- Sol -->
+        <circle cx="100" cy="120" r="14" fill="#FDF3E0" stroke="#D4A030" stroke-width="2"/>
+        <text x="100" y="125" text-anchor="middle" font-size="16" font-family="serif">☉</text>
+
+        <!-- Tierra a la derecha -->
+        <circle cx="230" cy="120" r="12" fill="#EBF2F8" stroke="#A0BFDA" stroke-width="1.5"/>
+        <text x="230" y="125" text-anchor="middle" font-size="13" font-family="serif">⊕</text>
+        <text x="230" y="138" text-anchor="middle" font-size="9" fill="#78716C" font-family="sans-serif">Tierra</text>
+
+        <!-- Línea de visión desde Tierra al Sol -->
+        <line x1="218" y1="120" x2="114" y2="120" stroke="#B0A090" stroke-width="0.8" stroke-dasharray="3,2"/>
+
+        <!-- Zona visible (entre pos 2 y 6) — arco verde -->
+        <!-- Zona no visible (del 6 al 1 al 2 pasando por detrás) -->
+
+        <!-- Posiciones de Mercurio en su órbita -->
+        <!-- Pos 1: conjunción superior (izquierda del Sol, lejos de Tierra) - ángulo 180° -->
+        <circle cx="30" cy="120" r="6" fill="#EEEAF8" stroke="#A89EDA" stroke-width="1.5"/>
+        <text x="30" y="124" text-anchor="middle" font-size="9" fill="#3B2E7A" font-family="sans-serif" font-weight="700">1</text>
+        <text x="10" y="108" text-anchor="middle" font-size="8" fill="#3B2E7A" font-family="sans-serif">Compilador</text>
+
+        <!-- Pos 2: elongación máxima positiva - ángulo ~270° (abajo) -->
+        <circle cx="100" cy="190" r="6" fill="#E8F4FB" stroke="#A8CDE0" stroke-width="1.5"/>
+        <text x="100" y="194" text-anchor="middle" font-size="9" fill="#1A4F72" font-family="sans-serif" font-weight="700">2</text>
+        <text x="100" y="208" text-anchor="middle" font-size="8" fill="#1A4F72" font-family="sans-serif">Epimeteico</text>
+        <text x="100" y="218" text-anchor="middle" font-size="7" fill="#78716C" font-family="sans-serif">elongación máx</text>
+
+        <!-- Pos 3: estación DR (entre 2 y 4) - ángulo ~315° -->
+        <circle cx="150" cy="170" r="4" fill="#F0F0F0" stroke="#B0B0B0" stroke-width="1"/>
+        <text x="158" y="174" text-anchor="start" font-size="8" fill="#78716C" font-family="sans-serif">3 DR</text>
+
+        <!-- Pos 4: conjunción inferior (entre Sol y Tierra) - ángulo 0° -->
+        <circle cx="170" cy="120" r="6" fill="#FBF0ED" stroke="#DBA090" stroke-width="1.5"/>
+        <text x="170" y="124" text-anchor="middle" font-size="9" fill="#8B3A2A" font-family="sans-serif" font-weight="700">4</text>
+        <text x="190" y="112" text-anchor="start" font-size="8" fill="#8B3A2A" font-family="sans-serif">Modelador</text>
+        <text x="190" y="121" text-anchor="start" font-size="7" fill="#78716C" font-family="sans-serif">conj. ℞</text>
+
+        <!-- Pos 5: estación RD (entre 4 y 6) - ángulo ~45° -->
+        <circle cx="150" cy="70" r="4" fill="#F0F0F0" stroke="#B0B0B0" stroke-width="1"/>
+        <text x="158" y="68" text-anchor="start" font-size="8" fill="#78716C" font-family="sans-serif">5 RD</text>
+
+        <!-- Pos 6: elongación máxima negativa - ángulo ~90° (arriba) -->
+        <circle cx="100" cy="50" r="6" fill="#FDF3E0" stroke="#D4A030" stroke-width="1.5"/>
+        <text x="100" y="54" text-anchor="middle" font-size="9" fill="#8B5E0A" font-family="sans-serif" font-weight="700">6</text>
+        <text x="100" y="38" text-anchor="middle" font-size="8" fill="#8B5E0A" font-family="sans-serif">Prometeico</text>
+        <text x="100" y="28" text-anchor="middle" font-size="7" fill="#78716C" font-family="sans-serif">elongación máx</text>
+
+        <!-- Zona NO visible desde Tierra (del 6 al 1 al 2 por la izquierda) -->
+        <text x="25" y="155" text-anchor="middle" font-size="8" fill="#B0A090" font-family="sans-serif">NO visible</text>
+        <text x="25" y="163" text-anchor="middle" font-size="8" fill="#B0A090" font-family="sans-serif">desde Tierra</text>
+
+        <!-- Zona visible -->
+        <text x="160" y="175" text-anchor="middle" font-size="8" fill="#3B6D11" font-family="sans-serif">visible</text>
+
+        <!-- Leyenda -->
+        <text x="5" y="232" font-size="8" fill="#78716C" font-family="sans-serif">Máx. elongación: 28° · Ciclo total: ~117 días</text>
+      </svg>
+    </div>
+
+    <div class="ciclo-texto">
+      <div style="font-size:12.5px; color:var(--ink2); line-height:1.7; margin-bottom:12px;">
+        Mercurio nunca puede alejarse más de <strong>28°</strong> del Sol desde la perspectiva de la Tierra. Por eso siempre lo encontramos en el mismo signo solar, el anterior o el siguiente. Esto crea un ciclo con 6 posiciones clave, de las cuales 4 son las fases principales a trabajar.
+      </div>
+      <div style="background:var(--paper2); border:1px solid var(--paper3); border-radius:var(--radius); padding:10px 12px; font-size:12px; color:var(--ink2); line-height:1.6;">
+        <strong>Lo que NO vemos:</strong> La mayor parte del ciclo de Mercurio (del pos. 6 al 1 al 2 pasando por detrás del Sol) es <em>inconsciente</em> — no lo percibimos desde la Tierra. Solo vemos el arco entre la pos. 2 y la pos. 6 (a través de la pos. 4). Esto tiene un equivalente psicológico: la mayor parte del procesamiento mental ocurre fuera de nuestra conciencia.
+      </div>
+    </div>
+  </div>
+
+  <!-- LAS 4 FASES PRINCIPALES -->
+  <div class="section-label">Las 4 fases principales — nombres y significados</div>
+  <div class="fases-grid">
+
+    <div class="fase-card f1">
+      <div class="fase-header">
+        <div class="fase-num">1</div>
+        <div class="fase-info">
+          <div class="fase-nombre">Compilador</div>
+          <div class="fase-sub">Conjunción superior Sol-Mercurio · inicio del ciclo</div>
+        </div>
+      </div>
+      <div class="fase-body">
+        <div class="fase-desc">El momento en que Mercurio está exactamente en conjunción con el Sol, pero <strong>lejos de la Tierra</strong> (al otro lado del Sol). Inicio del nuevo ciclo mental. La mente "compila" — recoge lo aprendido del ciclo anterior para iniciar uno nuevo. Es el momento más inconsciente de todos: Mercurio está totalmente oculto detrás del Sol.</div>
+        <div class="fase-fecha">📅 Próximo inicio de ciclo: 14 de mayo de 2026</div>
+      </div>
+    </div>
+
+    <div class="fase-card f2">
+      <div class="fase-header">
+        <div class="fase-num">2</div>
+        <div class="fase-info">
+          <div class="fase-nombre">Epimeteico</div>
+          <div class="fase-sub">Elongación máxima positiva · Mercurio vespertino oriental</div>
+        </div>
+      </div>
+      <div class="fase-body">
+        <div class="fase-desc">Mercurio está por delante del Sol (más adelantado en el zodiaco). Se ve por encima del horizonte <strong>después de la puesta del Sol</strong>. Epimeteico viene del mito de Epimeteo — "el que reflexiona después". Interpreta el pasado, revela lo ya recorrido. La mente trabaja con la información ya procesada por el Sol.<br><br><em>Ejemplo de Ana: Sol a 2° de Cáncer, Mercurio a 20° de Cáncer — Mercurio va por delante, es epimeteico.</em></div>
+        <div class="fase-fecha">📅 Elongación máxima: ~14 de junio 2026 · a 18° del Sol</div>
+      </div>
+    </div>
+
+    <div class="fase-card f4">
+      <div class="fase-header">
+        <div class="fase-num">4</div>
+        <div class="fase-info">
+          <div class="fase-nombre">Modelador</div>
+          <div class="fase-sub">Conjunción inferior Sol-Mercurio retrógrado</div>
+        </div>
+      </div>
+      <div class="fase-body">
+        <div class="fase-desc">Mercurio retrógrado y el Sol se vuelven a juntar, pero esta vez Mercurio está <strong>entre la Tierra y el Sol</strong> — es visible desde la Tierra. Es el momento de mayor intensidad del retrógrado. La mente "modela" — da forma a lo que ha venido revisando. Este punto sí se ve desde la Tierra, a diferencia de la fase 1.<br><br>Nota: la fase 3 (estación DR — Mercurio se pone retrógrado) y la 5 (estación RD — se pone directo) son <em>semifases</em>.</div>
+        <div class="fase-fecha">📅 Mercurio retrógrado: 30 jun 2026 · Fase 4 (conjunción): 12 jul 2026</div>
+      </div>
+    </div>
+
+    <div class="fase-card f6">
+      <div class="fase-header">
+        <div class="fase-num">6</div>
+        <div class="fase-info">
+          <div class="fase-nombre">Prometeico</div>
+          <div class="fase-sub">Elongación máxima negativa · Mercurio matutino occidental</div>
+        </div>
+      </div>
+      <div class="fase-body">
+        <div class="fase-desc">Mercurio está <strong>atrasado al Sol</strong> (el Sol va por delante). Se eleva en el horizonte <strong>antes de la salida del Sol</strong>. Prometeico viene del mito de Prometeo — "el que anticipa". Anticipa el futuro, pasa por territorio del zodiaco donde el Sol no ha llegado todavía. La mente explora e investiga lo que aún no ha sido.<br><br>Si juntamos la fase 2 y la 6, aparece una figura de dedo de Yot (con la Tierra en el vértice) + un radar enfocado al Sol: lo que la astrología psicológica llama <strong>figura de aspiración</strong>.</div>
+        <div class="fase-fecha">📅 Fase 6: 31 jul 2026 · Mercurio directo: 23 jul 2026</div>
+      </div>
+    </div>
+
+  </div>
+
+  <hr class="sep">
+
+  <!-- LOS DOS BINOMIOS -->
+  <div class="section-label">Los dos grandes binomios</div>
+  <div class="binomio-grid">
+    <div class="binomio-card">
+      <div class="binomio-header"><div class="binomio-titulo">🌙 Ciclos lunares — binomio Tierra-Luna</div></div>
+      <div class="binomio-body"><strong>El paradigma emocional.</strong> El Sol siempre está implicado. Trabaja el mundo emocional, los patrones del clan, las raíces y el pasado. La Luna representa memorias de razas anteriores (Lemuria). <em>Luna = pasado · Tierra = presente.</em></div>
+    </div>
+    <div class="binomio-card">
+      <div class="binomio-header"><div class="binomio-titulo">☿ Ciclo Sol-Mercurio — binomio Sol-Mercurio</div></div>
+      <div class="binomio-body"><strong>El paradigma mental.</strong> La Tierra siempre está implicada como observadora. Trabaja la mente, el procesamiento de la información, la conciencia en evolución. <em>Sol = propósito del alma · Mercurio = cómo lo procesa la mente.</em></div>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- PUNTOS A RETENER -->
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item"><div class="retener-num">1</div><div class="retener-texto"><span>Sinódico siempre implica el Sol.</span> El ciclo sinódico de Mercurio (Sol-Mercurio-Tierra) es una herramienta más potente que los tránsitos. Dura ~117 días y tiene 6 fases, 4 de las cuales son principales.</div></div>
+    <div class="retener-item"><div class="retener-num">2</div><div class="retener-texto"><span>Venus exaltado en Piscis sembró el amor. Mercurio exaltado en Acuario trae la sabiduría.</span> La era de Acuario pasa de la dualidad mutable a la mentalidad fija — mayor conciencia, no-dualidad, observación sin juicio.</div></div>
+    <div class="retener-item"><div class="retener-num">3</div><div class="retener-texto"><span>Las 4 fases principales: 1-Compilador · 2-Epimeteico · 4-Modelador · 6-Prometeico.</span> Las fases 3 (DR) y 5 (RD) son semifases. El Compilador inicia el ciclo. El Epimeteico interpreta el pasado. El Modelador da forma en el retrógrado. El Prometeico anticipa el futuro.</div></div>
+    <div class="retener-item"><div class="retener-num">4</div><div class="retener-texto"><span>Epimeteico = Mercurio adelantado al Sol (vespertino). Prometeico = Mercurio atrasado al Sol (matutino).</span> Si tu Mercurio natal está más adelante en el zodiaco que tu Sol → eres epimeteico. Si va por detrás → eres prometeico. Dice cómo procesas la información.</div></div>
+    <div class="retener-item"><div class="retener-num">5</div><div class="retener-texto"><span>La mayor parte del ciclo de Mercurio es inconsciente — no la vemos desde la Tierra.</span> Solo vemos el arco entre la elongación positiva y la negativa (a través de la conjunción inferior). El resto, incluida la conjunción superior (fase 1), ocurre detrás del Sol.</div></div>
+  </div>
+
+</div>
+</body>
+</html>
