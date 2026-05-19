@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C24 · Ciclo Sinódico Sol-Mercurio · Parte 2</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1C1917; --ink2: #44403C; --ink3: #78716C;
+      --paper: #FAF8F5; --paper2: #F2EFE9; --paper3: #E8E2D8;
+      --gold: #92712A; --gold-light: #C9A84C; --gold-bg: #FDF6E3;
+      --merc: #2D5478; --merc-bg: #EBF2F8; --merc-border: #A0BFDA;
+      --sol: #8B5E0A; --sol-bg: #FDF3E0; --sol-border: #D4A030;
+      --urano: #3B2E7A; --urano-bg: #EEEAF8; --urano-border: #A89EDA;
+      --luna: #4A6741; --luna-bg: #EFF4EE; --luna-border: #A8C2A5;
+      --terra: #8B3A2A; --terra-bg: #FBF0ED; --terra-border: #DBA090;
+      --radius: 10px; --radius-lg: 16px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); line-height: 1.6; padding: 2rem 1rem 4rem; }
+    .page { max-width: 760px; margin: 0 auto; }
+
+    .header { border-bottom: 1px solid var(--paper3); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+    .header-top { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+    .badge { font-size: 10px; font-weight: 500; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.07em; }
+    .b-curso { background: var(--gold-bg); color: var(--gold); border: 0.5px solid #D4A843; }
+    .b-tipo  { background: var(--paper2); color: var(--ink3); border: 0.5px solid var(--paper3); }
+    .titulo { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; line-height: 1.2; margin-bottom: 6px; }
+    .meta { font-size: 12px; color: var(--ink3); }
+    .section-label { font-size: 10px; font-weight: 500; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2rem; margin-bottom: 10px; }
+
+    /* LUNA NUEVA — contexto */
+    .luna-card { border: 1.5px solid var(--luna-border); border-radius: var(--radius-lg); overflow: hidden; }
+    .luna-header { padding: 11px 16px; background: var(--luna-bg); border-bottom: 1px solid var(--luna-border); }
+    .luna-titulo { font-size: 14px; font-weight: 600; color: var(--luna); }
+    .luna-sub { font-size: 11px; color: #5A8050; margin-top: 2px; }
+    .luna-body { }
+    .luna-fila { display: grid; grid-template-columns: 140px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--paper3); align-items: start; }
+    .luna-fila:last-child { border-bottom: none; }
+    .luna-fila:nth-child(even) { background: var(--paper2); }
+    .luna-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink3); padding-top: 2px; }
+    .luna-val { font-size: 12px; color: var(--ink2); line-height: 1.5; }
+    .luna-val strong { font-weight: 500; color: var(--ink); }
+    .luna-val em { color: var(--ink3); font-style: italic; }
+
+    /* PUNTO MEDIO */
+    .pm-bloque { background: var(--urano-bg); border: 1px solid var(--urano-border); border-radius: var(--radius-lg); padding: 14px 16px; font-size: 13px; color: var(--ink2); line-height: 1.7; }
+    .pm-bloque strong { font-weight: 500; color: var(--urano); }
+
+    /* CICLO EN CARTA — fases */
+    .fases-intro { background: var(--paper2); border: 1px solid var(--paper3); border-radius: var(--radius-lg); padding: 12px 14px; font-size: 12px; color: var(--ink2); line-height: 1.6; margin-bottom: 12px; }
+    .fases-intro strong { font-weight: 500; color: var(--ink); }
+
+    /* Timeline de fases */
+    .timeline { display: flex; flex-direction: column; gap: 0; position: relative; }
+    .timeline::before { content: ''; position: absolute; left: 20px; top: 20px; bottom: 20px; width: 2px; background: var(--paper3); }
+    .tl-item { display: flex; gap: 14px; align-items: flex-start; padding: 0 0 12px 0; position: relative; }
+    .tl-item:last-child { padding-bottom: 0; }
+    .tl-dot { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; flex-shrink: 0; position: relative; z-index: 1; border: 2px solid; }
+    .tl-content { flex: 1; background: var(--paper); border: 1px solid var(--paper3); border-radius: var(--radius-lg); overflow: hidden; }
+    .tl-header { padding: 10px 14px; border-bottom: 0.5px solid var(--paper3); }
+    .tl-nombre { font-size: 13px; font-weight: 600; margin-bottom: 1px; }
+    .tl-fecha { font-size: 11px; color: var(--ink3); }
+    .tl-body { padding: 10px 14px; font-size: 12px; color: var(--ink2); line-height: 1.6; }
+    .tl-body strong { font-weight: 500; color: var(--ink); }
+    .tl-body em { color: var(--ink3); font-style: italic; }
+
+    .f1 .tl-dot { background: var(--urano-bg); border-color: var(--urano-border); color: var(--urano); }
+    .f1 .tl-nombre { color: var(--urano); }
+    .f2 .tl-dot { background: var(--merc-bg); border-color: var(--merc-border); color: var(--merc); }
+    .f2 .tl-nombre { color: var(--merc); }
+    .f4 .tl-dot { background: var(--terra-bg); border-color: var(--terra-border); color: var(--terra); }
+    .f4 .tl-nombre { color: var(--terra); }
+    .f6 .tl-dot { background: var(--sol-bg); border-color: var(--sol-border); color: var(--sol); }
+    .f6 .tl-nombre { color: var(--sol); }
+
+    /* CÓMO LEER EL CICLO EN CARTA */
+    .leer-bloque { border: 1px solid var(--paper3); border-radius: var(--radius-lg); overflow: hidden; }
+    .leer-header { padding: 10px 14px; background: var(--paper2); border-bottom: 0.5px solid var(--paper3); }
+    .leer-titulo { font-size: 13px; font-weight: 600; color: var(--ink2); }
+    .leer-fila { display: grid; grid-template-columns: 130px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--paper3); align-items: start; }
+    .leer-fila:last-child { border-bottom: none; }
+    .leer-fila:nth-child(even) { background: var(--paper2); }
+    .leer-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink3); padding-top: 2px; }
+    .leer-val { font-size: 12px; color: var(--ink2); line-height: 1.5; }
+    .leer-val strong { font-weight: 500; color: var(--ink); }
+
+    /* POLARIDADES */
+    .pol-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    @media(max-width:540px){ .pol-grid { grid-template-columns: 1fr; } }
+    .pol-card { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--paper3); }
+    .pol-header { padding: 8px 12px; background: var(--paper2); border-bottom: 0.5px solid var(--paper3); }
+    .pol-eje { font-size: 12px; font-weight: 600; color: var(--ink2); }
+    .pol-body { padding: 8px 12px; font-size: 11.5px; color: var(--ink2); line-height: 1.5; }
+    .pol-body strong { font-weight: 500; color: var(--ink); }
+
+    /* RETENER */
+    .retener-list { display: flex; flex-direction: column; gap: 6px; }
+    .retener-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: var(--radius); border: 1px solid var(--paper3); background: var(--paper); }
+    .retener-num { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: var(--gold-light); min-width: 24px; line-height: 1.4; }
+    .retener-texto { font-size: 13px; color: var(--ink); line-height: 1.6; }
+    .retener-texto span { font-weight: 500; }
+
+    .sep { border: none; border-top: 1px dashed var(--paper3); margin: 2rem 0; }
+    .nota { background: var(--paper2); border: 1px solid var(--paper3); border-radius: var(--radius); padding: 10px 14px; font-size: 12px; color: var(--ink2); line-height: 1.6; margin-top: 8px; }
+    .nota strong { font-weight: 500; color: var(--ink); }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-top">
+      <span class="badge b-curso">Curso 4 · C24</span>
+      <span class="badge b-tipo">Teoría + Práctica</span>
+    </div>
+    <div class="titulo">Ciclo Sinódico Sol-Mercurio — Parte 2</div>
+    <div class="meta">13 de mayo de 2026 &nbsp;·&nbsp; Luna nueva en Tauro en contexto del ciclo · Las 4 fases en la carta natal · Cómo leer Sol y Mercurio · Las polaridades y el punto medio</div>
+  </div>
+
+  <!-- LUNA NUEVA EN CONTEXTO DEL CICLO -->
+  <div class="section-label">La luna nueva del 16 de mayo — semilla del ciclo</div>
+  <div class="luna-card">
+    <div class="luna-header">
+      <div class="luna-titulo">🌑 Luna nueva en 25° Tauro · Decanato de Virgo</div>
+      <div class="luna-sub">16 de mayo de 2026 · Mercurio como punto medio entre Sol y Urano</div>
+    </div>
+    <div class="luna-body">
+      <div class="luna-fila"><div class="luna-key">La semilla</div><div class="luna-val">Sol y Luna en conjunción a 25° Tauro — <strong>decanato de Virgo</strong>. Una siembra que combina los valores y recursos de Tauro con el cuerpo y las rutinas de Virgo. Lo que valoramos moldea cómo nos cuidamos y organizamos.</div></div>
+      <div class="luna-fila"><div class="luna-key">Mercurio</div><div class="luna-val">A 3° de la Luna y a 3° de Urano (grado 1 de Géminis). <strong>Mercurio está exactamente en el punto medio entre el Sol-Luna y Urano.</strong> Esto sucede el día antes del inicio del ciclo sinódico (14 de mayo). Cómo procesamos la información es el puente entre lo que se siembra y los cambios que Urano trae.</div></div>
+      <div class="luna-fila"><div class="luna-key">Urano</div><div class="luna-val">Ya dentro de la semilla. El factor de interrupción y cambio está <strong>garantizado en esta lunación</strong>. Tauro busca estabilidad y seguridad; Urano en Géminis interrumpe el tiempo lineal. El escenario: ¿cómo mantengo la contemplación cuando todo se mueve?</div></div>
+      <div class="luna-fila"><div class="luna-key">Otros aspectos</div><div class="luna-val">Cuadratura a los nodos · Trígono a Plutón · Sextil a Neptuno — este sextil viene principalmente de la relación entre transpersonales (triángulo azul continuo entre Urano-Neptuno-Plutón). Con Urano ya en Géminis: <strong>los tres transpersonales están en aire y fuego</strong> — el desarrollo espiritual opera plenamente en lo mental.</div></div>
+      <div class="luna-fila"><div class="luna-key">Marte + Quirón</div><div class="luna-val">Conjunción estrecha en Aries (28° y 24'). Quirón entre Saturno y Urano habla de la herida universal del individuo. El marcador: llevar lo personal a una <strong>dimensión de unidad</strong> — lo que siento no es solo mío, es experiencia humana compartida.</div></div>
+      <div class="luna-fila"><div class="luna-key">Tauro · Virgo</div><div class="luna-val">Tauro = valorar, contemplar, deseos, seguridad, nutrición. Decanato Virgo = el cuerpo como vehículo de conciencia (los tres niveles: físico, emocional, mental). <strong>La práctica de esta lunación: valorar desde la contemplación</strong>, no desde el deseo impulsivo. La alimentación consciente como ejemplo concreto.</div></div>
+    </div>
+  </div>
+
+  <!-- MERCURIO COMO PUNTO MEDIO -->
+  <div class="section-label">Mercurio como punto medio — Sol · Mercurio · Urano</div>
+  <div class="pm-bloque">
+    <strong>Sol (pasado) → Mercurio (procesador) → Urano (futuro).</strong> En el momento de la luna nueva, Mercurio está a exactamente 3° del Sol-Luna y 3° de Urano. No es solo una posición astronómica — es simbólica: el pensamiento es el puente entre la semilla que se siembra (Tauro, valores, contemplación) y los cambios que Urano en Géminis traerá. Cómo procesamos esta información determinará si los cambios se viven como caos o como adaptación consciente. El 18 de mayo Mercurio llega al grado exacto de conjunción con Urano — <strong>momento de revelación mental.</strong>
+  </div>
+
+  <hr class="sep">
+
+  <!-- EL CICLO SOL-MERCURIO: LAS 4 FASES CON FECHAS -->
+  <div class="section-label">El ciclo Sol-Mercurio 2026 — las 4 fases con fechas y signos</div>
+  <div class="fases-intro">El ciclo iniciado el 14 de mayo de 2026 recorre principalmente el signo de Cáncer en sus fases centrales. Esto añade una capa importante: Cáncer tiene que ver con el pasado, la familia, las inercias emocionales. El ciclo mental del trimestre estará teñido de <strong>información que viene del pasado y del árbol familiar</strong>.</div>
+
+  <div class="timeline">
+    <div class="tl-item f1">
+      <div class="tl-dot">1</div>
+      <div class="tl-content">
+        <div class="tl-header">
+          <div class="tl-nombre">Compilador — inicio del ciclo</div>
+          <div class="tl-fecha">14 de mayo · ~23° Tauro · Invisible desde la Tierra</div>
+        </div>
+        <div class="tl-body">Conjunción superior Sol-Mercurio — Mercurio detrás del Sol, no visible. <strong>Fase de observación pura.</strong> El ejercicio del mes: observar cómo pienso, cómo interpreto las situaciones, cómo juzgo. Sin autojuicio por juzgar — solo notar. <em>Esta fase dura aproximadamente un mes, lo que tarda la lunación.</em><br><br>Saber que este ciclo existe ya le da existencia en la mente. El pensar en él es participar en él.</div>
+      </div>
+    </div>
+
+    <div class="tl-item f2">
+      <div class="tl-dot">2</div>
+      <div class="tl-content">
+        <div class="tl-header">
+          <div class="tl-nombre">Epimeteico — elongación máxima</div>
+          <div class="tl-fecha">14 de junio · Sol en 22° Géminis · Mercurio en 17° Cáncer · 25° de separación</div>
+        </div>
+        <div class="tl-body">Mercurio alcanza su máxima distancia del Sol. <strong>Empieza a llegar información del pasado</strong> — Mercurio en Cáncer trae pensamientos relacionados con el origen, la familia, las inercias aprendidas. El Sol marca la temática (casa donde cae en cada carta). Mercurio trae los datos del pasado que la condicionan.<br><br><em>Decanato de Mercurio en esta fase: Cáncer-Acuario → inercias y patrones repetidos.</em></div>
+      </div>
+    </div>
+
+    <div class="tl-item f4">
+      <div class="tl-dot">4</div>
+      <div class="tl-content">
+        <div class="tl-header">
+          <div class="tl-nombre">Modelador — conjunción con Mercurio retrógrado</div>
+          <div class="tl-fecha">12 de julio · Sol y Mercurio℞ en 20° Cáncer</div>
+        </div>
+        <div class="tl-body">Mercurio retrógrado se junta con el Sol — <strong>momento de lógica y reflexión.</strong> Con toda la información observada desde la fase 1 y los datos del pasado de la fase 2, ahora se construye una lógica. Se disuelve lo que no procede.<br><br><em>Decanato en fase 4: Cáncer-Piscis → disolución. Hay asuntos que en la reflexión se trascienden.</em><br><br>El Mercurio retrógrado puede traer malentendidos si la reflexión interna no se comunica con cuidado al exterior. <strong>No todo el mundo está en el mismo proceso.</strong> El riesgo: comunicar desde la reflexión sin tener en cuenta que los demás están en su propio tiempo.</div>
+      </div>
+    </div>
+
+    <div class="tl-item f6">
+      <div class="tl-dot">6</div>
+      <div class="tl-content">
+        <div class="tl-header">
+          <div class="tl-nombre">Prometeico — elongación máxima de regreso</div>
+          <div class="tl-fecha">31 de julio · Sol en 7° Leo · Mercurio en 18° Cáncer · 18° de separación</div>
+        </div>
+        <div class="tl-body">Mercurio directo, vuelve al decanato Cáncer-Acuario. <strong>Fase de conclusiones e integración.</strong> Lo que se ha disuelto en la retrogradación deja espacio para algo nuevo. Mercurio integra lo nuevo en las inercias — ahora con una conciencia distinta.<br><br>El Sol ya está en Leo con Júpiter — cuidado: el reconocimiento llegará si la integración se hace desde el observador interno, no desde la búsqueda de visibilidad. <em>El verdadero maestro Leo daba el ejemplo y por eso era reconocido — no porque lo buscara.</em></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nota"><strong>Nota sobre la elongación:</strong> En la fase 2 Mercurio se aleja 25° del Sol; en la fase 6 solo 18°. Esto es normal — la elongación máxima varía por ciclo (el máximo astronómico posible es 28°). Ambas son posiciones visibles desde la Tierra, a diferencia de las fases 1 y el arco inconsciente.</div>
+
+  <hr class="sep">
+
+  <!-- CÓMO LEER EL CICLO EN CARTA -->
+  <div class="section-label">Cómo leer el ciclo en la carta natal</div>
+  <div class="leer-bloque">
+    <div class="leer-header"><div class="leer-titulo">El Sol y Mercurio en el ciclo sinódico — sus funciones distintas</div></div>
+    <div class="leer-fila"><div class="leer-key">El Sol en el ciclo</div><div class="leer-val">No es el sol de la personalidad/apariencia — es el <strong>sol del alma</strong>, el observador. La casa donde cae el Sol en cada fase indica <strong>qué ámbito está iluminando la conciencia</strong>, qué área está poniendo atención el yo interno. Es la temática general del proceso.</div></div>
+    <div class="leer-fila"><div class="leer-key">Mercurio en el ciclo</div><div class="leer-val">Es el procesador — <strong>cómo llega la información a ese ámbito</strong>. La casa donde cae Mercurio indica desde dónde viene la información que condiciona la temática del Sol. En Cáncer: viene del pasado y de la familia.</div></div>
+    <div class="leer-fila"><div class="leer-key">Los decanatos</div><div class="leer-val">Los grados donde cae Mercurio en cada fase dan información adicional a través de sus decanatos. <strong>Cáncer-Acuario</strong> (grado ~17-20): inercias y patrones repetidos. <strong>Cáncer-Piscis</strong> (grado ~20-30): disolución y trascendencia.</div></div>
+    <div class="leer-fila"><div class="leer-key">Cómo leer la casa</div><div class="leer-val">Ver en qué casa de la carta natal caen el Sol y Mercurio en cada fecha. La casa del Sol = el ámbito que se observa. La casa de Mercurio = la fuente de información que condiciona ese ámbito. <strong>Se leen en relación, no por separado.</strong></div></div>
+    <div class="leer-fila"><div class="leer-key">La práctica</div><div class="leer-val">Como con las fases lunares: anotar qué está pasando en cada fecha clave. Al llegar a la siguiente fase, ver si la experiencia vivida tiene que ver con la temática astrológica. <strong>La validación es experiencial, no predictiva.</strong></div></div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- LAS POLARIDADES Y EL PUNTO MEDIO -->
+  <div class="section-label">Las polaridades y el punto medio — Mercurio en Acuario como síntesis</div>
+  <p style="font-size:12.5px; color:var(--ink2); line-height:1.7; margin-bottom:12px;">La mente aprendida con Mercurio en Géminis-Virgo (mutable) opera desde los extremos: o un polo o el otro. Mercurio en Acuario (fijo) va hacia la síntesis — encontrar el punto medio de las polaridades, no como compromiso sino como integración de la información de ambos lados.</p>
+  <div class="pol-grid">
+    <div class="pol-card">
+      <div class="pol-header"><div class="pol-eje">♉ Tauro — ♏ Escorpio</div></div>
+      <div class="pol-body">Lo mío vs. lo del otro. El punto medio: <strong>aunque esto sea mío, tú lo puedes usar</strong>. Soltar el significado de propiedad para entrar en la mente grupal. <em>¿Cuántas creencias hay detrás del "es mío"?</em></div>
+    </div>
+    <div class="pol-card">
+      <div class="pol-header"><div class="pol-eje">♊ Géminis — ♐ Sagitario</div></div>
+      <div class="pol-body">Mente concreta vs. mente abstracta. El punto medio: <strong>encontrar el sentido práctico de la idea</strong>. No el detalle sin propósito ni la idea sin aplicación. Ambos lados integrados.</div>
+    </div>
+    <div class="pol-card">
+      <div class="pol-header"><div class="pol-eje">♌ Leo — ♒ Acuario</div></div>
+      <div class="pol-body">El yo individual vs. el colectivo. El punto medio: <strong>ser tu propio sol para atraer otros soles</strong>. La identidad integrada al servicio de algo más grande. Sin buscar reconocimiento — y por eso siendo reconocido.</div>
+    </div>
+  </div>
+  <div class="nota" style="margin-top:10px;"><strong>El ruido de Géminis-Virgo:</strong> La mente mutable genera ruido — esto está bien, esto está mal, a ver, pero si hago esto entonces lo otro. Mercurio en Acuario no elimina ese ruido, lo observa y va hacia la síntesis. La síntesis no es silencio — es entender cómo se vuelve a la unidad.</div>
+
+  <hr class="sep">
+
+  <!-- PRÁCTICA — CICLO EN LA CARTA DE NELDA -->
+  <div class="section-label">Práctica — el ciclo en la carta de Nelda</div>
+  <div class="fases-intro">El ciclo sinódico se aplica fase a fase sobre la carta natal. Lo que sigue es la lectura de Ana sobre la carta de Nelda para las 4 fechas clave del ciclo. <strong>El Sol indica el ámbito que el alma ilumina. Mercurio indica la fuente de información que condiciona ese ámbito.</strong> No se trata de predicción — se trata de un mapa para la observación consciente.</div>
+
+  <div class="timeline">
+    <div class="tl-item f1">
+      <div class="tl-dot">1</div>
+      <div class="tl-content">
+        <div class="tl-header">
+          <div class="tl-nombre">Compilador — 14 mayo · Casa 1</div>
+          <div class="tl-fecha">Sol-Mercurio en conjunción · ~23° Tauro · Casa 1 de Nelda</div>
+        </div>
+        <div class="tl-body">El inicio del ciclo cae en la casa 1 — <strong>la identidad, la forma de valorarse, los deseos y necesidades propias.</strong> Quincuncio a Mercurio natal y a Marte natal (Escorpio). La fase de observación estará centrada en: <em>observar los deseos, observar las necesidades, observar los juicios sobre lo que cree que le da seguridad.</em><br><br>Cuadratura con la luna: puede acrecentar la sensibilidad emocional durante este mes. El quincuncio con Marte en Escorpio llama a soltar definitivamente algo — pero es un quincuncio, no una urgencia. Hay todo un mes.</div>
+      </div>
+    </div>
+
+    <div class="tl-item f2">
+      <div class="tl-dot">2</div>
+      <div class="tl-content">
+        <div class="tl-header">
+          <div class="tl-nombre">Epimeteico — 14 junio · Sol Casa 2 · Mercurio Casa 3</div>
+          <div class="tl-fecha">Sol en 22° Géminis (Casa 2) · Mercurio en 17° Cáncer (Casa 3)</div>
+        </div>
+        <div class="tl-body"><strong>Sol en Casa 2:</strong> el alma ilumina el ámbito de los valores, los recursos y la seguridad. Las opciones que se observan tienen que ver con la seguridad económica — o con si la seguridad económica es lo que realmente define el valor de uno mismo. <em>¿Es "tanto soy, tanto tengo"? ¿O la seguridad viene de otro lugar?</em><br><br><strong>Mercurio en Casa 3 (Cáncer):</strong> la información que condiciona esas opciones viene del pasado familiar — cómo se ha pensado y transmitido la relación entre el tener y el valorarse en el árbol familiar. <em>¿Cómo se habló de dinero y seguridad en la familia de origen?</em><br><br><em>Decanato Cáncer-Acuario: inercias y patrones repetidos. ¿Cuáles son las inercias familiares respecto a este tema?</em></div>
+      </div>
+    </div>
+
+    <div class="tl-item f4">
+      <div class="tl-dot">4</div>
+      <div class="tl-content">
+        <div class="tl-header">
+          <div class="tl-nombre">Modelador — 12 julio · Sol Casa 2 · Mercurio℞ Casa 3</div>
+          <div class="tl-fecha">Sol y Mercurio retrógrado en ~20° Cáncer</div>
+        </div>
+        <div class="tl-body">La reflexión de la retrogradación: con toda la información observada, <strong>ahora se disuelve lo que no procede.</strong> Decanato Cáncer-Piscis: hay asuntos que se trascienden. No es negarlos — es no querer seguir pensando así y elegir crear un pensamiento distinto.<br><br>Posible zona de malentendido: si en esta época se habla de estos temas con alguien de la familia, puede haber perspectivas distintas. <em>No siempre el Mercurio retrógrado trae movidas — si uno está en la reflexión, no pasa nada.</em><br><br>Nota: Nelda estará en México desde el 4 de julio — cambiar la ubicación en el software para esta fecha si se quiere afinar la lectura de casas.</div>
+      </div>
+    </div>
+
+    <div class="tl-item f6">
+      <div class="tl-dot">6</div>
+      <div class="tl-content">
+        <div class="tl-header">
+          <div class="tl-nombre">Prometeico — 31 julio · Sol Casa 3 · Mercurio Casa 3</div>
+          <div class="tl-fecha">Sol en 7° Leo (con Júpiter) · Mercurio en 18° Cáncer · Directo</div>
+        </div>
+        <div class="tl-body">Mercurio vuelve al decanato Cáncer-Acuario ya directo — <strong>integra algo nuevo en las inercias</strong>, pero ahora desde una conciencia distinta. Lo que se disolvió en la retrogradación deja espacio para una forma nueva de pensarlo.<br><br>El Sol llega a Leo con conjunción a Júpiter: la energía se amplifica. Cuidado: si la integración se hace desde la búsqueda de reconocimiento (Leo personalidad), puede generar ruido. Si se hace desde el observador interno (Leo alma), <em>el reconocimiento llegará sin buscarlo.</em><br><br>Conclusión del ciclo: a lo largo de estos 3 meses, el proceso mental habrá recorrido la relación entre identidad, seguridad económica y los mensajes familiares recibidos sobre el valor de uno mismo.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nota"><strong>Cómo trabajar con esto:</strong> En cada fecha clave, parar un momento a observar qué está pasando en esa área de vida. No hay que forzar nada — simplemente notar si la experiencia vivida resuena con la temática astrológica. La validación es experiencial.</div>
+
+  <hr class="sep">
+
+  <!-- PUNTOS A RETENER -->
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item"><div class="retener-num">1</div><div class="retener-texto"><span>La luna nueva del 16 de mayo lleva dentro el ciclo Sol-Mercurio y a Urano.</span> Mercurio como punto medio entre Sol-Luna y Urano: el pensamiento es el puente entre lo que se siembra y los cambios que vienen. La conjunción Mercurio-Urano exacta llega el 18 de mayo.</div></div>
+    <div class="retener-item"><div class="retener-num">2</div><div class="retener-texto"><span>El ciclo de mayo-julio 2026 transcurre principalmente en Cáncer.</span> La información que llega en las fases centrales tiene que ver con el pasado, la familia y las inercias emocionales. Fase 2 en decanato Cáncer-Acuario (inercias) · Fase 4 en decanato Cáncer-Piscis (disolución).</div></div>
+    <div class="retener-item"><div class="retener-num">3</div><div class="retener-texto"><span>El Sol en el ciclo = ámbito que ilumina la conciencia. Mercurio = fuente de información que lo condiciona.</span> No son el sol y Mercurio de la personalidad — son el observador (alma) y el procesador. Se leen por la casa que ocupan en cada fase.</div></div>
+    <div class="retener-item"><div class="retener-num">4</div><div class="retener-texto"><span>Fase 1 (observación) → Fase 2 (información del pasado) → Fase 4 (lógica + disolución) → Fase 6 (conclusiones + integración).</span> Cada fase añade una capa al proceso mental. La retrogradación no es problema si se está en la reflexión — el malentendido viene cuando se comunica hacia afuera sin tener en cuenta que los demás no están en el mismo proceso.</div></div>
+    <div class="retener-item"><div class="retener-num">5</div><div class="retener-texto"><span>Mercurio en Acuario va hacia la síntesis de las polaridades, no hacia los extremos.</span> El ruido de la mente mutable (esto está bien / esto está mal) no desaparece — se observa. El objetivo es encontrar el punto medio donde la información de ambos extremos se integra.</div></div>
+  </div>
+
+</div>
+</body>
+</html>
