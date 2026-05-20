@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C20 · Lilith · El sentimiento de vacío</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1C1917; --ink2: #44403C; --ink3: #78716C;
+      --paper: #FAF8F5; --paper2: #F2EFE9; --paper3: #E8E2D8;
+      --gold: #92712A; --gold-light: #C9A84C; --gold-bg: #FDF6E3;
+      --lilit: #5C2D6E; --lilit-bg: #F3EAF8; --lilit-border: #C4A0D8;
+      --lilit-dark: #3D1A4A;
+      --astro: #2D5478; --astro-bg: #EBF2F8; --astro-border: #A0BFDA;
+      --fuego: #8B3A2A; --fuego-bg: #FBF0ED; --fuego-border: #DBA090;
+      --tierra: #4A6741; --tierra-bg: #EFF4EE; --tierra-border: #A8C2A5;
+      --aire: #8B5E0A; --aire-bg: #FDF3E0; --aire-border: #D4A030;
+      --agua: #2D5478; --agua-bg: #EBF2F8; --agua-border: #A0BFDA;
+      --radius: 10px; --radius-lg: 16px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); line-height: 1.6; padding: 2rem 1rem 4rem; }
+    .page { max-width: 760px; margin: 0 auto; }
+
+    .header { border-bottom: 1px solid var(--paper3); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+    .header-top { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+    .badge { font-size: 10px; font-weight: 500; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.07em; }
+    .b-curso { background: var(--gold-bg); color: var(--gold); border: 0.5px solid #D4A843; }
+    .b-tipo  { background: var(--paper2); color: var(--ink3); border: 0.5px solid var(--paper3); }
+    .titulo { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; line-height: 1.2; margin-bottom: 6px; }
+    .subtitulo { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 300; color: var(--lilit); font-style: italic; margin-bottom: 6px; }
+    .meta { font-size: 12px; color: var(--ink3); }
+    .section-label { font-size: 10px; font-weight: 500; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2rem; margin-bottom: 10px; }
+
+    /* INTRO EXPLICATIVA */
+    .intro { background: var(--lilit-bg); border: 1.5px solid var(--lilit-border); border-radius: var(--radius-lg); padding: 16px 18px; font-size: 13px; color: var(--ink2); line-height: 1.8; margin-bottom: 8px; }
+    .intro strong { font-weight: 500; color: var(--lilit); }
+    .intro em { color: var(--ink3); font-style: italic; }
+
+    /* BLOQUE DE CONCEPTO */
+    .concepto { background: var(--paper2); border: 1px solid var(--paper3); border-radius: var(--radius-lg); padding: 14px 16px; font-size: 12.5px; color: var(--ink2); line-height: 1.7; margin-top: 8px; }
+    .concepto strong { font-weight: 500; color: var(--ink); }
+    .concepto em { color: var(--ink3); font-style: italic; }
+
+    /* TABLA */
+    .tabla-bloque { border: 1px solid var(--paper3); border-radius: var(--radius-lg); overflow: hidden; }
+    .tabla-bloque.lilit { border-color: var(--lilit-border); }
+    .tabla-header { padding: 10px 14px; background: var(--paper2); border-bottom: 0.5px solid var(--paper3); }
+    .tabla-bloque.lilit .tabla-header { background: var(--lilit-bg); border-color: var(--lilit-border); }
+    .tabla-titulo { font-size: 13px; font-weight: 600; color: var(--ink2); }
+    .tabla-bloque.lilit .tabla-titulo { color: var(--lilit); }
+    .tabla-sub { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+    .tabla-fila { display: grid; grid-template-columns: 150px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--paper3); align-items: start; }
+    .tabla-fila:last-child { border-bottom: none; }
+    .tabla-fila:nth-child(even) { background: var(--paper2); }
+    .tabla-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink3); padding-top: 2px; }
+    .tabla-val { font-size: 12px; color: var(--ink2); line-height: 1.5; }
+    .tabla-val strong { font-weight: 500; color: var(--ink); }
+    .tabla-val em { color: var(--ink3); font-style: italic; }
+
+    /* PUNTO VACÍO ASTRONÓMICO — SVG */
+    .astro-wrap { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+    .astro-svg { flex: 0 0 220px; background: white; border: 1px solid var(--paper3); border-radius: var(--radius-lg); padding: 12px; }
+    .astro-texto { flex: 1; min-width: 200px; }
+
+    /* LOS DOS VACÍOS */
+    .vacios-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media(max-width:520px){ .vacios-grid { grid-template-columns: 1fr; } }
+    .vacio-card { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid; }
+    .vacio-header { padding: 10px 14px; }
+    .vacio-titulo { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .vacio-sub { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .vacio-body { padding: 10px 14px; border-top: 1px solid; font-size: 12px; color: var(--ink2); line-height: 1.6; }
+    .vacio-body strong { font-weight: 500; color: var(--ink); }
+    .v-carencia { border-color: var(--fuego-border); }
+    .v-carencia .vacio-header { background: var(--fuego-bg); }
+    .v-carencia .vacio-titulo { color: var(--fuego); }
+    .v-carencia .vacio-sub { color: #B05040; }
+    .v-carencia .vacio-body { border-color: var(--fuego-border); }
+    .v-abundancia { border-color: var(--tierra-border); }
+    .v-abundancia .vacio-header { background: var(--tierra-bg); }
+    .v-abundancia .vacio-titulo { color: var(--tierra); }
+    .v-abundancia .vacio-sub { color: #5A8050; }
+    .v-abundancia .vacio-body { border-color: var(--tierra-border); }
+
+    /* SIGNOS POR ELEMENTO */
+    .elem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media(max-width:520px){ .elem-grid { grid-template-columns: 1fr; } }
+    .elem-card { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid; }
+    .elem-header { padding: 10px 14px; }
+    .elem-titulo { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .elem-signos { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0; }
+    .elem-body { padding: 10px 14px; border-top: 1px solid; font-size: 12px; color: var(--ink2); line-height: 1.6; }
+    .elem-body strong { font-weight: 500; color: var(--ink); }
+    .elem-body em { color: var(--ink3); font-style: italic; }
+    .e-fuego { border-color: var(--fuego-border); }
+    .e-fuego .elem-header { background: var(--fuego-bg); }
+    .e-fuego .elem-titulo { color: var(--fuego); }
+    .e-fuego .elem-signos { color: #B05040; }
+    .e-fuego .elem-body { border-color: var(--fuego-border); }
+    .e-tierra { border-color: var(--tierra-border); }
+    .e-tierra .elem-header { background: var(--tierra-bg); }
+    .e-tierra .elem-titulo { color: var(--tierra); }
+    .e-tierra .elem-signos { color: #5A8050; }
+    .e-tierra .elem-body { border-color: var(--tierra-border); }
+    .e-aire { border-color: var(--aire-border); }
+    .e-aire .elem-header { background: var(--aire-bg); }
+    .e-aire .elem-titulo { color: var(--aire); }
+    .e-aire .elem-signos { color: #A07020; }
+    .e-aire .elem-body { border-color: var(--aire-border); }
+    .e-agua { border-color: var(--agua-border); }
+    .e-agua .elem-header { background: var(--agua-bg); }
+    .e-agua .elem-titulo { color: var(--agua); }
+    .e-agua .elem-signos { color: #3A6080; }
+    .e-agua .elem-body { border-color: var(--agua-border); }
+
+    /* CASAS */
+    .casas-nota { background: var(--lilit-bg); border: 1px solid var(--lilit-border); border-radius: var(--radius); padding: 12px 14px; font-size: 12.5px; color: var(--ink2); line-height: 1.7; }
+    .casas-nota strong { font-weight: 500; color: var(--lilit); }
+
+    /* DEBORAH Y NELDA */
+    .practica-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media(max-width:520px){ .practica-grid { grid-template-columns: 1fr; } }
+    .practica-card { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--paper3); }
+    .practica-header { padding: 9px 14px; background: var(--paper2); border-bottom: 0.5px solid var(--paper3); }
+    .practica-nombre { font-size: 12px; font-weight: 600; color: var(--lilit); }
+    .practica-pos { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+    .practica-body { padding: 10px 14px; font-size: 12px; color: var(--ink2); line-height: 1.6; }
+    .practica-body strong { font-weight: 500; color: var(--ink); }
+
+    /* RETENER */
+    .retener-list { display: flex; flex-direction: column; gap: 6px; }
+    .retener-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: var(--radius); border: 1px solid var(--paper3); background: var(--paper); }
+    .retener-num { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: var(--gold-light); min-width: 24px; line-height: 1.4; }
+    .retener-texto { font-size: 13px; color: var(--ink); line-height: 1.6; }
+    .retener-texto span { font-weight: 500; }
+
+    .sep { border: none; border-top: 1px dashed var(--paper3); margin: 2rem 0; }
+    .nota { background: var(--paper2); border: 1px solid var(--paper3); border-radius: var(--radius); padding: 10px 14px; font-size: 12px; color: var(--ink2); line-height: 1.6; margin-top: 8px; }
+    .nota strong { font-weight: 500; color: var(--ink); }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <span class="badge b-curso">Curso 4 · C20</span>
+      <span class="badge b-tipo">Teoría</span>
+    </div>
+    <div class="titulo">Lilith — el sentimiento de vacío</div>
+    <div class="subtitulo">Inconsciente del vacío · Punto vacío astronómico · Lilith en los signos</div>
+    <div class="meta">15 de abril de 2026 &nbsp;·&nbsp; Origen de Lilith · La vacuidad · El punto focal vacío · Lilith en signos de fuego · Práctica en cartas</div>
+  </div>
+
+  <!-- QUÉ ES LILITH — INTRODUCCIÓN AMPLIADA -->
+  <div class="section-label">Qué es Lilith — leer esto antes que nada</div>
+  <div class="intro">
+    <strong>Lilith no es una mujer rechazada.</strong> Esa es la interpretación habitual en astrología, pero Ana propone una lectura completamente diferente, basada en dos investigaciones independientes: la descodificación del relato bíblico y la astronomía.<br><br>
+    En astrología convencional se dice que Lilith representa "la primera mujer de Adán, que fue rechazada por no someterse". Ana señala que esa lectura perpetúa una confusión histórica de origen patriarcal y religioso. <strong>Lilith no es una mujer — es un principio.</strong> Específicamente, es el principio femenino primordial del que nacen todos los opuestos manifestados (masculino y femenino), y representa algo que está profundamente inconsciente en nosotros: <em>el estado de vacuidad del que venimos y al que estamos conectados sin saberlo.</em><br><br>
+    Dicho de forma más sencilla: <strong>Lilith es el inconsciente del vacío.</strong> No el vacío como "nada horrible", sino el vacío como el estado de plenitud anterior a toda forma — lo que en distintas tradiciones se llama la Fuente, el reino de Dios, el estado antes del Big Bang. Estamos conectados a eso por un "hilo de plata", pero no somos conscientes de ello. Lilith en la carta marca dónde vivimos esa desconexión — y dónde está la puerta de vuelta.
+  </div>
+
+  <hr class="sep">
+
+  <!-- LA INTERPRETACIÓN BÍBLICA DESCODIFICADA -->
+  <div class="section-label">La lectura bíblica descodificada — Adán, Eva y Lilith</div>
+  <div class="tabla-bloque lilit">
+    <div class="tabla-header">
+      <div class="tabla-titulo">Lo que la Biblia dice en realidad — según Ana</div>
+      <div class="tabla-sub">Una descodificación simbólica, no literal</div>
+    </div>
+    <div class="tabla-fila"><div class="tabla-key">Lilith</div><div class="tabla-val">No es la "primera mujer de Adán". Es el <strong>principio femenino primordial</strong> — energía sin forma, sin género, sin cuerpo. El inconsciente del vacío. Lo anterior a toda creación y manifestación. <em>Es tan anterior a Eva y Adán que no tiene sentido llamarla "mujer".</em></div></div>
+    <div class="tabla-fila"><div class="tabla-key">Adán</div><div class="tabla-val">Leído de derecha a izquierda (como en hebreo original) es <strong>NADA</strong>. No es casualidad — Adán representa el principio masculino como vacuidad, como potencialidad pura antes de manifestarse.</div></div>
+    <div class="tabla-fila"><div class="tabla-key">Eva</div><div class="tabla-val">Leído al revés es <strong>AVE</strong>. Ave significa "manifestación divina" — de ahí el "Ave María". <em>"Eva nace de la costilla de Adán"</em> significa: la manifestación divina (AVE) nace del carbono/materia más densa (la costilla = lo más denso del cuerpo). Es la divinidad materializándose, no la sumisión de la mujer al hombre.</div></div>
+    <div class="tabla-fila"><div class="tabla-key">El principio femenino</div><div class="tabla-val">De Lilith (energía sin forma, andrógina) nacen los dos principios manifestados: <strong>Marte como energía masculina y Venus como energía femenina.</strong> Todo lo que tiene forma nace de un espacio de principio femenino primordial.</div></div>
+    <div class="tabla-fila"><div class="tabla-key">Por qué se distorsionó</div><div class="tabla-val">El patriarcado y la iglesia necesitaban someter el principio femenino. Al llamar a Lilith "mujer diabólica" y "primera mujer rechazada", se perpetuó el código de rechazo a la divinidad femenina — y por extensión, el rechazo a esa parte de nosotros mismos conectada con la Fuente.</div></div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- EL PUNTO VACÍO ASTRONÓMICO -->
+  <div class="section-label">El punto vacío astronómico — la base científica de Lilith</div>
+  <div class="astro-wrap">
+
+    <div class="astro-svg">
+      <svg viewBox="0 0 220 200" width="196" height="178" xmlns="http://www.w3.org/2000/svg">
+        <!-- Fondo -->
+        <rect width="220" height="200" fill="white"/>
+
+        <!-- Órbita elíptica de la Luna -->
+        <ellipse cx="90" cy="100" rx="78" ry="55" fill="none" stroke="#C4A0D8" stroke-width="1.5"/>
+
+        <!-- Tierra — foco principal -->
+        <circle cx="50" cy="100" r="12" fill="#EBF2F8" stroke="#A0BFDA" stroke-width="1.5"/>
+        <text x="50" y="105" text-anchor="middle" font-size="11" font-family="serif">⊕</text>
+        <text x="50" y="120" text-anchor="middle" font-size="8" fill="#78716C" font-family="sans-serif">Tierra</text>
+
+        <!-- Punto vacío — foco secundario (lado opuesto) -->
+        <circle cx="130" cy="100" r="8" fill="#F3EAF8" stroke="#C4A0D8" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="130" y="104" text-anchor="middle" font-size="10" fill="#5C2D6E" font-family="sans-serif" font-weight="700">◯</text>
+        <text x="130" y="118" text-anchor="middle" font-size="7.5" fill="#5C2D6E" font-family="sans-serif">Punto vacío</text>
+        <text x="130" y="127" text-anchor="middle" font-size="7" fill="#78716C" font-family="sans-serif">(Luna Oscura)</text>
+
+        <!-- Luna en perigeo (más cerca de Tierra) -->
+        <circle cx="12" cy="100" r="7" fill="#F2EFE9" stroke="#C4A0D8" stroke-width="1.5"/>
+        <text x="12" y="104" text-anchor="middle" font-size="10" font-family="serif">☽</text>
+        <text x="12" y="118" text-anchor="middle" font-size="7" fill="#78716C" font-family="sans-serif">Perigeo</text>
+
+        <!-- Luna en apogeo (más lejos de Tierra) -->
+        <circle cx="168" cy="100" r="7" fill="#F2EFE9" stroke="#C4A0D8" stroke-width="1.5"/>
+        <text x="168" y="104" text-anchor="middle" font-size="10" font-family="serif">☽</text>
+        <text x="168" y="118" text-anchor="middle" font-size="7" fill="#78716C" font-family="sans-serif">Apogeo</text>
+
+        <!-- Línea de ápside -->
+        <line x1="12" y1="100" x2="168" y2="100" stroke="#E8E2D8" stroke-width="0.8" stroke-dasharray="4,3"/>
+
+        <!-- Flechas de dirección de la Luna -->
+        <path d="M 90 45 Q 140 42 168 90" fill="none" stroke="#C4A0D8" stroke-width="1" marker-end="url(#arr)"/>
+        <defs>
+          <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L6,3 z" fill="#C4A0D8"/>
+          </marker>
+        </defs>
+
+        <!-- Equidistancia -->
+        <text x="90" y="165" text-anchor="middle" font-size="8" fill="#5C2D6E" font-family="sans-serif">← misma distancia →</text>
+        <line x1="50" y1="158" x2="130" y2="158" stroke="#C4A0D8" stroke-width="0.8"/>
+        <line x1="50" y1="154" x2="50" y2="162" stroke="#C4A0D8" stroke-width="0.8"/>
+        <line x1="130" y1="154" x2="130" y2="162" stroke="#C4A0D8" stroke-width="0.8"/>
+
+        <!-- Título -->
+        <text x="110" y="185" text-anchor="middle" font-size="8" fill="#78716C" font-family="sans-serif">Ciclo: ~9 meses</text>
+      </svg>
+    </div>
+
+    <div class="astro-texto">
+      <div class="tabla-bloque">
+        <div class="tabla-header">
+          <div class="tabla-titulo">Qué es el punto vacío astronómico</div>
+          <div class="tabla-sub">La base científica de Lilith</div>
+        </div>
+        <div class="tabla-fila"><div class="tabla-key">La órbita lunar</div><div class="tabla-val">La Luna no gira en círculo perfecto alrededor de la Tierra — gira en una <strong>elipse</strong>. En una elipse hay dos focos. La Tierra ocupa uno de ellos.</div></div>
+        <div class="tabla-fila"><div class="tabla-key">El punto vacío</div><div class="tabla-val">El segundo foco de la elipse está <strong>vacío</strong> — no hay ningún cuerpo ahí. Los astrónomos lo llaman "punto focal vacío" o "punto fantasma". <em>A la misma distancia del perigeo que el apogeo, pero del otro lado.</em></div></div>
+        <div class="tabla-fila"><div class="tabla-key">Lilith = apogeo</div><div class="tabla-val">En astrología, se usa como Lilith el <strong>apogeo lunar</strong> (el punto más alejado de la Tierra) o el punto vacío. Se comporta como un cuerpo celeste — actúa como un atractor, como un agujero negro que influye en la trayectoria de la Luna.</div></div>
+        <div class="tabla-fila"><div class="tabla-key">El ciclo</div><div class="tabla-val">Lilith tarda <strong>~9 meses en dar la vuelta</strong> al zodiaco. 9 meses = período de gestación. Simbólicamente: lo que está en gestación en ese espacio de principio femenino.</div></div>
+        <div class="tabla-fila"><div class="tabla-key">La sincronía</div><div class="tabla-val">Ana descubrió esta correspondencia astronómica mientras investigaba los duelos no hechos en el mapa sistémico. El "punto fantasma" de la astronomía coincide exactamente con el "sentimiento de vacío" del árbol genealógico. <em>Una sincronía de investigaciones independientes.</em></div></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- EL CONCEPTO CENTRAL: INCONSCIENTE DEL VACÍO -->
+  <div class="section-label">El concepto central — inconsciente del vacío</div>
+  <div class="intro" style="background:var(--lilit-bg); border-color:var(--lilit-border);">
+    <strong>Vacío ≠ nada terrible.</strong> Hay dos palabras que en español parecen iguales pero son muy distintas:<br><br>
+    <strong>Sentimiento de vacío</strong> = la sensación de carencia, de que algo falta, de que no estamos completos. Esto es lo que la mayoría de la gente entiende por vacío — y es la manifestación inconsciente de Lilith.<br><br>
+    <strong>Vacuidad</strong> = el estado de ausencia de ruido, de pensamiento, de juicio. El silencio profundo. El estado anterior a toda forma. Esto es lo que Lilith realmente representa — pero está <em>inconsciente</em> en nosotros. No somos conscientes de que ese estado existe y de que estamos conectados a él.<br><br>
+    La paradoja de Lilith: <strong>en el mismo sitio donde está el sentimiento de carencia, está también el acceso a la plenitud.</strong> Depende de desde dónde miremos — desde el inconsciente del vacío (carencia) o desde la conciencia del vacío (abundancia). Lilith en la carta marca exactamente dónde se da esta dualidad en cada persona.
+  </div>
+
+  <!-- LOS DOS VACÍOS -->
+  <div class="vacios-grid" style="margin-top:10px;">
+    <div class="vacio-card v-carencia">
+      <div class="vacio-header">
+        <div class="vacio-titulo">Desde el inconsciente — carencia</div>
+        <div class="vacio-sub">Lo que vivimos sin darnos cuenta</div>
+      </div>
+      <div class="vacio-body">Sentimiento de que algo falta. Que no estoy completa. Que me falta pareja, reconocimiento, hogar, identidad. <strong>La carencia es el código que se activa cuando no somos conscientes de nuestra conexión con la Fuente.</strong> Es heredado del linaje y del inconsciente colectivo. <em>No es real — es una creencia instalada.</em></div>
+    </div>
+    <div class="vacio-card v-abundancia">
+      <div class="vacio-header">
+        <div class="vacio-titulo">Desde la conciencia — abundancia</div>
+        <div class="vacio-sub">Lo que aparece al atravesar el vacío</div>
+      </div>
+      <div class="vacio-body">Cuando atravieso ese sentimiento de vacío en lugar de huir de él, me encuentro con todo. La misma Lilith da las dos versiones. <strong>Cuando se supera el desequilibrio, Lilith da plena identidad</strong> — porque uno ha reconocido la parte divina que había rechazado. <em>El acceso está en el mismo lugar que el dolor.</em></div>
+    </div>
+  </div>
+
+  <div class="concepto" style="margin-top:8px;">
+    <strong>Por qué se hereda:</strong> Lilith tiene que ver con el linaje y con los duelos no hechos. Los ancestros que no pudieron ser conscientes de esta conexión dejaron un código de carencia. Ese código se hereda de generación en generación — no porque seamos malos o estemos rotos, sino porque nadie lo pudo resolver antes. <strong>La oportunidad de Lilith es sanarlo ahora.</strong> Al hacerlo, sana también el árbol.
+  </div>
+
+  <hr class="sep">
+
+  <!-- LILITH EN LOS SIGNOS POR ELEMENTO -->
+  <div class="section-label">Lilith en los signos — por elemento</div>
+  <p style="font-size:12.5px; color:var(--ink2); line-height:1.7; margin-bottom:12px;">El elemento del signo donde está Lilith indica el <strong>tipo de vacío heredado</strong>. El signo concreto matiza dentro de ese elemento. En clase se desarrollaron los signos de fuego — los de aire, tierra y agua se mencionaron brevemente.</p>
+
+  <div class="elem-grid">
+    <div class="elem-card e-fuego">
+      <div class="elem-header">
+        <div class="elem-titulo">🔥 Signos de fuego</div>
+        <div class="elem-signos">♈ Aries · ♌ Leo · ♐ Sagitario</div>
+      </div>
+      <div class="elem-body">
+        <strong>Vacío de identidad.</strong> Ancestros que han perdido su autoafirmación por una pérdida de poder o de voluntad. No tenían voz ni voto — eran una extensión de otro.<br><br>
+        <strong>♈ Aries:</strong> vacío del "yo existo". El "yo" más primario. Suicidios, no nacidos o muertes tempranas en el linaje — personas que no llegaron a existir o existieron sin que se les reconociera la vida.<br><br>
+        <strong>♌ Leo:</strong> vacío de posición — "¿quién soy yo?" en relación a los demás. Desorden de posiciones en el linaje: muertes tempranas que dejaron lugares vacíos que otra persona ocupó sin saberlo. Conflictos de identidad en las relaciones.<br><br>
+        <strong>♐ Sagitario:</strong> vacío de identidad espiritual — las creencias heredadas. Temas con los sistemas de creencias del linaje: dogmas, prohibiciones religiosas, conflictos ideológicos.
+      </div>
+    </div>
+
+    <div class="elem-card e-aire">
+      <div class="elem-header">
+        <div class="elem-titulo">💨 Signos de aire</div>
+        <div class="elem-signos">♊ Géminis · ♎ Libra · ♒ Acuario</div>
+      </div>
+      <div class="elem-body">
+        <strong>Vacío intelectual o mental.</strong> Ancestros con problemas de salud mental, diagnósticos de enfermedad mental por falta de información, muertes de hermanos, falta de educación, miedo a las relaciones por experiencias traumáticas. Exclusiones del clan.<br><br>
+        <em>Este elemento se mencionó en clase pero no se desarrolló en detalle — se ampliará en la siguiente sesión.</em>
+      </div>
+    </div>
+
+    <div class="elem-card e-agua">
+      <div class="elem-header">
+        <div class="elem-titulo">💧 Signos de agua</div>
+        <div class="elem-signos">♋ Cáncer · ♏ Escorpio · ♓ Piscis</div>
+      </div>
+      <div class="elem-body">
+        <strong>Vacío afectivo.</strong> En el sentido de hogar, de pertenencia, de origen emocional. Esterilidad, traumas de abandono, duelos no hechos. Pérdidas afectivas en el linaje sin elaborar.<br><br>
+        <strong>Piscis especialmente:</strong> dependencia afectiva, miedo a la pérdida. Puede venir de matrimonios donde uno de los dos murió — el sobreviviente quedó dependiente del duelo. El patrón: "no me emparejo, por si lo pierdo."<br><br>
+        <em>Este elemento se mencionó en clase pero no se desarrolló en detalle.</em>
+      </div>
+    </div>
+
+    <div class="elem-card e-tierra">
+      <div class="elem-header">
+        <div class="elem-titulo">🌱 Signos de tierra</div>
+        <div class="elem-signos">♉ Tauro · ♍ Virgo · ♑ Capricornio</div>
+      </div>
+      <div class="elem-body">
+        <strong>Vacío en las capacidades y habilidades.</strong> Incapacidad de responsabilizarse, quiebras materiales (tierras, empresas), problemas con la alimentación. Ancestros que no desarrollaron sus habilidades de trabajo o que fracasaron en el emprendimiento.<br><br>
+        <em>Este elemento se mencionó en clase pero no se desarrolló en detalle.</em>
+      </div>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- LILITH EN LAS CASAS — PRINCIPIO -->
+  <div class="section-label">Lilith en las casas — el ámbito vital donde se manifiesta</div>
+  <div class="casas-nota">
+    <strong>El signo marca el tipo de vacío heredado. La casa marca dónde se vive ese vacío.</strong><br><br>
+    Si el signo dice "de qué tipo es el código de carencia", la casa dice "en qué área de vida lo vives con más intensidad". Por eso Ana dice que en Lilith <strong>la casa es más importante que el signo</strong> (al contrario que Quirón, donde el signo pesa más).<br><br>
+    Ejemplos que salieron en clase:
+    <ul style="margin-top:8px; padding-left:16px; line-height:1.8;">
+      <li><strong>Casa 7 (relaciones de pareja):</strong> sentimiento de vacío en la pareja. El vacío se manifiesta como dependencia, necesidad de la figura del otro, o dificultad para encontrar una relación que te defina como tú misma — no solo como esposa, madre o cuidadora.</li>
+      <li><strong>Casa 4 (raíces, familia):</strong> desarraigo total. Sentimiento de no tener hogar, de no pertenecer a ningún lado.</li>
+      <li><strong>Casa 11 (grupos, amigos, proyectos colectivos):</strong> sentimiento de vacío en los grupos de pertenencia — sentirse outsider, no encajar en el colectivo.</li>
+    </ul>
+  </div>
+
+  <hr class="sep">
+
+  <!-- PRÁCTICA EN CLASE -->
+  <div class="section-label">Práctica en clase — Lilith en las cartas de Deborah y Nelda</div>
+  <div class="practica-grid">
+    <div class="practica-card">
+      <div class="practica-header">
+        <div class="practica-nombre">Deborah — Lilith en Leo, Casa 7</div>
+        <div class="practica-pos">Signo de fuego · Casa de pareja</div>
+      </div>
+      <div class="practica-body">
+        Lilith en Leo: vacío de posición — "¿quién soy yo?" en las relaciones. El vacío se vive en el ámbito de la pareja y los vínculos cercanos.<br><br>
+        <strong>En la Casa 7:</strong> dificultad para ocupar el propio lugar en la relación. La pregunta inconsciente: ¿soy yo misma en esta pareja, o soy un rol (la esposa, la madre, la cuidadora)? Cuando se resuelve: relación de igual a igual desde la propia identidad.
+      </div>
+    </div>
+    <div class="practica-card">
+      <div class="practica-header">
+        <div class="practica-nombre">Nelda — Lilith en Piscis, Casa 7</div>
+        <div class="practica-pos">Signo de agua · Casa de pareja</div>
+      </div>
+      <div class="practica-body">
+        Lilith en Piscis: vacío afectivo relacionado con pérdidas y duelos. El vacío se vive también en la Casa 7 — la pareja.<br><br>
+        <strong>En Piscis (agua):</strong> dependencia afectiva que puede venir de pérdidas en el linaje (matrimonios donde uno murió, duelos no hechos). El patrón puede manifestarse como buscar la figura de la pareja por necesidad más que por elección, o como miedo a comprometerse por miedo a perder. <em>La resolución: disolver la creencia de que la pareja es lo que da seguridad afectiva.</em>
+      </div>
+    </div>
+  </div>
+
+  <div class="nota" style="margin-top:8px;"><strong>Nota importante:</strong> Tanto Deborah como Nelda tienen Lilith en Casa 7 — el ámbito de la pareja y las relaciones. Aunque los signos son diferentes (Leo fuego vs. Piscis agua), ambas trabajan el mismo tema: encontrar la propia identidad en las relaciones, sin depender de la figura del otro para sentirse completas.</div>
+
+  <hr class="sep">
+
+  <!-- PUNTOS A RETENER -->
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item"><div class="retener-num">1</div><div class="retener-texto"><span>Lilith no es una mujer rechazada — es el principio femenino primordial, el inconsciente del vacío.</span> No tiene género ni forma. Es la energía andrógina anterior a toda manifestación. Lo que se llama "rechazo de Lilith" es en realidad el rechazo inconsciente de la propia conexión con la Fuente.</div></div>
+    <div class="retener-item"><div class="retener-num">2</div><div class="retener-texto"><span>Lilith astronómica = el punto vacío (segundo foco) de la órbita elíptica de la Luna.</span> No hay ningún cuerpo ahí — es un punto fantasma, un atractor. Tarda ~9 meses en dar la vuelta al zodiaco. La correspondencia con los duelos no hechos del linaje no es casual.</div></div>
+    <div class="retener-item"><div class="retener-num">3</div><div class="retener-texto"><span>Lilith tiene dos caras en el mismo lugar: sentimiento de carencia o acceso a la plenitud.</span> Depende del nivel de conciencia. Inconsciente = creo que me falta algo. Consciente = atravieso ese vacío y encuentro que lo tengo todo. La misma Lilith da las dos versiones.</div></div>
+    <div class="retener-item"><div class="retener-num">4</div><div class="retener-texto"><span>El signo indica el tipo de vacío heredado. La casa indica dónde se vive.</span> Fuego = vacío de identidad · Aire = vacío intelectual/mental · Agua = vacío afectivo · Tierra = vacío de capacidades/recursos. En Lilith, la casa tiene más peso que el signo.</div></div>
+    <div class="retener-item"><div class="retener-num">5</div><div class="retener-texto"><span>Lilith es un código heredado del linaje — no es personal, es sistémico.</span> Lo que heredamos son creencias sobre la carencia que nadie pudo resolver antes. Al hacerlo consciente, se sana no solo en uno mismo sino en el árbol familiar. <em>La clase continúa en C22 con los signos de aire, tierra y agua, y Quirón.</em></div></div>
+  </div>
+
+</div>
+</body>
+</html>
