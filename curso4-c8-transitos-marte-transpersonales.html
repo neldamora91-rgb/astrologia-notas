@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C8 · Tránsitos de Marte con planetas transpersonales</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9;
+      --text: #1a1a18; --text2: #4a4a46; --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+      --radius: 8px; --radius-lg: 12px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2a; --text: #e8e6de; --text2: #a8a6a0; --text3: #68665e; --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18); }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; padding: 2rem 1rem; }
+    .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; }
+
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .curso-badge { font-size: 11px; font-weight: 500; background: #e6f1fb; color: #185FA5; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tipo-badge { font-size: 11px; font-weight: 500; background: #EEEDFE; color: #534AB7; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); }
+
+    .section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 2rem; }
+
+    /* LENTE */
+    .lente { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+    .lente-header { padding: 10px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .lente-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lente-subtitulo { font-size: 12px; color: var(--text2); }
+    .lente-body { padding: 12px 16px; }
+    .lente-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; margin-bottom: 2px; }
+    .lente-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .lente-footer { padding: 10px 16px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lente-footer strong { font-weight: 500; color: var(--text); }
+
+    /* TARJETAS PLANETA */
+    .planeta-grid { display: flex; flex-direction: column; gap: 8px; }
+    .planeta-card { border-radius: var(--radius-lg); overflow: hidden; }
+    .planeta-header { display: flex; align-items: center; gap: 12px; padding: 10px 14px; }
+    .planeta-icono { font-size: 20px; flex-shrink: 0; }
+    .planeta-nombre { font-size: 14px; font-weight: 600; }
+    .planeta-subtitulo { font-size: 12px; margin-top: 1px; }
+    .planeta-body { display: grid; grid-template-columns: 1fr 1fr; border-top: 0.5px solid; }
+    @media (max-width: 520px) { .planeta-body { grid-template-columns: 1fr; } }
+    .planeta-col { padding: 10px 14px; }
+    .planeta-col:first-child { border-right: 0.5px solid; }
+    @media (max-width: 520px) { .planeta-col:first-child { border-right: none; border-bottom: 0.5px solid; } }
+    .planeta-col-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 5px; }
+    .planeta-col-text { font-size: 12px; line-height: 1.6; }
+    .planeta-col-text strong { font-weight: 500; }
+    .planeta-footer { padding: 8px 14px; border-top: 0.5px solid; font-size: 12px; line-height: 1.5; }
+    .planeta-footer strong { font-weight: 500; }
+
+    /* Plutón */
+    .c-pluton { border: 1px solid #C4A6D8; }
+    .c-pluton .planeta-header { background: #F5EEF8; }
+    .c-pluton .planeta-nombre { color: #6B2F8A; }
+    .c-pluton .planeta-subtitulo { color: #9B5BBF; }
+    .c-pluton .planeta-body { border-color: #C4A6D8; }
+    .c-pluton .planeta-col { border-color: #C4A6D8; }
+    .c-pluton .planeta-col-label { color: #6B2F8A; }
+    .c-pluton .planeta-col-text { color: var(--text2); }
+    .c-pluton .planeta-footer { background: #F5EEF8; border-color: #C4A6D8; color: #5A2070; }
+
+    /* Urano */
+    .c-urano { border: 1px solid #B5D4F4; }
+    .c-urano .planeta-header { background: #E6F1FB; }
+    .c-urano .planeta-nombre { color: #185FA5; }
+    .c-urano .planeta-subtitulo { color: #2E7ED4; }
+    .c-urano .planeta-body { border-color: #B5D4F4; }
+    .c-urano .planeta-col { border-color: #B5D4F4; }
+    .c-urano .planeta-col-label { color: #185FA5; }
+    .c-urano .planeta-col-text { color: var(--text2); }
+    .c-urano .planeta-footer { background: #E6F1FB; border-color: #B5D4F4; color: #0C447C; }
+
+    /* Neptuno */
+    .c-neptuno { border: 1px solid #A8C4E8; }
+    .c-neptuno .planeta-header { background: #EAF2F8; }
+    .c-neptuno .planeta-nombre { color: #0F4C81; }
+    .c-neptuno .planeta-subtitulo { color: #1A6BA8; }
+    .c-neptuno .planeta-body { border-color: #A8C4E8; }
+    .c-neptuno .planeta-col { border-color: #A8C4E8; }
+    .c-neptuno .planeta-col-label { color: #0F4C81; }
+    .c-neptuno .planeta-col-text { color: var(--text2); }
+    .c-neptuno .planeta-footer { background: #EAF2F8; border-color: #A8C4E8; color: #0C3E6B; }
+
+    /* Saturno */
+    .c-saturno { border: 1px solid #C0DD97; }
+    .c-saturno .planeta-header { background: #EAF3DE; }
+    .c-saturno .planeta-nombre { color: #3B6D11; }
+    .c-saturno .planeta-subtitulo { color: #518F1A; }
+    .c-saturno .planeta-body { border-color: #C0DD97; }
+    .c-saturno .planeta-col { border-color: #C0DD97; }
+    .c-saturno .planeta-col-label { color: #3B6D11; }
+    .c-saturno .planeta-col-text { color: var(--text2); }
+    .c-saturno .planeta-footer { background: #EAF3DE; border-color: #C0DD97; color: #2A5000; }
+
+    /* ESTELIUM */
+    .estelium-bloque { border: 1.5px solid #534AB7; border-radius: var(--radius-lg); overflow: hidden; }
+    .estelium-header { padding: 10px 16px; background: #EEEDFE; }
+    .estelium-titulo { font-size: 14px; font-weight: 600; color: #3D2A8A; }
+    .estelium-subtitulo { font-size: 12px; color: #534AB7; margin-top: 2px; }
+    .estelium-body { padding: 12px 16px; border-top: 1px solid #D0CAF5; }
+    .estelium-fila { display: grid; grid-template-columns: 90px 1fr; gap: 8px; margin-bottom: 6px; align-items: start; }
+    .estelium-fila:last-child { margin-bottom: 0; }
+    .estelium-key { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #534AB7; padding-top: 2px; }
+    .estelium-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .estelium-val strong { font-weight: 500; color: var(--text); }
+    .estelium-footer { padding: 10px 16px; background: #EEEDFE; border-top: 1px solid #D0CAF5; font-size: 12px; color: #3D2A8A; line-height: 1.5; }
+    .estelium-footer strong { font-weight: 600; }
+
+    /* DIFERENCIA */
+    .diff-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .diff-header { padding: 8px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); }
+    .diff-grid { display: grid; grid-template-columns: 1fr 1fr; }
+    @media (max-width: 520px) { .diff-grid { grid-template-columns: 1fr; } }
+    .diff-col { padding: 12px 14px; }
+    .diff-col:first-child { border-right: 0.5px solid var(--border); }
+    @media (max-width: 520px) { .diff-col:first-child { border-right: none; border-bottom: 0.5px solid var(--border); } }
+    .diff-col-titulo { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .diff-item { font-size: 12px; color: var(--text2); line-height: 1.5; padding-left: 10px; position: relative; margin-bottom: 3px; }
+    .diff-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .diff-footer { padding: 10px 14px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .diff-footer strong { font-weight: 500; color: var(--text); }
+
+    /* CONCEPTO */
+    .badge { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .b-nuevo { background: #EEEDFE; color: #534AB7; }
+    .concepto-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .concepto-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .concepto-nombre { font-size: 14px; font-weight: 500; color: var(--text); flex: 1; }
+    .concepto-def { padding: 12px 14px; }
+    .concepto-def-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .concepto-def-text strong { font-weight: 500; color: var(--text); }
+
+    /* RETENER */
+    .retener-list { display: flex; flex-direction: column; gap: 6px; }
+    .retener-item { display: flex; gap: 12px; align-items: flex-start; padding: 11px 14px; border-radius: var(--radius); border: 0.5px solid var(--border); }
+    .retener-num { font-size: 12px; font-weight: 500; color: #185FA5; min-width: 20px; padding-top: 2px; }
+    .retener-texto { font-size: 13px; color: var(--text); line-height: 1.6; }
+    .retener-texto span { font-weight: 500; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-top">
+      <div class="curso-badge">Curso 4 · C8</div>
+      <div class="tipo-badge">Teoría + Práctica</div>
+    </div>
+    <div class="titulo">Tránsitos de Marte con planetas transpersonales</div>
+    <div class="meta">14 de enero de 2026 &nbsp;·&nbsp; Tránsitos · Marte · Plutón · Urano · Neptuno · Saturno</div>
+  </div>
+
+  <div class="section-label">Lente de lectura</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">Marte como activador — qué pasa cuando toca un transpersonal</div>
+      <div class="lente-subtitulo">Hay que leer los dos arquetipos juntos — la combinación genera una energía específica</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">Marte inyecta energía en el planeta que toca — lo que ese planeta representa se activa y se pone en movimiento</div>
+      <div class="lente-item">El signo donde ocurre el contacto matiza el tipo de acción — no es lo mismo Marte en Capricornio que en Aries</div>
+      <div class="lente-item">Un tránsito de Marte dura 1–2 días por grado — puede ser intenso pero no permanente; los transpersonales perduran mucho más</div>
+      <div class="lente-item">El nivel de conciencia del que lo vive cambia completamente la experiencia — el mismo tránsito puede vivirse desde el impulso o desde la elección</div>
+      <div class="lente-item">Lo que hace potente un tránsito no es solo el planeta sino la combinación — las configuraciones planetarias multiplican el efecto</div>
+    </div>
+    <div class="lente-footer"><strong>El signo de origen importa:</strong> un Marte que viene de Capricornio ya trae la idea de lo correcto y lo responsable antes de entrar en Acuario — el historial del tránsito forma parte de la lectura.</div>
+  </div>
+
+  <div class="section-label">Marte en contacto con planetas transpersonales</div>
+  <div class="planeta-grid">
+
+    <div class="planeta-card c-pluton">
+      <div class="planeta-header">
+        <div class="planeta-icono">♇</div>
+        <div>
+          <div class="planeta-nombre">Marte + Plutón — transformación inevitable</div>
+          <div class="planeta-subtitulo">Intensidad máxima · La acción fuerza el cambio</div>
+        </div>
+      </div>
+      <div class="planeta-body">
+        <div class="planeta-col">
+          <div class="planeta-col-label">Qué trae</div>
+          <div class="planeta-col-text">Energía intensa dirigida a la transformación. Plutón quiere soltar lo que impide el avance; Marte le inyecta combustible. <strong>Cambio inevitable</strong> — algo que ya no puede seguir igual se moviliza.</div>
+        </div>
+        <div class="planeta-col">
+          <div class="planeta-col-label">El reto</div>
+          <div class="planeta-col-text">La intensidad puede derivar en obsesión, acción compulsiva o conflicto explosivo. En cuadratura: quién actúa sobre quién — <strong>dilema de poder</strong>. La acción puede violar límites del otro.</div>
+        </div>
+      </div>
+      <div class="planeta-footer"><strong>La diferencia por aspecto:</strong> conjunción/oposición = encuentro directo de arquetipos. Cuadratura = conflicto activo, la tensión se detona. Sextil/trígono = transformación favorecida con menos sufrimiento — pero la transformación ocurre igualmente. Plutón es Plutón en cualquier aspecto.</div>
+    </div>
+
+    <div class="planeta-card c-urano">
+      <div class="planeta-header">
+        <div class="planeta-icono">♅</div>
+        <div>
+          <div class="planeta-nombre">Marte + Urano — cambio radical e inesperado</div>
+          <div class="planeta-subtitulo">Sacudida brusca · Ruptura de lo establecido</div>
+        </div>
+      </div>
+      <div class="planeta-body">
+        <div class="planeta-col">
+          <div class="planeta-col-label">Qué trae</div>
+          <div class="planeta-col-text">Cambios radicales y repentinos. Marte actúa, Urano rompe — la combinación genera disrupciones que no se ven venir. <strong>Energía eléctrica</strong> — puede ser liberadora o desestabilizadora según el estado de conciencia.</div>
+        </div>
+        <div class="planeta-col">
+          <div class="planeta-col-label">El reto</div>
+          <div class="planeta-col-text">Impulsividad extrema — actuar antes de pensar. La energía es alta y difícil de contener o dirigir. En combinación con Mercurio puede llegar a accidentes o situaciones muy imprevistas.</div>
+        </div>
+      </div>
+      <div class="planeta-footer"><strong>Marte + Urano + Mercurio juntos:</strong> movimiento (Marte), ruptura (Urano) y desplazamiento/comunicación (Mercurio) — contexto de mayor riesgo de accidentes o situaciones imprevistas en tránsito físico.</div>
+    </div>
+
+    <div class="planeta-card c-neptuno">
+      <div class="planeta-header">
+        <div class="planeta-icono">♆</div>
+        <div>
+          <div class="planeta-nombre">Marte + Neptuno — acción sin claridad</div>
+          <div class="planeta-subtitulo">Confusión · Desorientación · Mala praxis</div>
+        </div>
+      </div>
+      <div class="planeta-body">
+        <div class="planeta-col">
+          <div class="planeta-col-label">Qué trae</div>
+          <div class="planeta-col-text">La acción pierde dirección. Puede traer <strong>mala praxis</strong>, acciones que no salen como se planeaban, o ausencia de acción por falta de rumbo. También puede ser acción desde la compasión o el ideal.</div>
+        </div>
+        <div class="planeta-col">
+          <div class="planeta-col-label">El reto</div>
+          <div class="planeta-col-text">Neptuno no tiene la potencia de Plutón ni la ruptura de Urano — pero puede ser igualmente destructivo por confusión. Las acciones parecen razonables y llevan a resultados inesperados o se disuelven.</div>
+        </div>
+      </div>
+      <div class="planeta-footer"><strong>Ejemplo de clase:</strong> formulario enviado en octubre, cuenta bloqueada el 25 de diciembre, burocracia sin respuesta — cada gestión lleva a un nuevo obstáculo. La acción está hecha; el resultado, disuelto.</div>
+    </div>
+
+    <div class="planeta-card c-saturno">
+      <div class="planeta-header">
+        <div class="planeta-icono">♄</div>
+        <div>
+          <div class="planeta-nombre">Marte + Saturno — frenada desde la responsabilidad</div>
+          <div class="planeta-subtitulo">Tensión entre impulso y estructura · Algo puede terminar</div>
+        </div>
+      </div>
+      <div class="planeta-body">
+        <div class="planeta-col">
+          <div class="planeta-col-label">Qué trae</div>
+          <div class="planeta-col-text">Saturno frena el impulso de Marte desde la responsabilidad y la estructura. Puede traer <strong>terminaciones</strong> — algo llega a su fin. También puede ser acción disciplinada que tarda en materializarse.</div>
+        </div>
+        <div class="planeta-col">
+          <div class="planeta-col-label">El reto</div>
+          <div class="planeta-col-text">El conflicto entre querer actuar y el peso de la responsabilidad. En la tradición, Marte y Saturno son los "maléficos" — energía que exige conciencia para no derivar en confrontación o bloqueo total.</div>
+        </div>
+      </div>
+      <div class="planeta-footer"><strong>Próximo movimiento:</strong> Marte va hacia Piscis y luego Aries, donde estarán Saturno y Neptuno. En Aries la conjunción Marte-Saturno puede traer gran determinación de autoridad — algo puede terminar o decidirse de forma contundente.</div>
+    </div>
+
+  </div>
+
+  <div class="section-label">Fenómeno de enero 2026 — Estelium en Acuario</div>
+  <div class="estelium-bloque">
+    <div class="estelium-header">
+      <div class="estelium-titulo">Todos los planetas personales entran en Acuario</div>
+      <div class="estelium-subtitulo">Venus (18 ene) · Luna (19 ene) · Mercurio y Sol (21 ene) · Marte (24 ene) · Plutón ya en grado 3</div>
+    </div>
+    <div class="estelium-body">
+      <div class="estelium-fila">
+        <div class="estelium-key">Qué ocurre</div>
+        <div class="estelium-val">Todos los planetas personales — Sol, Luna, Mercurio, Venus, Marte — entran en Acuario en pocos días. Seis de nueve planetas en un mismo signo, todos pasando por Plutón en grado 3.</div>
+      </div>
+      <div class="estelium-fila">
+        <div class="estelium-key">Qué significa</div>
+        <div class="estelium-val">Cada subpersonalidad (cómo pienso, siento, actúo, me relaciono, deseo) entra en un proceso de cambio de conciencia a través de Plutón. <strong>No es Plutón viniendo a transformar — soy yo quien camina hacia Plutón.</strong></div>
+      </div>
+      <div class="estelium-fila">
+        <div class="estelium-key">Marte + Plutón</div>
+        <div class="estelium-val">El 28 de enero Marte alcanza el grado 3 de Acuario donde está Plutón. Marte viene de Capricornio (lo correcto, lo responsable) — llega a colaborar con el cambio de conciencia colectiva que Plutón está gestando.</div>
+      </div>
+      <div class="estelium-fila">
+        <div class="estelium-key">A nivel mundial</div>
+        <div class="estelium-val">Plutón en Acuario cambia la conciencia de lo que es la sociedad y cómo nos organizamos. Marte trae acciones en esa dirección — acciones sociales correctas, no solo disruptivas por hartazgo.</div>
+      </div>
+    </div>
+    <div class="estelium-footer"><strong>Plutón en Acuario ≠ revolución.</strong> La revolución (Urano) ya ocurrió con la Revolución Francesa y la Industrial. Plutón en Acuario cambia la conciencia sobre qué es la sociedad — el cambio viene de adentro, no de la calle.</div>
+  </div>
+
+  <div class="section-label">Diferencia clave — Plutón encima del planeta vs planeta yendo hacia Plutón</div>
+  <div class="diff-bloque">
+    <div class="diff-header">El mismo encuentro — dirección opuesta</div>
+    <div class="diff-grid">
+      <div class="diff-col">
+        <div class="diff-col-titulo">♇ Plutón pasa sobre el planeta natal</div>
+        <div class="diff-item">El cambio viene desde fuera — llega sin ser pedido</div>
+        <div class="diff-item">Opera como cirujano — mucho tiempo, perfora, transforma</div>
+        <div class="diff-item">La transformación es inevitable y profunda</div>
+        <div class="diff-item">Se vive una sola vez en la vida</div>
+        <div class="diff-item">Puede haber sufrimiento, pérdida, desestructuración</div>
+      </div>
+      <div class="diff-col">
+        <div class="diff-col-titulo">Planeta personal va hacia Plutón</div>
+        <div class="diff-item">El movimiento es mío — yo voy hacia el cambio</div>
+        <div class="diff-item">El tránsito es breve — un destello de energía plutoniana</div>
+        <div class="diff-item">Más conciencia — puedo anticipar y elegir cómo vivirlo</div>
+        <div class="diff-item">El matiz plutoniano aparece pero no opera con la misma fuerza</div>
+        <div class="diff-item">Como ir al terapeuta voluntariamente</div>
+      </div>
+    </div>
+    <div class="diff-footer"><strong>Imagen de clase:</strong> Plutón sobre la Luna = el cirujano te estira en la camilla y opera. Luna yendo hacia Plutón = tú vas al terapeuta y le cuentas lo que te pasó — hay movimiento de conciencia elegido.</div>
+  </div>
+
+  <div class="section-label">Concepto clave</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header"><span class="concepto-nombre">El nivel de conciencia cambia cómo se vive un tránsito</span><span class="badge b-nuevo">profundización</span></div>
+    <div class="concepto-def"><div class="concepto-def-text">Dos personas con la misma carta pueden vivir el mismo tránsito de manera completamente distinta. Lo que cambia es el <strong>nivel de conciencia</strong> desde el que se habita el arquetipo. Un Marte-Plutón puede vivirse como una acción transformadora consciente o como una confrontación destructiva. La astrología no predice lo que ocurrirá — marca <strong>el tipo de energía disponible</strong> y cómo puede manifestarse en distintos niveles de conciencia.</div></div>
+  </div>
+
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item"><div class="retener-num">1</div><div class="retener-texto"><span>Marte + Plutón = transformación inevitable.</span> Potente en cualquier aspecto — en cuadratura hay conflicto de poder; en sextil/trígono el cambio fluye con menos sufrimiento, pero ocurre.</div></div>
+    <div class="retener-item"><div class="retener-num">2</div><div class="retener-texto"><span>Marte + Urano = cambio radical e inesperado.</span> Sacudida brusca. En combinación con Mercurio, riesgo de accidentes o situaciones muy imprevistas.</div></div>
+    <div class="retener-item"><div class="retener-num">3</div><div class="retener-texto"><span>No es lo mismo que Plutón pase sobre un planeta a que el planeta vaya hacia Plutón.</span> En el primer caso el cambio viene desde fuera y es profundo. En el segundo hay más conciencia y elección.</div></div>
+    <div class="retener-item"><div class="retener-num">4</div><div class="retener-texto"><span>El nivel de conciencia cambia completamente cómo se vive un tránsito.</span> El mismo aspecto puede ser destructivo o transformador — depende de si se actúa desde el impulso o desde la elección consciente.</div></div>
+  </div>
+
+</div>
+</body>
+</html>
