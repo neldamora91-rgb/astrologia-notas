@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C22 · Lilit: naturaleza y signos por elementos</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9;
+      --text: #1a1a18; --text2: #4a4a46; --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+      --radius: 8px; --radius-lg: 12px;
+
+      --neptuno: #6B3CB5; --neptuno-bg: #F0E8FC; --neptuno-border: #C9A8EF;
+      --sat:     #534AB7; --sat-bg:     #EEEDFE; --sat-border:     #AFA9EC;
+      --verde:   #3B6D11; --verde-bg:   #EAF3DE; --verde-border:   #C0DD97;
+      --marte:   #993C1D; --marte-bg:   #FAECE7; --marte-border:   #F0C4BA;
+      --rojo: #993C1D; --azul: #185FA5;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2a; --text: #e8e6de; --text2: #a8a6a0; --text3: #68665e; --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18); }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; padding: 2rem 1rem; }
+    .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; }
+
+    /* HEADER */
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .curso-badge { font-size: 11px; font-weight: 500; background: #e6f1fb; color: #185FA5; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tipo-badge { font-size: 11px; font-weight: 500; background: #EEEDFE; color: #534AB7; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); }
+    .section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 1.75rem; }
+
+    /* LENTE */
+    .lente { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+    .lente-header { padding: 10px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .lente-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lente-subtitulo { font-size: 12px; color: var(--text2); }
+    .lente-body { padding: 12px 16px; }
+    .lente-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; margin-bottom: 2px; }
+    .lente-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .lente-footer { padding: 10px 16px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lente-footer strong { font-weight: 500; color: var(--text); }
+
+    /* CONCEPTO */
+    .concepto-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .concepto-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .concepto-nombre { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; }
+    .badge { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
+    .b-clave { background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text2); }
+    .b-nuevo { background: #EEEDFE; color: #534AB7; }
+    .concepto-def { padding: 12px 14px; font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .concepto-def strong { font-weight: 500; color: var(--text); }
+
+    /* TABLA DE ELEMENTOS */
+    .tabla-outer { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .tabla-row { display: grid; grid-template-columns: 90px 1fr 1fr; border-bottom: 0.5px solid var(--border); }
+    .tabla-row:last-child { border-bottom: none; }
+    .tabla-row.header-row { background: var(--bg2); }
+    .tabla-cell { padding: 9px 12px; font-size: 12px; color: var(--text2); line-height: 1.5; border-right: 0.5px solid var(--border); }
+    .tabla-cell:last-child { border-right: none; }
+    .tabla-cell.el-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); display: flex; align-items: flex-start; padding-top: 10px; }
+    .tabla-cell.col-head { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); }
+    .tabla-cell strong { font-weight: 500; color: var(--text); }
+    .tag-fuego { background: #FAECE7; color: #993C1D; padding: 2px 7px; border-radius: 20px; font-size: 10px; font-weight: 500; }
+    .tag-tierra { background: #EAF3DE; color: #3B6D11; padding: 2px 7px; border-radius: 20px; font-size: 10px; font-weight: 500; }
+    .tag-aire { background: #E6F1FB; color: #185FA5; padding: 2px 7px; border-radius: 20px; font-size: 10px; font-weight: 500; }
+    .tag-agua { background: #F0E8FC; color: #6B3CB5; padding: 2px 7px; border-radius: 20px; font-size: 10px; font-weight: 500; }
+
+    /* COMPARACIÓN LILIT vs QUIRÓN */
+    .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    @media (max-width: 520px) { .comp-grid { grid-template-columns: 1fr; } }
+    .comp-card { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .comp-header { padding: 9px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); font-size: 13px; font-weight: 500; color: var(--text); }
+    .comp-body { padding: 10px 14px; font-size: 12px; color: var(--text2); line-height: 1.6; }
+    .comp-body strong { font-weight: 500; color: var(--text); }
+
+    /* TARJETA PRÁCTICA */
+    .practica-bloque { border: 1.5px solid var(--neptuno-border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .practica-header { padding: 10px 16px; background: var(--neptuno-bg); }
+    .practica-titulo { font-size: 14px; font-weight: 600; color: var(--neptuno); }
+    .practica-sub { font-size: 12px; color: #5a2f9a; margin-top: 2px; }
+    .practica-body { border-top: 1px solid var(--neptuno-border); }
+    .practica-fila { display: grid; grid-template-columns: 130px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .practica-fila:last-child { border-bottom: none; }
+    .practica-fila:nth-child(even) { background: var(--bg2); }
+    .practica-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .practica-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .practica-val strong { font-weight: 500; color: var(--text); }
+
+    /* PUNTOS A RETENER */
+    .retener-list { display: flex; flex-direction: column; gap: 6px; }
+    .retener-item { display: flex; gap: 12px; align-items: flex-start; padding: 11px 14px; border-radius: var(--radius); border: 0.5px solid var(--border); }
+    .retener-num { font-size: 12px; font-weight: 500; color: var(--neptuno); min-width: 20px; padding-top: 2px; }
+    .retener-texto { font-size: 13px; color: var(--text); line-height: 1.6; }
+    .retener-texto span { font-weight: 500; }
+
+    .separador { border: none; border-top: 2px dashed var(--border); margin: 2rem 0; }
+
+    .pill { display: inline-block; font-size: 11px; font-weight: 500; padding: 1px 7px; border-radius: 20px; margin-right: 3px; }
+    .pill-neptuno { background: var(--neptuno-bg); color: var(--neptuno); }
+    .pill-sat { background: var(--sat-bg); color: var(--sat); }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div class="curso-badge">Curso 4 · C22</div>
+      <div class="tipo-badge">Teoría + Práctica</div>
+    </div>
+    <div class="titulo">Lilit: naturaleza y signos por elementos</div>
+    <div class="meta">29 de abril 2026 &nbsp;·&nbsp; Lilit · Vacío ancestral · Signos · Elementos · Quirón</div>
+  </div>
+
+  <!-- BLOQUE INTRODUCTORIO -->
+  <div class="section-label">Qué es Lilit</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">El principio femenino original</div>
+      <div class="lente-subtitulo">Inconsciente del vacío — punto espacio-temporal sin cuerpo físico</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">Lilit no es una mujer ni una figura con cuerpo: es la alegoría del <strong>primer principio femenino</strong>, en igualdad de condiciones con el principio masculino (Adán).</div>
+      <div class="lente-item">Astronómicamente es el <strong>punto vacío</strong> (también llamado "punto fantasma") que mantiene la equidistancia en el sistema Tierra-Luna. No tiene masa, pero tiene función gravitacional.</div>
+      <div class="lente-item">De Marte y Venus (Adán y Eva) emergen los progenitores terrenales; Lilit es el <strong>útero cósmico</strong> previo del que surgen.</div>
+      <div class="lente-item">En la carta natal, Lilit informa de dos cosas simultáneas: dónde hay un <strong>sentimiento de vacío</strong> (como ausencia, creencia heredada) y, al integrarlo, dónde hay una <strong>conexión con lo divino</strong>.</div>
+    </div>
+    <div class="lente-footer">
+      <strong>Nota de Ana:</strong> La interpretación religiosa de Lilit como figura expulsada del Edén es una manipulación cultural. Lilit no tiene enfado ni erotismo intrínseco; esas connotaciones provienen de un código para mantenernos alejados de lo espiritual. Lilit usada en astrogenealogía y mapas sistémicos confirma esta lectura.
+    </div>
+  </div>
+
+  <!-- LILIT VS QUIRÓN -->
+  <div class="section-label">Lilit vs. Quirón</div>
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header">Lilit — el vacío</div>
+      <div class="comp-body">
+        <strong>Ausencia.</strong> No hay presencia posible en ese lugar. Es un código heredado del inconsciente colectivo que dice: "aquí no existe nada."<br><br>
+        La persona muchas veces <strong>no lo ve</strong>: al preguntar directamente es cuando emerge la conciencia de ese vacío.
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header">Quirón — la duda</div>
+      <div class="comp-body">
+        <strong>Realidad incierta.</strong> Hay una división interna: esto o lo otro. Algo es posible y algo no. La duda convive con cierta presencia en algún lugar.<br><br>
+        La persona <strong>sí lo ve</strong>: puede identificar la herida con más facilidad al nombrársela.
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:8px; padding: 10px 14px; border-radius: var(--radius); border: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.6;">
+    Ambos son transgeneracionales y ancestrales. Quirón da oportunidad de presencia (aunque incierta); Lilit es ausencia pura. En Quirón, Aries: "¿soy el primogénito que debe seguir al padre o puedo elegir mi vida?" — hay duda. En Lilit, Aries: el ancestro simplemente no existió como sujeto. No hay elección porque no hay percepción de que haya una.
+  </div>
+
+  <!-- INASPECTADO -->
+  <div class="section-label">Cuando Lilit está inaspectado</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Elemento inaspectado</div>
+      <span class="badge b-clave">Concepto clave</span>
+    </div>
+    <div class="concepto-def">
+      Cuando Lilit (o cualquier elemento astrológico) <strong>no recibe ni hace aspectos</strong>, funciona como un mecanismo automático fuera de la conciencia. Al no poder verlo, no se puede modificar: la energía actúa sola, sin intervención del ego. Esto amplifica tanto el vacío como el potencial de integración cuando se trabaja.
+    </div>
+  </div>
+
+  <div class="separador"></div>
+
+  <!-- TABLA POR ELEMENTOS -->
+  <div class="section-label">Lilit por elementos y signos</div>
+
+  <div class="tabla-outer">
+    <!-- Cabecera -->
+    <div class="tabla-row header-row">
+      <div class="tabla-cell col-head">Elemento</div>
+      <div class="tabla-cell col-head">Tipo de vacío / raíz ancestral</div>
+      <div class="tabla-cell col-head">Potencial al integrar</div>
+    </div>
+
+    <!-- FUEGO -->
+    <div class="tabla-row">
+      <div class="tabla-cell el-label"><span class="tag-fuego">Fuego</span></div>
+      <div class="tabla-cell">
+        <strong>Vacío de identidad.</strong> Ancestros que perdieron su autoafirmación: por trabajar desde niños, por heredar el rol del padre, por no poder decidir su propia vida. El yo existo no existió.
+        <br><br>
+        <strong>♈ Aries:</strong> "Yo no existo, soy objeto del padre." Pérdida de poder o voluntad propias.<br>
+        <strong>♌ Leo:</strong> Invisibilidad. Niños del linaje que no nacieron o murieron; lealtad a ellos genera sentirse invisible.<br>
+        <strong>♐ Sagitario:</strong> Desorientación. Sistemas de creencias rígidos o falta de sentido en todo lo que se hace.
+      </div>
+      <div class="tabla-cell">
+        Aries: hacerse sujeto, autoafirmarse.<br>
+        Leo: brillar con humildad, dar el ejemplo, actuar con maestría.<br>
+        Sagitario: buscador de verdad, incorporar conocimiento, objetivos claros.
+      </div>
+    </div>
+
+    <!-- TIERRA -->
+    <div class="tabla-row">
+      <div class="tabla-cell el-label"><span class="tag-tierra">Tierra</span></div>
+      <div class="tabla-cell">
+        <strong>Vacío material.</strong> Capacidades, autoestima, recursos económicos, responsabilidad, habilidades físicas.
+        <br><br>
+        <strong>♉ Tauro:</strong> "No me valoran" o "no me valoro." Pérdidas de tierras o bienes ancestrales. Vacío de autoestima.<br>
+        <strong>♍ Virgo:</strong> "Soy inútil." Enfermedad o falta de habilidades en el árbol. Sin desarrollo de un oficio.<br>
+        <strong>♑ Capricornio:</strong> "No tengo capacidades." Incapacidad de emprender o responsabilizarse del propio destino.
+      </div>
+      <div class="tabla-cell">
+        Tauro: gran capacidad para valorar y generar recursos económicos.<br>
+        Virgo: maestría en un oficio (artesano, orfebre, carpintero).<br>
+        Capricornio: empresaria autónoma, líder responsable de su destino.
+      </div>
+    </div>
+
+    <!-- AIRE -->
+    <div class="tabla-row">
+      <div class="tabla-cell el-label"><span class="tag-aire">Aire</span></div>
+      <div class="tabla-cell">
+        <strong>Vacío intelectual/mental.</strong> Problemas de salud mental, analfabetismo, falta de educación, exclusión social, miedo en relaciones.
+        <br><br>
+        <strong>♊ Géminis:</strong> Hermanos que murieron, enfermedades mentales en el árbol, analfabetismo.<br>
+        <strong>♎ Libra:</strong> Relaciones traumáticas: casados sin elección, sin vivir el amor propio.<br>
+        <strong>♒ Acuario:</strong> Exclusión del clan: ser diferente, migrar, homosexualidad oculta; sentirse muy diferente al grupo.
+      </div>
+      <div class="tabla-cell">
+        Géminis: gran comunicador; capacidad de canalizar campos de información.<br>
+        Libra: mediador experto, conocedor de la negociación y el equilibrio.<br>
+        Acuario: organizador de colectivos para que nadie se sienta excluido.
+      </div>
+    </div>
+
+    <!-- AGUA -->
+    <div class="tabla-row">
+      <div class="tabla-cell el-label"><span class="tag-agua">Agua</span></div>
+      <div class="tabla-cell">
+        <strong>Vacío afectivo.</strong> Hogar, vínculos emocionales profundos, fe, pérdidas.
+        <br><br>
+        <strong>♋ Cáncer:</strong> Esterilidad, duelos de madre, desarraigo; no poder crear un hogar.<br>
+        <strong>♏ Escorpio:</strong> Traumas de pérdidas, secretos familiares, tabúes, abusos sexuales en el árbol, pérdidas económicas.<br>
+        <strong>♓ Piscis:</strong> Profunda soledad; falta de fe; suicidios o abandono ancestral (adopción). "No sé a qué encomendarme."
+      </div>
+      <div class="tabla-cell">
+        Cáncer: maternidad universal — ONG de niños, cuidado colectivo.<br>
+        Escorpio: gran albacea y gestor de bienes ajenos.<br>
+        Piscis: fusión de alma con el otro, conexión espiritual profunda en pareja.
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:8px; padding: 10px 14px; border-radius: var(--radius); border: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.6;">
+    <strong>La lógica de integración:</strong> Lilit va del pasado (ancestros, vacío heredado) al presente (yo en mi mejor versión). El recorrido siempre es: reconocer la ausencia → entender que es una creencia → conectar con la fuente → expresar lo mejor de ese signo. Lilit está en el binomio <strong>Tierra–Luna</strong> (presente–pasado); su resolución ocurre en el ciclo lunar y en la conciencia que da la realidad material.
+  </div>
+
+  <div class="separador"></div>
+
+  <!-- PRÁCTICA: CARTAS -->
+  <div class="section-label">Práctica — cartas</div>
+
+  <div class="practica-bloque" style="margin-bottom:12px;">
+    <div class="practica-header">
+      <div class="practica-titulo">Bill Gates</div>
+      <div class="practica-sub">Lilit en Sagitario · Casa 5 · Inaspectado</div>
+    </div>
+    <div class="practica-body">
+      <div class="practica-fila">
+        <div class="practica-key">Lectura del vacío</div>
+        <div class="practica-val">Sagitario en casa 5 apunta a un vacío en las <strong>creencias sobre su creatividad e identidad como creador</strong>. Posible desorientación en los objetivos creativos; creencias sobre lo que puede o no puede lograr, instaladas desde la infancia o el linaje familiar.</div>
+      </div>
+      <div class="practica-fila">
+        <div class="practica-key">Al integrarlo</div>
+        <div class="practica-val">Cuando revierte la creencia por experiencia propia, emerge el <strong>buscador de verdad que da vuelta a esa desorientación</strong> y construye objetivos claros. Su visibilidad global (casa 5: el yo soy) se activa desde ese punto.</div>
+      </div>
+      <div class="practica-fila">
+        <div class="practica-key">Inaspectado</div>
+        <div class="practica-val">Al no tener aspectos, este mecanismo funcionó de forma <strong>automática e inconsciente</strong> durante años, hasta que lo integró sin necesariamente haberlo visto como tal.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="practica-bloque">
+    <div class="practica-header">
+      <div class="practica-titulo">Albert Einstein</div>
+      <div class="practica-sub">Lilit en Aries · Casa 10</div>
+    </div>
+    <div class="practica-body">
+      <div class="practica-fila">
+        <div class="practica-key">Lectura del vacío</div>
+        <div class="practica-val">Aries en casa 10: <strong>ausencia de autoafirmación pública</strong>. Durante años presentó sus investigaciones sin defenderlas, sin reivindicarlas. Como si su existencia como sujeto no estuviera del todo presente en el espacio profesional y social.</div>
+      </div>
+      <div class="practica-fila">
+        <div class="practica-key">En su historia</div>
+        <div class="practica-val">Tuvo una hija cuya existencia nunca fue reconocida públicamente, y un hijo con esquizofrenia. El <strong>tema de la existencia</strong> (¿existió o no existió?) se repite en su entorno más cercano — huella del vacío heredado.</div>
+      </div>
+      <div class="practica-fila">
+        <div class="practica-key">Al integrarlo</div>
+        <div class="practica-val">Cuando ese Aries se gira, la casa 10 activa su <strong>popularidad y reconocimiento mundial</strong>. Su Mercurio en Aries —superintuitivo— se potencia desde la conexión con el inconsciente del vacío: mente iluminada como forma de autoafirmarse.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="separador"></div>
+
+  <!-- PUNTOS A RETENER -->
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item">
+      <div class="retener-num">1</div>
+      <div class="retener-texto"><span>Lilit es el inconsciente del vacío, no una figura con cuerpo.</span> Es el primer principio femenino y un punto astronómico sin masa (punto fantasma) que mantiene el equilibrio Tierra-Luna. En la carta informa dónde hay una ausencia heredada y dónde está la conexión con lo divino.</div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">2</div>
+      <div class="retener-texto"><span>La diferencia entre Lilit y Quirón es ausencia vs. duda.</span> Quirón implica división interna con cierta presencia posible; Lilit implica ausencia pura. La persona suele ver a Quirón y no ver a Lilit hasta que se le pregunta directamente.</div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">3</div>
+      <div class="retener-texto"><span>El vacío de Lilit se lee según el elemento del signo donde está.</span> Fuego → identidad / autoafirmación; Tierra → capacidades y recursos materiales; Aire → mente, comunicación, integración social; Agua → afecto, hogar, fe y vínculos profundos.</div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">4</div>
+      <div class="retener-texto"><span>La integración de Lilit siempre da lo mejor de ese signo.</span> El recorrido va del vacío ancestral (Luna, pasado) al presente (Tierra, realidad actual). Deshacer la creencia de ausencia activa el potencial más elevado del signo.</div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">5</div>
+      <div class="retener-texto"><span>Lilit inaspectado opera como mecanismo automático.</span> Sin aspectos, no hay conciencia espontánea del vacío; funciona solo, sin posibilidad de modificación hasta que se nombra. Preguntar directamente abre la posibilidad existencial.</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
