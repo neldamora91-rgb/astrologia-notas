@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C2 · Sol y Mercurio: el observador y el pensamiento</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9;
+      --text: #1a1a18; --text2: #4a4a46; --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+      --radius: 8px; --radius-lg: 12px;
+
+      --hl-amarillo:     #FFF4C2; --hl-amarillo-text: #7A5A00;
+      --hl-rojo:         #FAECE7; --hl-rojo-text:     #993C1D;
+      --hl-verde:        #EAF3DE; --hl-verde-text:    #3B6D11;
+      --hl-morado:       #EEEDFE; --hl-morado-text:   #534AB7;
+      --hl-azul:         #E6F1FB; --hl-azul-text:     #185FA5;
+
+      --sol:     #993C1D; --sol-bg:     #FAECE7; --sol-border:     #F0C4BA;
+      --luna:    #185FA5; --luna-bg:    #E6F1FB; --luna-border:    #B5D4F4;
+      --merc:    #854F0B; --merc-bg:    #FAEEDA; --merc-border:    #EDCF9A;
+      --sat:     #534AB7; --sat-bg:     #EEEDFE; --sat-border:     #AFA9EC;
+      --urano:   #1A7A8A; --urano-bg:   #E0F4F7; --urano-border:   #9AD5DF;
+      --pluton:  #993C1D; --pluton-bg:  #FAECE7; --pluton-border:  #F0C4BA;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2a;
+        --text: #e8e6de; --text2: #a8a6a0; --text3: #68665e;
+        --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18);
+        --hl-amarillo: #3a2e00; --hl-amarillo-text: #e8c84a;
+        --hl-rojo: #2e1a14;     --hl-rojo-text:     #e8907a;
+        --hl-verde: #1a2e10;    --hl-verde-text:    #8dcc5a;
+        --hl-morado: #1e1c3a;   --hl-morado-text:   #a9a3f0;
+        --hl-azul: #0e2038;     --hl-azul-text:     #7ab8f5;
+        --sol: #e8907a;   --sol-bg: #2e1a14;   --sol-border: #5a3326;
+        --merc: #e0b36a;  --merc-bg: #2e2414;  --merc-border: #5a4726;
+        --urano: #6fd0e0; --urano-bg: #0f2a30; --urano-border: #245a66;
+        --sat: #a9a3f0;   --sat-bg: #1e1c3a;   --sat-border: #3c3870;
+      }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; padding: 2rem 1rem; }
+    .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; }
+
+    /* Header */
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .curso-badge { font-size: 11px; font-weight: 500; background: #e6f1fb; color: #185FA5; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tipo-badge { font-size: 11px; font-weight: 500; background: #EEEDFE; color: #534AB7; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); }
+    .section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 1.75rem; }
+    .separador { border: none; border-top: 2px dashed var(--border); margin: 2rem 0; }
+
+    /* Highlights */
+    .hl { display: inline; padding: 1px 4px; border-radius: 3px; font-weight: 500; }
+    .hl-a  { background: var(--hl-amarillo); color: var(--hl-amarillo-text); }
+    .hl-r  { background: var(--hl-rojo);     color: var(--hl-rojo-text); }
+    .hl-v  { background: var(--hl-verde);    color: var(--hl-verde-text); }
+    .hl-m  { background: var(--hl-morado);   color: var(--hl-morado-text); }
+    .hl-az { background: var(--hl-azul);     color: var(--hl-azul-text); }
+
+    /* Frase clave */
+    .frase-clave { border-left: 3px solid var(--hl-amarillo-text); background: var(--hl-amarillo); padding: 10px 14px; border-radius: 0 var(--radius) var(--radius) 0; font-size: 13px; font-weight: 500; color: var(--hl-amarillo-text); line-height: 1.5; margin: 10px 0 4px; }
+    .frase-clave.fc-rojo   { border-left-color: #993C1D; background: var(--hl-rojo);   color: var(--hl-rojo-text); }
+    .frase-clave.fc-verde  { border-left-color: #3B6D11; background: var(--hl-verde);  color: var(--hl-verde-text); }
+    .frase-clave.fc-morado { border-left-color: #534AB7; background: var(--hl-morado); color: var(--hl-morado-text); }
+    .frase-clave.fc-azul   { border-left-color: #185FA5; background: var(--hl-azul);   color: var(--hl-azul-text); }
+
+    /* Lente */
+    .lente { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+    .lente-header { padding: 10px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .lente-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lente-subtitulo { font-size: 12px; color: var(--text2); }
+    .lente-body { padding: 12px 16px; display: flex; flex-direction: column; gap: 4px; }
+    .lente-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; }
+    .lente-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .lente-item strong { font-weight: 500; color: var(--text); }
+    .lente-footer { padding: 10px 16px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lente-footer strong { font-weight: 500; color: var(--text); }
+
+    /* Concepto */
+    .concepto-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .concepto-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .concepto-nombre { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; }
+    .badge { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
+    .b-clave { background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text2); }
+    .b-nuevo { background: #EEEDFE; color: #534AB7; }
+    .concepto-def { padding: 12px 14px; font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .concepto-def strong { font-weight: 500; color: var(--text); }
+
+    /* Pills */
+    .pill { display: inline-block; font-size: 11px; font-weight: 500; padding: 1px 7px; border-radius: 20px; margin-right: 3px; }
+    .pill-sol { background: var(--sol-bg); color: var(--sol); }
+    .pill-merc { background: var(--merc-bg); color: var(--merc); }
+    .pill-urano { background: var(--urano-bg); color: var(--urano); }
+    .pill-luna { background: var(--luna-bg); color: var(--luna); }
+    .pill-pluton { background: var(--pluton-bg); color: var(--pluton); }
+
+    /* Tarjetas de planeta */
+    .sol-bloque   { --X: var(--sol);   --X-bg: var(--sol-bg);   --X-border: var(--sol-border); }
+    .merc-bloque  { --X: var(--merc);  --X-bg: var(--merc-bg);  --X-border: var(--merc-border); }
+    .urano-bloque { --X: var(--urano); --X-bg: var(--urano-bg); --X-border: var(--urano-border); }
+    .sol-bloque, .merc-bloque, .urano-bloque { border: 1.5px solid var(--X-border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 10px; }
+    .pl-header { padding: 10px 16px; background: var(--X-bg); }
+    .pl-titulo { font-size: 14px; font-weight: 600; color: var(--X); }
+    .pl-sub { font-size: 12px; color: var(--X); margin-top: 2px; opacity: 0.85; }
+    .pl-body { border-top: 1px solid var(--X-border); }
+    .pl-fila { display: grid; grid-template-columns: 120px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .pl-fila:last-child { border-bottom: none; }
+    .pl-fila:nth-child(even) { background: var(--bg2); }
+    .pl-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .pl-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .pl-val strong { font-weight: 500; color: var(--text); }
+    .pl-footer { padding: 10px 16px; background: var(--X-bg); border-top: 1px solid var(--X-border); font-size: 12px; color: var(--X); line-height: 1.5; }
+
+    /* Grid comparativo */
+    .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 560px) { .comp-grid { grid-template-columns: 1fr; } .pl-fila { grid-template-columns: 1fr; gap: 2px; } }
+
+    /* Protocolo numerado */
+    .proto { display: flex; flex-direction: column; gap: 8px; }
+    .proto-paso { display: flex; gap: 12px; align-items: flex-start; }
+    .proto-num { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--sol); color: #ffffff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .proto-txt { font-size: 13px; color: var(--text2); line-height: 1.55; padding-top: 2px; }
+    .proto-txt strong { font-weight: 500; color: var(--text); }
+
+    /* Puntos a retener */
+    .retener-list { display: flex; flex-direction: column; gap: 8px; }
+    .retener-item { display: flex; gap: 0; align-items: stretch; border-radius: var(--radius); overflow: hidden; border: 0.5px solid var(--sat-border); }
+    .retener-num { font-size: 13px; font-weight: 700; color: #ffffff; background: #534AB7; min-width: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .retener-body { padding: 11px 14px; background: var(--bg); }
+    .retener-titulo { font-size: 13px; font-weight: 600; color: var(--sat); margin-bottom: 3px; }
+    .retener-texto { font-size: 12px; color: var(--text2); line-height: 1.6; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div class="curso-badge">Curso 5 · C2</div>
+      <div class="tipo-badge">Teoría + Práctica</div>
+    </div>
+    <div class="titulo">Sol y Mercurio: el observador y el pensamiento</div>
+    <div class="meta">03/06/2026 &nbsp;·&nbsp; Sol observador &nbsp;·&nbsp; Mercurio &nbsp;·&nbsp; Ciclo sinódico Sol–Mercurio &nbsp;·&nbsp; Luna llena en Sagitario</div>
+  </div>
+
+  <!-- PARTE 1 · EL OBSERVADOR -->
+  <div class="section-label" style="margin-top:0">Parte 1 · Repaso: el Sol como observador</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">El observador es el punto central del Sol</div>
+      <div class="lente-subtitulo">Por eso se llama «corazón del Sol»</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">Se vive en la <strong>dualidad</strong>. La actitud del observador es <span class="hl hl-az">mirar esa dualidad y aceptarla sin juzgar</span>.</div>
+      <div class="lente-item">Desde el centro del Sol se conecta con el plano más interno. Ese observador puede llamarse <strong>alma</strong> o simplemente <strong>conciencia</strong>: según desde qué línea de conocimiento se hable, es lo mismo con otro nombre.</div>
+      <div class="lente-item">La conciencia <span class="hl hl-m">no juzga</span> porque no pertenece al mundo de la dualidad: es inclusiva.</div>
+      <div class="lente-item">Hablar de «conciencia» suele ser más aceptable que hablar de «alma», que remite a temas más ocultistas o teosóficos. Para entenderse sirven las dos.</div>
+    </div>
+    <div class="lente-footer"><strong>Pregunta «¿quién soy?»:</strong> puede responderse desde la personalidad o desde el alma («formo parte de todo»). El Sol en Leo observa justo eso: si me identifico con el personaje o siento al observador que no tiene nada que ver con él.</div>
+  </div>
+  <div class="frase-clave fc-morado">Cada signo solar termina con la misma coletilla: «acepto y no juzgo».</div>
+
+  <div class="section-label">Qué observa el Sol en cada signo</div>
+  <div class="comp-grid">
+    <div class="concepto-bloque" style="margin-bottom:0">
+      <div class="concepto-header"><div class="concepto-nombre">Signos ya trabajados</div></div>
+      <div class="concepto-def">
+        <strong>Libra:</strong> los opuestos.<br>
+        <strong>Géminis:</strong> la dualidad.<br>
+        <strong>Acuario:</strong> cómo se atrapa en las inercias.
+      </div>
+    </div>
+    <div class="concepto-bloque" style="margin-bottom:0">
+      <div class="concepto-header"><div class="concepto-nombre">Fuego y agua</div></div>
+      <div class="concepto-def">
+        <strong>Aries:</strong> la voluntad de existir.<br>
+        <strong>Leo:</strong> quién es.<br>
+        <strong>Sagitario:</strong> las creencias detrás del pensamiento.<br>
+        <strong>Cáncer:</strong> su instinto maternal.<br>
+        <strong>Escorpio:</strong> lo que le duele y le da miedo.<br>
+        <strong>Piscis:</strong> la sensibilidad y el caos.
+      </div>
+    </div>
+    <div class="concepto-bloque" style="margin-bottom:0">
+      <div class="concepto-header"><div class="concepto-nombre">Tierra</div></div>
+      <div class="concepto-def">
+        <strong>Tauro:</strong> el deseo por las cosas.<br>
+        <strong>Virgo:</strong> el orden.<br>
+        <strong>Capricornio:</strong> la capacidad de responder (responsabilidad).
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Dos palabras que se afinaron</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Virgo: «orden», sin adjetivo</div>
+      <span class="badge b-nuevo">Un adjetivo es un juicio</span>
+    </div>
+    <div class="concepto-def">
+      «El orden perfecto» ya juzga: <span class="hl hl-r">poner un adjetivo es juzgar</span>. Además, el orden implica niveles (qué va primero, qué va segundo) y, en la astrología esotérica, la integración de la personalidad física, emocional y mental. Como el orden tiene un opuesto (el <strong>desorden</strong>), observarlo es encontrarse con la dualidad. «Análisis» no sirve porque no tiene un contrario: se analiza o no se analiza.
+    </div>
+  </div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Capricornio: «capacidad de responder» mejor que «materialidad»</div>
+      <span class="badge b-clave">Responsabilidad</span>
+    </div>
+    <div class="concepto-def">
+      Capricornio lleva ambición y por eso se pensó en la <em>materialidad</em>, pero se prefiere <strong>«observo mi capacidad de responder»</strong> (responsabilidad). Si se habla de materialidad, que sea como algo que está en la existencia y no como algo que se ambiciona.
+    </div>
+  </div>
+
+  <hr class="separador">
+
+  <!-- PARTE 2 · MERCURIO -->
+  <div class="section-label" style="margin-top:0">Parte 2 · Mercurio: cómo procesa el pensamiento</div>
+  <div class="merc-bloque">
+    <div class="pl-header">
+      <div class="pl-titulo">Mercurio en la era de Acuario</div>
+      <div class="pl-sub">Regente de Géminis y Virgo: signos mutables, signos de la dualidad</div>
+    </div>
+    <div class="pl-body">
+      <div class="pl-fila"><div class="pl-key">Cualidad fija</div><div class="pl-val">Al recibir la energía de Acuario (<strong>signo fijo</strong>), el procesamiento de la información cambia. La cualidad fija <strong>tampoco juzga</strong>: incluye todo.</div></div>
+      <div class="pl-fila"><div class="pl-key">Mente abierta</div><div class="pl-val">Dos cosas a la vez: <strong>sin juicio</strong> y con <strong>apertura mental</strong>. Es una mente más tecnológica y rápida, capaz de pensar varias cosas a la vez o estar en varios sitios simultáneamente.</div></div>
+      <div class="pl-fila"><div class="pl-key">Sistema nervioso</div><div class="pl-val">Hay que «encajar» Acuario en la mente, por eso el <strong>sistema nervioso</strong> cobra gran importancia.</div></div>
+      <div class="pl-fila"><div class="pl-key">Urano en Géminis</div><div class="pl-val">Al activarse el sistema nervioso hay <strong>ajustes</strong> físicos, emocionales y mentales. A nivel físico pueden aparecer síntomas como vértigos, tensión, tics o espasmos nerviosos, ligados al elemento aire. Se puede «biologizar» sin entrar en demasiada preocupación: es un ajuste.</div></div>
+    </div>
+    <div class="pl-footer">En la luna llena del 31 de mayo se notó especialmente: varias personas comentaron síntomas de este tipo, como si «te movieran la mente».</div>
+  </div>
+
+  <div class="section-label">Sol y Mercurio: reparto de funciones</div>
+  <div class="comp-grid">
+    <div class="sol-bloque">
+      <div class="pl-header">
+        <div class="pl-titulo">Sol</div>
+        <div class="pl-sub">El observador</div>
+      </div>
+      <div class="pl-body">
+        <div class="pl-fila"><div class="pl-key">Función</div><div class="pl-val"><strong>Da la perspectiva</strong> y la orden de no juzgar. Está dentro; el mundo está fuera.</div></div>
+        <div class="pl-fila"><div class="pl-key">Cómo</div><div class="pl-val">«Pongo esto fuera y cambio la perspectiva» (el ejercicio de externalización de la clase anterior).</div></div>
+      </div>
+    </div>
+    <div class="merc-bloque">
+      <div class="pl-header">
+        <div class="pl-titulo">Mercurio</div>
+        <div class="pl-sub">El pensamiento</div>
+      </div>
+      <div class="pl-body">
+        <div class="pl-fila"><div class="pl-key">Función</div><div class="pl-val"><strong>Procesa</strong> la información que está ahí fuera, teniendo en cuenta al observador.</div></div>
+        <div class="pl-fila"><div class="pl-key">Cómo</div><div class="pl-val">Sigue siendo él mismo (curiosidad de Géminis, abrir cuatro libros a la vez), pero con la ayuda del observador para no juzgar.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="frase-clave fc-morado">La perspectiva la da el observador, no Mercurio. Mercurio recibe la instrucción del Sol.</div>
+
+  <div style="font-size:12px;color:var(--text2);margin-top:10px;line-height:1.7;">
+    Las definiciones del Sol por signo se repiten con Mercurio, cambiando «observar» por <span class="hl hl-m">«pensar»</span>: por ejemplo, Mercurio en Libra piensa en equilibrio y mediación (necesita ese balanceo de opuestos), y el Sol lo observa sin juzgarlo.
+  </div>
+
+  <div class="concepto-bloque" style="margin-top:12px">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Ejemplo: Mercurio en Géminis con tres libros abiertos</div>
+      <span class="badge b-clave">Observar el pensamiento</span>
+    </div>
+    <div class="concepto-def">
+      Salta el pensamiento: «qué tontería haber comprado este libro, si ya tengo tres abiertos». El observador <strong>observa ese pensamiento</strong> a la vez y así Sol y Mercurio llegan a un acuerdo de no juicio. Es <span class="hl hl-v">disciplinar la mente</span>, como se hizo con la Luna a nivel emocional y de necesidades. No es tan sencillo como con la Luna, pero nunca se había hecho.
+    </div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Pensamientos que no vemos</div>
+      <span class="badge b-clave">Matiz</span>
+    </div>
+    <div class="concepto-def">
+      Nos damos cuenta de lo que pensamos cuando lo <strong>hablamos</strong>. Muchas veces hay pensamientos de los que ni siquiera somos conscientes. Tampoco hace falta revisar en cada carta cómo mira el Sol y cómo piensa Mercurio: al principio costará y, con la práctica, la respuesta saldrá con más facilidad.
+    </div>
+  </div>
+
+  <hr class="separador">
+
+  <!-- PARTE 3 · CICLO SINÓDICO -->
+  <div class="section-label" style="margin-top:0">Parte 3 · Ciclo sinódico Sol–Mercurio, fase a fase</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">Un ciclo que empieza en Tauro</div>
+      <div class="lente-subtitulo">Conjunción del 14 de mayo · dura unos tres meses, con las retrogradaciones</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">El signo donde se abre el ciclo marca su tema. Como empieza en <strong>Tauro</strong>: recursos, valores, seguridad, deseo.</div>
+      <div class="lente-item">Cada fase se interpreta con el <span class="hl hl-a">decanato</span> en el que está Mercurio, que añade su matiz.</div>
+      <div class="lente-item">En la <strong>fase 1</strong> y la <strong>fase 2</strong> solo se <span class="hl hl-az">observa</span>: se trabaja con el inconsciente, desde lo colectivo (arquetipal) hacia lo personal (la sombra).</div>
+    </div>
+    <div class="lente-footer">Propuesta de la profesora: <strong>anotar lo que ocurre en cada fase</strong> durante este ciclo para «humanizar el arquetipo». Es una propuesta nueva en el colectivo astrológico, que conoce sobre todo el Mercurio cazimi y los Mercurios retrógrados, y que ella seguirá investigando.</div>
+  </div>
+
+  <div class="section-label">Fase 1 · Compilador (14 de mayo)</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Conjunción en Tauro: reunir información</div>
+      <span class="badge b-clave">Observar</span>
+    </div>
+    <div class="concepto-def">
+      <strong>Pregunta guía:</strong> ¿qué memorias, hábitos y estructuras de seguridad siguen gobernando mi mente?
+      <br>Mercurio con el Sol <strong>escucha patrones repetidos</strong>, detecta automatismos y reconoce información sedimentada. Es corporal por ser de tierra: la memoria es <strong>somática</strong>.
+      <br>Puede traer recuerdos corporales, cansancios antiguos, necesidad de estabilidad, repetición de viejos valores familiares y preguntas sobre qué sostiene realmente la vida. Esas estructuras están guardadas en el pensamiento y tienen que ver con las <span class="hl hl-m">creencias</span>.
+      <br><strong>Clave:</strong> no intenta resolver todavía, solo reúne piezas y percibe que algo se repite.
+    </div>
+  </div>
+
+  <div class="section-label">Fase 2 · Epimeteico (14 de junio)</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Sol en Géminis (grado 22), Mercurio en Cáncer en decanato de Acuario</div>
+      <span class="badge b-nuevo">Experimentar</span>
+    </div>
+    <div class="concepto-def">
+      <strong>Géminis</strong> abre percepción múltiple; <strong>Cáncer</strong> introduce memoria emocional; <strong>Acuario</strong> añade conciencia sistémica. Se incorporan los patrones heredados dentro de la observación que empezó en Tauro, ya con más dispersión.
+      <br>«Acuario en Cáncer» observa la <span class="hl hl-az">programación familiar</span>. Mercurio epimeteico va por delante del Sol: <strong>primero se experimenta</strong> (por recuerdo o viviéndolo) y luego se observan reacciones, vínculos y automatismos.
+      <br>La tendencia de Mercurio es opinar, es decir, <strong>juzgar</strong> la situación. El observador mira ese juicio hasta que se deja de juzgar. No hay que «hacer» nada para que Sol y Mercurio lleguen a un acuerdo.
+      <br><strong>Puede traer:</strong> toma de conciencia de lealtades invisibles, comprensión de repeticiones emocionales, observación desapegada de hábitos afectivos y necesidad de nombrar las dinámicas heredadas.
+      <br><strong>Pregunta:</strong> ¿qué parte de mi emocionalidad es realmente mía y qué parte del sistema heredado?
+      <br><strong>Prácticas sugeridas:</strong> genealogía emocional, constelaciones, observación de patrones vinculares y escritura introspectiva. «Acuario no destruye el sistema, lo observa.»
+    </div>
+  </div>
+
+  <div class="section-label">Fase 3 · Retrogradación</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Mercurio se pone retrógrado</div>
+      <span class="badge b-clave">Darse cuenta</span>
+    </div>
+    <div class="concepto-def">
+      Mercurio estaba directo, con movimiento en una dirección. Al ponerse retrógrado, la Tierra pasa por delante y lo percibe como si estuviera detrás. Es el primer paso de la retrogradación, que implica asuntos relacionados con el <strong>pasado</strong>.
+      <br>La fase 3 está entre la 2 y la 4: en la 2 ya se incorporan asuntos del pasado y en la 3 se sigue con ellos, pero con <span class="hl hl-a">conciencia</span> de que están atrás. Hasta que Mercurio retrógrado no se junta con el Sol no se está en la fase 4. Después se vuelve estacionario y por fin directo.
+    </div>
+  </div>
+
+  <div class="section-label">Fase 4 · Modelador</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Conjunción retrógrada: Cáncer en decanato de Piscis</div>
+      <span class="badge b-nuevo">Disolver</span>
+    </div>
+    <div class="concepto-def">
+      Si Acuario observaba el sistema, <strong>Piscis lo reabsorbe en el océano psíquico</strong>: es otra forma de decir «trascender al disolver». Antes de construir una forma mental nueva debe deshacerse la vieja. Estructura desde la <strong>disolución simbólica</strong>, no desde la lógica racional.
+      <br><strong>Puede traer:</strong> emociones antiguas, memorias difusas, sueños, nostalgia, confusión temporal, duelo de identidades emocionales, mayor sensibilidad, cansancio psíquico y necesidad de silencio. Es también cuando aparecen <span class="hl hl-r">malos entendidos y discusiones</span>.
+      <br>Es un <strong>reinicio psicológico interior</strong>. Aquí el Sol (observador) se junta con el pasado en disolución. El decanato de Piscis <strong>no elimina memoria, elimina rigidez</strong>: se deja de fijarse en las inercias familiares.
+    </div>
+  </div>
+
+  <div class="section-label">Fase 5 · Prometeico (finales de julio)</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Vuelta al decanato de Acuario, Sol en Leo</div>
+      <span class="badge b-clave">Reintegrar</span>
+    </div>
+    <div class="concepto-def">
+      Ya se ha dado la transformación. Se vuelve al decanato de Acuario <strong>después de la inmersión pisciana</strong>: la conciencia reingresa al sistema sin quedar atrapada en él. Mercurio prometeico anticipa, crea una nueva narrativa y propone otra organización emocional, <span class="hl hl-v">desde la conciencia sistémica integrada</span> y no desde la reacción.
+      <br>El Sol en Leo observa quién es: <strong>individuación, autoconciencia, creatividad y soberanía psíquica</strong> («puedo pertenecer sin perder mi centro»).
+      <br>No se trata de cortar raíces ni de romper vínculos: se honra el sistema del que se viene, pero <strong>ya no se necesita repetirlo exactamente</strong> y se toman las decisiones sobre uno mismo. Es un enfoque muy cercano a las constelaciones familiares.
+    </div>
+  </div>
+
+  <div class="section-label">Cómo vivir el ciclo</div>
+  <div class="proto">
+    <div class="proto-paso"><div class="proto-num">1</div><div class="proto-txt"><strong>No forzar claridad inmediata.</strong> Este ciclo necesita observación, decantación y escucha interna.</div></div>
+    <div class="proto-paso"><div class="proto-num">2</div><div class="proto-txt"><strong>Preguntarse</strong> qué emociones parecen antiguas y si lo que se siente es presente o memoria del sistema.</div></div>
+    <div class="proto-paso"><div class="proto-num">3</div><div class="proto-txt"><strong>En el modelador, no definirse demasiado rápido:</strong> la fase pisciana necesita vacío, ambigüedad y disolución temporal, como una crisálida.</div></div>
+    <div class="proto-paso"><div class="proto-num">4</div><div class="proto-txt"><strong>En la última fase, ensayar nuevas narrativas emocionales:</strong> no solo comprender el sistema, sino actuar distinto dentro de él. Ahí ocurren los cambios.</div></div>
+  </div>
+
+  <hr class="separador">
+
+  <!-- PARTE 4 · PRÁCTICA LUNA LLENA -->
+  <div class="section-label" style="margin-top:0">Parte 4 · Práctica: la luna llena del 31 de mayo</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">Cada luna nueva y cada luna llena, un espacio</div>
+      <div class="lente-subtitulo">Aunque sean 15 minutos: debe estar dominado a lo largo del curso</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">Esta luna llena es la <strong>respuesta de la luna nueva en Tauro</strong>, que además coincidía con el ciclo sinódico de Mercurio.</div>
+      <div class="lente-item">El aspecto más importante: <span class="pill pill-urano">Urano</span> dentro de la luna llena. El Sol estaba a 7° de Urano, así que <strong>7 días antes</strong> (en el cuarto creciente) hizo la conjunción exacta con Urano.</div>
+      <div class="lente-item">El ciclo lunar son <strong>4 fases de 7 días</strong> (28 días); con los casi dos días de luna nueva y llena se llega a los 30 del mes.</div>
+      <div class="lente-item">Lo sorpresivo que ocurrió esa semana, antes y después de la luna llena, encaja con Urano: <span class="hl hl-a">la sorpresa es Urano</span>.</div>
+    </div>
+  </div>
+
+  <div class="section-label">Cómo estudiar el eje de la luna llena</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Luna nueva → luna llena: ¿mismo eje o eje siguiente?</div>
+      <span class="badge b-nuevo">Regla práctica</span>
+    </div>
+    <div class="concepto-def">
+      Entre luna nueva y luna llena hay unos 15 días, unos 15° de recorrido.
+      <br><strong>Si la luna nueva está en los primeros grados del signo</strong> (por ejemplo, grado 14 + 15 = grado 29 del signo opuesto), la luna llena cae en el <strong>mismo eje</strong> (Tauro–Escorpio).
+      <br><strong>Si está hacia el final del signo</strong> (grados 24–25 de Tauro), la luna llena <span class="hl hl-m">salta al eje siguiente</span>: Géminis–Sagitario.
+    </div>
+  </div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Tauro (luna nueva) → Sagitario (luna llena)</div>
+      <span class="badge b-clave">Quincuncio por signos</span>
+    </div>
+    <div class="concepto-def">
+      Tauro y Sagitario están en <strong>quincuncio por resonancia zodiacal</strong> (no por grados): un <span class="hl hl-r">punto ciego</span> que no resuena con las expectativas. La respuesta de la luna llena cuestiona los deseos y las garantías puestas en Tauro: la seguridad.
+      <br>La respuesta llega por una <span class="pill pill-luna">Luna</span> en Sagitario: <strong>expectativas, ideales, idealizaciones</strong>… que hay que <strong>demostrar a través de la experiencia</strong>. Toda experiencia que vive el ser humano es para avanzar, nunca para retroceder.
+      <br>Si uno se queda en sus creencias, en cómo cree que hay que mantener la vida, Sagitario es la flecha sin objetivo y llega la desilusión o la decepción. Sagitario es también <strong>confianza</strong>: confiar en que lo plantado en Tauro (lo que da seguridad) se encontrará a través de la experiencia vivida.
+    </div>
+  </div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Próxima luna nueva en Géminis</div>
+      <span class="badge b-clave">Mirar en la carta</span>
+    </div>
+    <div class="concepto-def">
+      Será en los últimos grados de Géminis: comunicación, firmas, movimientos, desplazamientos. Se puede ir viendo en qué casa cae en cada carta; la astrología permite moverse entre pasado, presente y futuro por la tendencia de los movimientos.
+    </div>
+  </div>
+
+  <div class="frase-clave fc-azul">Urano descoloca siempre, pero trae una verdad: después uno entiende. Lo que trae es mejor que lo que se tenía. Mayor conciencia, porque Urano es el regente de Acuario.</div>
+
+  <div class="section-label">Material anunciado</div>
+  <div style="font-size:12px;color:var(--text2);line-height:1.7;">
+    La profesora enviará el <strong>PDF de las fases</strong> del ciclo sinódico (para practicarlo) y un <strong>protocolo de tránsitos</strong>.
+  </div>
+
+  <!-- PUNTOS A RETENER -->
+  <hr class="separador">
+  <div class="section-label" style="margin-top:0">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item">
+      <div class="retener-num">1</div>
+      <div class="retener-body">
+        <div class="retener-titulo">El observador es la conciencia</div>
+        <div class="retener-texto">Alma o conciencia es el punto central del Sol. <span class="hl hl-az">No juzga</span> porque no pertenece a la dualidad: es inclusivo.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">2</div>
+      <div class="retener-body">
+        <div class="retener-titulo">Un adjetivo es un juicio</div>
+        <div class="retener-texto">El observador describe sin adjetivos: «el orden», no «el orden perfecto». <span class="hl hl-a">Opinar es juzgar.</span></div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">3</div>
+      <div class="retener-body">
+        <div class="retener-titulo">El Sol observa algo distinto en cada signo</div>
+        <div class="retener-texto">Aries: la voluntad de existir. Tauro: el deseo. Géminis: la dualidad. Cáncer: el instinto maternal. Leo: quién es. Virgo: el orden. Libra: los opuestos. Escorpio: lo que duele y da miedo. Sagitario: las creencias. Capricornio: la capacidad de responder. Acuario: las inercias. Piscis: la sensibilidad y el caos.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">4</div>
+      <div class="retener-body">
+        <div class="retener-titulo">La perspectiva la da el Sol; el pensamiento lo procesa Mercurio</div>
+        <div class="retener-texto">Mercurio sigue siendo Mercurio, pero <span class="hl hl-m">recibe la instrucción del observador</span>: no juzgar. Así se disciplina la mente, como se hizo con la Luna a nivel emocional.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">5</div>
+      <div class="retener-body">
+        <div class="retener-titulo">Mercurio en la era de Acuario</div>
+        <div class="retener-texto">Incorpora la cualidad fija: <span class="hl hl-v">sin juicio, mente abierta, varias cosas a la vez</span>. El sistema nervioso cobra importancia, sobre todo con Urano en Géminis.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">6</div>
+      <div class="retener-body">
+        <div class="retener-titulo">El ciclo sinódico tiene fases y decanatos</div>
+        <div class="retener-texto">1 Compilador (reunir, Tauro) · 2 Epimeteico (experimentar, Cáncer en Acuario) · 3 Retrogradación (darse cuenta) · 4 Modelador (disolver, Cáncer en Piscis) · 5 Prometeico (reintegrar, de nuevo Acuario). <span class="hl hl-a">Cada fase se lee con el decanato de Mercurio.</span></div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">7</div>
+      <div class="retener-body">
+        <div class="retener-titulo">Luna nueva y luna llena en el mismo eje o en el siguiente</div>
+        <div class="retener-texto">Depende del grado de la luna nueva (primeros grados: mismo eje; últimos: eje siguiente). Tauro–Sagitario es un <span class="hl hl-r">quincuncio por signos</span>: la respuesta cuestiona las seguridades y pide demostrar las creencias con la experiencia.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">8</div>
+      <div class="retener-body">
+        <div class="retener-titulo">Urano es la sorpresa que trae una verdad</div>
+        <div class="retener-texto">Descoloca, pero luego se entiende. Si el Sol hace aspecto exacto a Urano, el efecto se nota <span class="hl hl-az">desde el cuarto creciente hasta la luna llena</span>.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
