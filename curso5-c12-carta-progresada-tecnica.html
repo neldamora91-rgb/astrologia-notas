@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C12 · Carta progresada paso a paso</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9;
+      --text: #1a1a18; --text2: #4a4a46; --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+      --radius: 8px; --radius-lg: 12px;
+
+      --hl-amarillo:     #FFF4C2; --hl-amarillo-text: #7A5A00;
+      --hl-rojo:         #FAECE7; --hl-rojo-text:     #993C1D;
+      --hl-verde:        #EAF3DE; --hl-verde-text:    #3B6D11;
+      --hl-morado:       #EEEDFE; --hl-morado-text:   #534AB7;
+      --hl-azul:         #E6F1FB; --hl-azul-text:     #185FA5;
+
+      --sol:     #993C1D; --sol-bg:     #FAECE7; --sol-border:     #F0C4BA;
+      --luna:    #185FA5; --luna-bg:    #E6F1FB; --luna-border:    #B5D4F4;
+      --merc:    #854F0B; --merc-bg:    #FAEEDA; --merc-border:    #EDCF9A;
+      --sat:     #534AB7; --sat-bg:     #EEEDFE; --sat-border:     #AFA9EC;
+      --urano:   #1A7A8A; --urano-bg:   #E0F4F7; --urano-border:   #9AD5DF;
+      --pluton:  #993C1D; --pluton-bg:  #FAECE7; --pluton-border:  #F0C4BA;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2a;
+        --text: #e8e6de; --text2: #a8a6a0; --text3: #68665e;
+        --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18);
+        --hl-amarillo: #3a2e00; --hl-amarillo-text: #e8c84a;
+        --hl-rojo: #2e1a14;     --hl-rojo-text:     #e8907a;
+        --hl-verde: #1a2e10;    --hl-verde-text:    #8dcc5a;
+        --hl-morado: #1e1c3a;   --hl-morado-text:   #a9a3f0;
+        --hl-azul: #0e2038;     --hl-azul-text:     #7ab8f5;
+        --sol: #e8907a;   --sol-bg: #2e1a14;   --sol-border: #5a3326;
+        --merc: #e0b36a;  --merc-bg: #2e2414;  --merc-border: #5a4726;
+        --urano: #6fd0e0; --urano-bg: #0f2a30; --urano-border: #245a66;
+        --sat: #a9a3f0;   --sat-bg: #1e1c3a;   --sat-border: #3c3870;
+      }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; padding: 2rem 1rem; }
+    .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; }
+
+    /* Header */
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .curso-badge { font-size: 11px; font-weight: 500; background: #e6f1fb; color: #185FA5; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tipo-badge { font-size: 11px; font-weight: 500; background: #EEEDFE; color: #534AB7; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); }
+    .section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 1.75rem; }
+    .separador { border: none; border-top: 2px dashed var(--border); margin: 2rem 0; }
+
+    /* Highlights */
+    .hl { display: inline; padding: 1px 4px; border-radius: 3px; font-weight: 500; }
+    .hl-a  { background: var(--hl-amarillo); color: var(--hl-amarillo-text); }
+    .hl-r  { background: var(--hl-rojo);     color: var(--hl-rojo-text); }
+    .hl-v  { background: var(--hl-verde);    color: var(--hl-verde-text); }
+    .hl-m  { background: var(--hl-morado);   color: var(--hl-morado-text); }
+    .hl-az { background: var(--hl-azul);     color: var(--hl-azul-text); }
+
+    /* Frase clave */
+    .frase-clave { border-left: 3px solid var(--hl-amarillo-text); background: var(--hl-amarillo); padding: 10px 14px; border-radius: 0 var(--radius) var(--radius) 0; font-size: 13px; font-weight: 500; color: var(--hl-amarillo-text); line-height: 1.5; margin: 10px 0 4px; }
+    .frase-clave.fc-rojo   { border-left-color: #993C1D; background: var(--hl-rojo);   color: var(--hl-rojo-text); }
+    .frase-clave.fc-verde  { border-left-color: #3B6D11; background: var(--hl-verde);  color: var(--hl-verde-text); }
+    .frase-clave.fc-morado { border-left-color: #534AB7; background: var(--hl-morado); color: var(--hl-morado-text); }
+    .frase-clave.fc-azul   { border-left-color: #185FA5; background: var(--hl-azul);   color: var(--hl-azul-text); }
+
+    /* Lente */
+    .lente { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+    .lente-header { padding: 10px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .lente-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lente-subtitulo { font-size: 12px; color: var(--text2); }
+    .lente-body { padding: 12px 16px; display: flex; flex-direction: column; gap: 4px; }
+    .lente-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; }
+    .lente-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .lente-item strong { font-weight: 500; color: var(--text); }
+    .lente-footer { padding: 10px 16px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lente-footer strong { font-weight: 500; color: var(--text); }
+
+    /* Concepto */
+    .concepto-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .concepto-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .concepto-nombre { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; }
+    .badge { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
+    .b-clave { background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text2); }
+    .b-nuevo { background: #EEEDFE; color: #534AB7; }
+    .concepto-def { padding: 12px 14px; font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .concepto-def strong { font-weight: 500; color: var(--text); }
+
+    /* Pills */
+    .pill { display: inline-block; font-size: 11px; font-weight: 500; padding: 1px 7px; border-radius: 20px; margin-right: 3px; }
+    .pill-sol { background: var(--sol-bg); color: var(--sol); }
+    .pill-merc { background: var(--merc-bg); color: var(--merc); }
+    .pill-urano { background: var(--urano-bg); color: var(--urano); }
+    .pill-luna { background: var(--luna-bg); color: var(--luna); }
+    .pill-pluton { background: var(--pluton-bg); color: var(--pluton); }
+
+    /* Tarjetas de planeta */
+    .sol-bloque   { --X: var(--sol);   --X-bg: var(--sol-bg);   --X-border: var(--sol-border); }
+    .merc-bloque  { --X: var(--merc);  --X-bg: var(--merc-bg);  --X-border: var(--merc-border); }
+    .urano-bloque { --X: var(--urano); --X-bg: var(--urano-bg); --X-border: var(--urano-border); }
+    .sol-bloque, .merc-bloque, .urano-bloque { border: 1.5px solid var(--X-border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 10px; }
+    .pl-header { padding: 10px 16px; background: var(--X-bg); }
+    .pl-titulo { font-size: 14px; font-weight: 600; color: var(--X); }
+    .pl-sub { font-size: 12px; color: var(--X); margin-top: 2px; opacity: 0.85; }
+    .pl-body { border-top: 1px solid var(--X-border); }
+    .pl-fila { display: grid; grid-template-columns: 120px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .pl-fila:last-child { border-bottom: none; }
+    .pl-fila:nth-child(even) { background: var(--bg2); }
+    .pl-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .pl-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .pl-val strong { font-weight: 500; color: var(--text); }
+    .pl-footer { padding: 10px 16px; background: var(--X-bg); border-top: 1px solid var(--X-border); font-size: 12px; color: var(--X); line-height: 1.5; }
+
+    /* Grid comparativo */
+    .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 560px) { .comp-grid { grid-template-columns: 1fr; } .pl-fila { grid-template-columns: 1fr; gap: 2px; } }
+
+    /* Protocolo numerado */
+    .proto { display: flex; flex-direction: column; gap: 8px; }
+    .proto-paso { display: flex; gap: 12px; align-items: flex-start; }
+    .proto-num { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--sol); color: #ffffff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .proto-txt { font-size: 13px; color: var(--text2); line-height: 1.55; padding-top: 2px; }
+    .proto-txt strong { font-weight: 500; color: var(--text); }
+
+    /* Puntos a retener */
+    .retener-list { display: flex; flex-direction: column; gap: 8px; }
+    .retener-item { display: flex; gap: 0; align-items: stretch; border-radius: var(--radius); overflow: hidden; border: 0.5px solid var(--sat-border); }
+    .retener-num { font-size: 13px; font-weight: 700; color: #ffffff; background: #534AB7; min-width: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .retener-body { padding: 11px 14px; background: var(--bg); }
+    .retener-titulo { font-size: 13px; font-weight: 600; color: var(--sat); margin-bottom: 3px; }
+    .retener-texto { font-size: 12px; color: var(--text2); line-height: 1.6; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-top">
+      <div class="curso-badge">Curso 5 · C12</div>
+      <div class="tipo-badge">Teoría + Práctica</div>
+    </div>
+    <div class="titulo">Carta progresada: la técnica paso a paso</div>
+    <div class="meta">02/09/2026 &nbsp;·&nbsp; Astrosic &nbsp;·&nbsp; Carta progresada de Trump &nbsp;·&nbsp; Sol y Luna progresados &nbsp;·&nbsp; Casas fijas</div>
+  </div>
+
+  <div class="frase-clave fc-morado">Esta nota sirve de guía de la técnica. La clase 13 (Ascendente y Medio Cielo progresados) se apoya directamente en ella.</div>
+
+  <!-- PARTE 1 -->
+  <div class="section-label" style="margin-top:0">Parte 1 · Qué es la carta progresada</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">Una carta en sí misma, calculada para una fecha</div>
+      <div class="lente-subtitulo">Igual que la revolución solar tiene su propia carta</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">Hasta ahora mirábamos la <strong>carta natal con las progresiones alrededor</strong> (solo Sol y Luna). La carta progresada es una carta completa: tiene su ascendente, sus casas y sus planetas progresados.</div>
+      <div class="lente-item">Principio: <strong>1 día después del nacimiento = 1 año de vida</strong> (1 grado por año aprox.). Por eso la hora de la carta progresada también cambia; no hay que preocuparse por ella.</div>
+      <div class="lente-item">La fecha de cálculo en el programa es la fecha de hoy (aquí 02/09/2026).</div>
+    </div>
+  </div>
+
+  <!-- PARTE 2 -->
+  <div class="section-label">Parte 2 · Cómo se calcula en Astrosic</div>
+  <div class="proto">
+    <div class="proto-paso"><div class="proto-num">1</div><div class="proto-txt"><strong>Registrarse en Astrosic</strong> (astro-seek.com) y poner la página <strong>en español</strong> (ver aviso abajo).</div></div>
+    <div class="proto-paso"><div class="proto-num">2</div><div class="proto-txt"><strong>Mi base de datos → Agregar persona:</strong> nombre, género (obligatorio), fecha, hora y ciudad. Si la ciudad se repite (Jamaica), elegir la primera del desplegable (Queens, Nueva York). Pulsar «Añadir persona».</div></div>
+    <div class="proto-paso"><div class="proto-num">3</div><div class="proto-txt"><strong>Cálculo de cartas → Persona A:</strong> seleccionar a la persona. Ignorar la persona B (es para sinastría).</div></div>
+    <div class="proto-paso"><div class="proto-num">4</div><div class="proto-txt"><strong>Tipo de gráfico:</strong> desplegar la lista (por defecto «carta natal») y elegir <strong>Progresiones secundarias</strong> (dentro de «tablas de pronóstico»). Pulsar <strong>Calcular</strong>.</div></div>
+    <div class="proto-paso"><div class="proto-num">5</div><div class="proto-txt"><strong>Usar las pestañas encima de la carta:</strong> «Progresiones + natal» (superposición), «Gráficos alternativos» y «Progresiones» (solo la carta progresada).</div></div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Aviso: pon el programa en español</div>
+      <span class="badge b-clave">Problema detectado en clase</span>
+    </div>
+    <div class="concepto-def">
+      Con el programa en inglés, una alumna veía otra carta (sin el Gran Trígono, con el Punto de la Fortuna en otro sitio) porque aparecía un <strong>tipo de cálculo distinto</strong> (por ejemplo, direcciones de arco solar, que da resultados parecidos pero no iguales). Al cambiar a español aparecieron las progresiones secundarias correctas. Si tu carta no coincide con la de la profesora: <strong>vuelve a empezar, idioma español, «Progresiones secundarias»</strong>, y comprueba que el Sol sale en el mismo grado.
+    </div>
+  </div>
+
+  <div class="section-label">Qué muestra cada pestaña</div>
+  <div class="comp-grid">
+    <div class="sol-bloque">
+      <div class="pl-header"><div class="pl-titulo">Progresiones (solo)</div><div class="pl-sub">La carta progresada aislada</div></div>
+      <div class="pl-body">
+        <div class="pl-fila"><div class="pl-key">Sirve para</div><div class="pl-val">Ver los <strong>aspectos entre planetas progresados</strong> (Sol–Luna, Mercurio–Luna, grandes trígonos…) y las casas <strong>progresadas</strong>.</div></div>
+      </div>
+    </div>
+    <div class="urano-bloque">
+      <div class="pl-header"><div class="pl-titulo">Progresiones + natal</div><div class="pl-sub">Superposición</div></div>
+      <div class="pl-body">
+        <div class="pl-fila"><div class="pl-key">Sirve para</div><div class="pl-val">Ver en qué <strong>casa natal</strong> cae cada planeta progresado, qué aspectos hace a los planetas natales y si <strong>toca un planeta, cambia de signo o de casa</strong>.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="frase-clave fc-azul">Las dos pestañas dan información distinta: el mismo Sol puede caer en la casa 10 en la carta progresada y en la casa 1 de la natal. Hay que mirar ambas.</div>
+
+  <hr class="separador">
+
+  <!-- PARTE 3 -->
+  <div class="section-label" style="margin-top:0">Parte 3 · Cómo se lee (orden de trabajo)</div>
+  <div class="proto">
+    <div class="proto-paso"><div class="proto-num">1</div><div class="proto-txt"><strong>Sol progresado:</strong> signo y casa. Lo que el alma pide experimentar (conciencia e identidad). La casa = dónde; el signo = qué energía.</div></div>
+    <div class="proto-paso"><div class="proto-num">2</div><div class="proto-txt"><strong>Luna progresada:</strong> signo y casa. El escenario emocional donde se vive lo que pide el Sol.</div></div>
+    <div class="proto-paso"><div class="proto-num">3</div><div class="proto-txt"><strong>Aspectos entre ambos</strong> y con otros planetas (¿aplica o separa? ver abajo).</div></div>
+    <div class="proto-paso"><div class="proto-num">4</div><div class="proto-txt"><strong>Puntos de crisis:</strong> ¿el Sol o la Luna están en una casa fija (2, 5, 8, 11)?</div></div>
+    <div class="proto-paso"><div class="proto-num">5</div><div class="proto-txt"><strong>Mirar el «clima» general</strong> de la carta (más azul = armonía, más rojo = tensión; estelios; puntos como la Fortuna).</div></div>
+    <div class="proto-paso"><div class="proto-num">6</div><div class="proto-txt"><strong>Superposición con la natal:</strong> planetas que se mueven, tocan otro planeta, cambian de casa o signo; aspectos del AC y el MC (se profundiza en la C13).</div></div>
+    <div class="proto-paso"><div class="proto-num">7</div><div class="proto-txt"><strong>Contrastar con la vida:</strong> baraja hipótesis con los arquetipos y <strong>pregunta</strong>; hacer una frase coherente que la persona entienda.</div></div>
+  </div>
+
+  <div class="section-label">Aspectos: aplicando o separando</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Quién va más rápido llega al otro</div>
+      <span class="badge b-nuevo">Ejemplo</span>
+    </div>
+    <div class="concepto-def">
+      El Sol progresado de Trump está en el grado ~9 de Virgo y la Luna progresada en el grado ~2 de Sagitario. La Luna es la más rápida y <strong>se acerca</strong> al grado 9: la cuadratura se está <strong>aplicando</strong>; todavía no ha llegado el momento más crítico.
+      <br>La Luna progresa <strong>~1 grado por mes</strong>: de 2° a 9° = <strong>7 meses</strong> hasta la cuadratura exacta.
+      <br>Cuando la línea sale <strong>punteada</strong>, la energía del aspecto aún es débil porque no es exacto.
+    </div>
+  </div>
+
+  <div class="section-label">Qué se mueve y qué no</div>
+  <div class="lente">
+    <div class="lente-body">
+      <div class="lente-item"><strong>Sol y Luna</strong> (la Luna sobre todo) son los que dan el tiempo. Mercurio, Venus y Marte pueden moverse bastante según su ciclo con el Sol.</div>
+      <div class="lente-item"><strong>Planetas lentos</strong> (Júpiter, Saturno, transpersonales): casi no se mueven. Solo importan si llegan a una <strong>conjunción exacta con un planeta personal</strong>. Aun así sí se revisan cambios de casa o signo (p. ej. Saturno natal en casa 11 pasa a casa 12).</div>
+      <div class="lente-item">Un planeta que <strong>llega</strong> a otro (la Luna llega a Saturno) encuentra estructura y realidad; si el planeta lento llegara encima de la Luna, la restringiría y le daría seriedad.</div>
+    </div>
+  </div>
+
+  <hr class="separador">
+
+  <!-- PARTE 4 -->
+  <div class="section-label" style="margin-top:0">Parte 4 · Práctica con la carta de Trump (14/06/1946, 10:54, Queens)</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Sol progresado en Virgo (casa 10) · Luna progresada en Sagitario (casa 2)</div>
+      <span class="badge b-clave">Cuadratura Sol–Luna</span>
+    </div>
+    <div class="concepto-def">
+      <strong>Sol en Virgo casa 10:</strong> el alma pide en lo público y profesional <span class="hl hl-az">humildad, sencillez y atención al detalle</span>. Es un cambio de su Sol natal en Géminis (Virgo es signo en cuadratura con Géminis: un desafío).
+      <br><strong>Luna en Sagitario casa 2:</strong> valorar las cosas desde la grandeza y el optimismo (idealista, quijotesca). La casa 2 son los <strong>valores</strong>: para llegar a la humildad tiene que revisar cómo valora.
+      <br><strong>La cuadratura</strong> es una cosa contra otra: lo pequeño y el detalle (Virgo) frente a la grandeza (Sagitario). Si el alma no puede llevar la experiencia por su lado, puede pasar «algo» que obligue: caída de la popularidad, golpe económico o de amor propio.
+      <br><strong>Ejemplo gráfico:</strong> Virgo ve el hilo suelto de la chaqueta; Sagitario solo ve la marca.
+    </div>
+  </div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Clima general y superposición</div>
+      <span class="badge b-clave">Más armonía que tensión</span>
+    </div>
+    <div class="concepto-def">
+      Gran Trígono (talento maduro, con el Punto de la Fortuna en casa 5); mucho azul: calma aparente y capacidad de equilibrar. Estelio en Libra en casa 12: <strong>enemigos ocultos</strong> frente a apoyos benéficos (Venus, Júpiter). Marte en Leo en casa 12: voluntad interna, con <strong>Mercurio</strong> en casa 10 como su «voz»; el Marte toca el <strong>Quirón</strong> natal en casa 2 (herida en la autoestima, desacuerdos discretos).
+      <br><strong>Saturno</strong> pasa de casa 11 a casa 12: la figura de autoridad empieza a deshacerse. El <strong>Sol progresado</strong> cae en la casa 1 natal (no es casa fija); entrará en la 11 dentro de años (no hay punto de crisis ahora).
+      <br><strong>MC progresado en Leo (~8°38')</strong> llegando al Plutón natal (grado 10, casa 12) en ~1,5 años: un giro seguro en su dirección de vida, la «caída» desde arriba. Es información de progresiones: se contrasta con otras técnicas.
+    </div>
+  </div>
+
+  <div class="section-label">Práctica de una alumna: crisis y casas fijas</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Sol en Leo, casa 5 · Luna en Tauro en la casa 3 o 4</div>
+      <span class="badge b-nuevo">Crisis iniciática</span>
+    </div>
+    <div class="concepto-def">
+      <strong>Sol en la casa 5</strong> (casa fija, mitad de la casa): crisis relacionada con la <strong>seguridad en quién soy</strong> (como hija, esposa, madre, profesional). Es más largo (el Sol), así que es la crisis principal; la Luna es más rápida.
+      <br><strong>Luna en Tauro:</strong> valores, necesidad de expresarse con seguridad y buscar recursos comunicativos; la casa describe el escenario (entorno / familia).
+      <br><strong>Luna a ~2 meses de Saturno</strong> (está en 13°, Saturno en 15°; con Mercurio): más estructura al expresarse; uno se siente valorado cuando primero se ha valorado.
+      <br><strong>Sextil al Urano natal en casa 9:</strong> romper con inercias y creencias sobre cómo es una relación (se conjugan casas: la 7 progresada con la 9 natal).
+    </div>
+  </div>
+
+  <div class="frase-clave fc-rojo">Casas fijas: mandan la casa (2, 5, 8, 11) y su escenario. El signo fijo solo cuenta como refuerzo, p. ej. si se acumulan planetas en un signo fijo aunque estén en casa cardinal o mutable.</div>
+
+  <hr class="separador">
+
+  <div class="section-label" style="margin-top:0">⚓ Anclaje de la clase</div>
+  <div class="lente">
+    <div class="lente-header"><div class="lente-titulo">Resumen que se hizo al cierre de la clase</div></div>
+    <div class="lente-body"><div class="lente-item">Primero se ve la <strong>carta progresada</strong>: el <strong>Sol progresado</strong> (dónde está) y la <strong>Luna progresada</strong>, y qué aspectos hacen.</div><div class="lente-item">Se complementa con el <strong>ascendente y el medio cielo</strong> (más importantes si hay aspectos).</div><div class="lente-item">Después, la <strong>superposición</strong> con la natal: empezar por el Sol progresado, ver aspectos, planetas que se tocan y <strong>cambios de casa o de signo</strong>, y aspectos del AC y MC de una carta sobre la otra.</div><div class="lente-item">Los <strong>puntos de crisis</strong> se dan en las <strong>casas fijas</strong> (2, 5, 8, 11): manda la casa; el signo fijo solo refuerza.</div></div>
+  </div>
+
+  <hr class="separador">
+
+  <div class="section-label" style="margin-top:0">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item"><div class="retener-num">1</div><div class="retener-body"><div class="retener-titulo">La carta progresada es una carta propia</div><div class="retener-texto">Se calcula para una fecha (1 día = 1 año) y se mira sola y <strong>superpuesta a la natal</strong>. Cada pestaña da información distinta.</div></div></div>
+    <div class="retener-item"><div class="retener-num">2</div><div class="retener-body"><div class="retener-titulo">Astrosic en español</div><div class="retener-texto">Persona A → Progresiones secundarias → Calcular. Si no coincide con la carta de referencia, vuelve a empezar y comprueba el grado del Sol.</div></div></div>
+    <div class="retener-item"><div class="retener-num">3</div><div class="retener-body"><div class="retener-titulo">Orden: Sol, Luna, aspectos</div><div class="retener-texto">Primero el Sol (qué pide el alma), luego la Luna (dónde y cómo se vive) y los aspectos entre ambos.</div></div></div>
+    <div class="retener-item"><div class="retener-num">4</div><div class="retener-body"><div class="retener-titulo">Aplicar o separar</div><div class="retener-texto">El más rápido (la Luna) se acerca al otro: <span class="hl hl-a">1° por mes</span> para calcular cuándo llega. Línea punteada = aspecto aún débil.</div></div></div>
+    <div class="retener-item"><div class="retener-num">5</div><div class="retener-body"><div class="retener-titulo">Casas fijas = crisis</div><div class="retener-texto">2, 5, 8 y 11: lo decisivo es la casa; el signo fijo solo refuerza.</div></div></div>
+    <div class="retener-item"><div class="retener-num">6</div><div class="retener-body"><div class="retener-titulo">Qué buscar en la superposición</div><div class="retener-texto">Planetas que tocan otro, cambian de casa o de signo; los lentos solo cuentan si llegan a un planeta personal.</div></div></div>
+    <div class="retener-item"><div class="retener-num">7</div><div class="retener-body"><div class="retener-titulo">Narrativa coherente</div><div class="retener-texto">Usar palabras del signo, la casa y la cruz (cardinal/fija/mutable) para formular una frase que la persona entienda; baraja hipótesis y confirma preguntando.</div></div></div>
+    <div class="retener-item"><div class="retener-num">8</div><div class="retener-body"><div class="retener-titulo">Siguiente paso</div><div class="retener-texto">Tarea: calcular las progresiones <strong>conversas</strong> de Trump. Después, AC y MC progresados (clase 13).</div></div></div>
+  </div>
+
+</div>
+</body>
+</html>

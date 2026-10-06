@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C11 · Puntos de crisis y reversión de nodos</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9;
+      --text: #1a1a18; --text2: #4a4a46; --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+      --radius: 8px; --radius-lg: 12px;
+
+      --hl-amarillo:     #FFF4C2; --hl-amarillo-text: #7A5A00;
+      --hl-rojo:         #FAECE7; --hl-rojo-text:     #993C1D;
+      --hl-verde:        #EAF3DE; --hl-verde-text:    #3B6D11;
+      --hl-morado:       #EEEDFE; --hl-morado-text:   #534AB7;
+      --hl-azul:         #E6F1FB; --hl-azul-text:     #185FA5;
+
+      --sol:     #993C1D; --sol-bg:     #FAECE7; --sol-border:     #F0C4BA;
+      --luna:    #185FA5; --luna-bg:    #E6F1FB; --luna-border:    #B5D4F4;
+      --merc:    #854F0B; --merc-bg:    #FAEEDA; --merc-border:    #EDCF9A;
+      --sat:     #534AB7; --sat-bg:     #EEEDFE; --sat-border:     #AFA9EC;
+      --urano:   #1A7A8A; --urano-bg:   #E0F4F7; --urano-border:   #9AD5DF;
+      --pluton:  #993C1D; --pluton-bg:  #FAECE7; --pluton-border:  #F0C4BA;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2a;
+        --text: #e8e6de; --text2: #a8a6a0; --text3: #68665e;
+        --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18);
+        --hl-amarillo: #3a2e00; --hl-amarillo-text: #e8c84a;
+        --hl-rojo: #2e1a14;     --hl-rojo-text:     #e8907a;
+        --hl-verde: #1a2e10;    --hl-verde-text:    #8dcc5a;
+        --hl-morado: #1e1c3a;   --hl-morado-text:   #a9a3f0;
+        --hl-azul: #0e2038;     --hl-azul-text:     #7ab8f5;
+        --sol: #e8907a;   --sol-bg: #2e1a14;   --sol-border: #5a3326;
+        --merc: #e0b36a;  --merc-bg: #2e2414;  --merc-border: #5a4726;
+        --urano: #6fd0e0; --urano-bg: #0f2a30; --urano-border: #245a66;
+        --sat: #a9a3f0;   --sat-bg: #1e1c3a;   --sat-border: #3c3870;
+      }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; padding: 2rem 1rem; }
+    .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; }
+
+    /* Header */
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .curso-badge { font-size: 11px; font-weight: 500; background: #e6f1fb; color: #185FA5; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tipo-badge { font-size: 11px; font-weight: 500; background: #EEEDFE; color: #534AB7; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); }
+    .section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 1.75rem; }
+    .separador { border: none; border-top: 2px dashed var(--border); margin: 2rem 0; }
+
+    /* Highlights */
+    .hl { display: inline; padding: 1px 4px; border-radius: 3px; font-weight: 500; }
+    .hl-a  { background: var(--hl-amarillo); color: var(--hl-amarillo-text); }
+    .hl-r  { background: var(--hl-rojo);     color: var(--hl-rojo-text); }
+    .hl-v  { background: var(--hl-verde);    color: var(--hl-verde-text); }
+    .hl-m  { background: var(--hl-morado);   color: var(--hl-morado-text); }
+    .hl-az { background: var(--hl-azul);     color: var(--hl-azul-text); }
+
+    /* Frase clave */
+    .frase-clave { border-left: 3px solid var(--hl-amarillo-text); background: var(--hl-amarillo); padding: 10px 14px; border-radius: 0 var(--radius) var(--radius) 0; font-size: 13px; font-weight: 500; color: var(--hl-amarillo-text); line-height: 1.5; margin: 10px 0 4px; }
+    .frase-clave.fc-rojo   { border-left-color: #993C1D; background: var(--hl-rojo);   color: var(--hl-rojo-text); }
+    .frase-clave.fc-verde  { border-left-color: #3B6D11; background: var(--hl-verde);  color: var(--hl-verde-text); }
+    .frase-clave.fc-morado { border-left-color: #534AB7; background: var(--hl-morado); color: var(--hl-morado-text); }
+    .frase-clave.fc-azul   { border-left-color: #185FA5; background: var(--hl-azul);   color: var(--hl-azul-text); }
+
+    /* Lente */
+    .lente { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+    .lente-header { padding: 10px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .lente-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lente-subtitulo { font-size: 12px; color: var(--text2); }
+    .lente-body { padding: 12px 16px; display: flex; flex-direction: column; gap: 4px; }
+    .lente-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; }
+    .lente-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .lente-item strong { font-weight: 500; color: var(--text); }
+    .lente-footer { padding: 10px 16px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lente-footer strong { font-weight: 500; color: var(--text); }
+
+    /* Concepto */
+    .concepto-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .concepto-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .concepto-nombre { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; }
+    .badge { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
+    .b-clave { background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text2); }
+    .b-nuevo { background: #EEEDFE; color: #534AB7; }
+    .concepto-def { padding: 12px 14px; font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .concepto-def strong { font-weight: 500; color: var(--text); }
+
+    /* Pills */
+    .pill { display: inline-block; font-size: 11px; font-weight: 500; padding: 1px 7px; border-radius: 20px; margin-right: 3px; }
+    .pill-sol { background: var(--sol-bg); color: var(--sol); }
+    .pill-merc { background: var(--merc-bg); color: var(--merc); }
+    .pill-urano { background: var(--urano-bg); color: var(--urano); }
+    .pill-luna { background: var(--luna-bg); color: var(--luna); }
+    .pill-pluton { background: var(--pluton-bg); color: var(--pluton); }
+
+    /* Tarjetas de planeta */
+    .sol-bloque   { --X: var(--sol);   --X-bg: var(--sol-bg);   --X-border: var(--sol-border); }
+    .merc-bloque  { --X: var(--merc);  --X-bg: var(--merc-bg);  --X-border: var(--merc-border); }
+    .urano-bloque { --X: var(--urano); --X-bg: var(--urano-bg); --X-border: var(--urano-border); }
+    .sol-bloque, .merc-bloque, .urano-bloque { border: 1.5px solid var(--X-border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 10px; }
+    .pl-header { padding: 10px 16px; background: var(--X-bg); }
+    .pl-titulo { font-size: 14px; font-weight: 600; color: var(--X); }
+    .pl-sub { font-size: 12px; color: var(--X); margin-top: 2px; opacity: 0.85; }
+    .pl-body { border-top: 1px solid var(--X-border); }
+    .pl-fila { display: grid; grid-template-columns: 120px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .pl-fila:last-child { border-bottom: none; }
+    .pl-fila:nth-child(even) { background: var(--bg2); }
+    .pl-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .pl-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .pl-val strong { font-weight: 500; color: var(--text); }
+    .pl-footer { padding: 10px 16px; background: var(--X-bg); border-top: 1px solid var(--X-border); font-size: 12px; color: var(--X); line-height: 1.5; }
+
+    /* Grid comparativo */
+    .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 560px) { .comp-grid { grid-template-columns: 1fr; } .pl-fila { grid-template-columns: 1fr; gap: 2px; } }
+
+    /* Protocolo numerado */
+    .proto { display: flex; flex-direction: column; gap: 8px; }
+    .proto-paso { display: flex; gap: 12px; align-items: flex-start; }
+    .proto-num { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--sol); color: #ffffff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .proto-txt { font-size: 13px; color: var(--text2); line-height: 1.55; padding-top: 2px; }
+    .proto-txt strong { font-weight: 500; color: var(--text); }
+
+    /* Puntos a retener */
+    .retener-list { display: flex; flex-direction: column; gap: 8px; }
+    .retener-item { display: flex; gap: 0; align-items: stretch; border-radius: var(--radius); overflow: hidden; border: 0.5px solid var(--sat-border); }
+    .retener-num { font-size: 13px; font-weight: 700; color: #ffffff; background: #534AB7; min-width: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .retener-body { padding: 11px 14px; background: var(--bg); }
+    .retener-titulo { font-size: 13px; font-weight: 600; color: var(--sat); margin-bottom: 3px; }
+    .retener-texto { font-size: 12px; color: var(--text2); line-height: 1.6; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-top">
+      <div class="curso-badge">Curso 5 · C11</div>
+      <div class="tipo-badge">Teoría + Práctica</div>
+    </div>
+    <div class="titulo">Puntos de crisis y reversión de los nodos</div>
+    <div class="meta">26/08/2026 &nbsp;·&nbsp; Casas fijas &nbsp;·&nbsp; Punto de la edad &nbsp;·&nbsp; Retorno y reversión nodal &nbsp;·&nbsp; Sol progresado en casa fija</div>
+  </div>
+
+  <!-- PARTE 1 -->
+  <div class="section-label" style="margin-top:0">Parte 1 · Recapitulación: el punto de la edad</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">Los puntos de crisis están en las casas fijas</div>
+      <div class="lente-subtitulo">Se localizan con el punto de la edad (Astronex, astrología Huber) y se verifican en la carta natal Plácidus</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">Casas fijas: <strong>2, 5, 8 y 11</strong>. Cada una corresponde a una edad: <strong>9 años (casa 2), 27 (casa 5), 45 (casa 8) y 63 (casa 11)</strong>.</div>
+      <div class="lente-item">En Astronex se ve en qué grado y signo cae ese punto; luego se vuelve a la carta natal Plácidus para ver en qué grado están las cúspides de las casas fijas.</div>
+      <div class="lente-item">Las casas fijas son las intermedias entre dos cardinales: la 2 está entre el AC y la 4; la 5 entre la 4 y la 7; la 8 entre la 7 y la 10; la 11 entre el MC y el AC.</div>
+    </div>
+  </div>
+
+  <!-- PARTE 2 -->
+  <div class="section-label">Parte 2 · ¿Por qué coinciden con los nodos?</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Reversión de los nodos: cada 9 años</div>
+      <span class="badge b-clave">Reajuste kármico</span>
+    </div>
+    <div class="concepto-def">
+      Los nodos se mueven ~1,5 años por signo. A la <strong>mitad del ciclo de 18 años</strong> (a los 9, 27, 45 y 63) el eje queda <strong>al revés</strong>: el nodo sur ocupa el signo donde estaba el nodo norte, y al revés.
+      <br>Eso es un <strong>reajuste</strong>: el nodo sur recibe al norte (aporta una parte más elevada) y el norte recibe del sur (se le recuerda lo que ya no hace falta). Como las ecuaciones: negativo con negativo y positivo con positivo se compensan.
+      <br>Se trae <strong>conciencia a lo inconsciente</strong> del eje. Dura unos <strong>3 años</strong> (antes de la crisis, la crisis y el duelo/proceso posterior). No tiene por qué ser negativo ni una pérdida.
+    </div>
+  </div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Retorno de los nodos: cada 18 años</div>
+      <span class="badge b-nuevo">Casas cardinales</span>
+    </div>
+    <div class="concepto-def">
+      A los <strong>18 años (y 36, 54…)</strong> los nodos vuelven al mismo eje y, en algún momento del año y medio que dura, <strong>pasan por el mismo grado</strong> (a veces entre 18 y 19 años). Tras el reajuste de 9 años antes, el retorno <strong>templa y actualiza</strong> el eje nodal. Por eso se dice que hay que mirar 18 años atrás en los eclipses: los eclipses tienen los nodos implicados.
+    </div>
+  </div>
+
+  <div class="section-label">Cómo verificarlo con las efemérides</div>
+  <div class="proto">
+    <div class="proto-paso"><div class="proto-num">1</div><div class="proto-txt"><strong>Retorno (18 años):</strong> sumar 18 al año de nacimiento y buscar en qué mes el nodo norte vuelve al mismo signo y grado. Ejemplo: nacida en 1991 con nodo norte en Cáncer → entre 2009 y 2010 el eje coincide, y en mayo de 2010 llega al mismo grado (13°).</div></div>
+    <div class="proto-paso"><div class="proto-num">2</div><div class="proto-txt"><strong>Reversión (9 años):</strong> sumar 9 años y buscar el eje al revés (nodo norte en el signo del antiguo nodo sur). En el mismo ejemplo, a finales de febrero de 2001 el nodo norte vuelve a estar en el grado 13 de Cáncer.</div></div>
+    <div class="proto-paso"><div class="proto-num">3</div><div class="proto-txt"><strong>Fuente:</strong> se usan los nodos «true» o «mean» (hay poca diferencia) de la efeméride.</div></div>
+  </div>
+  <div class="frase-clave fc-azul">Nodo sur y nodo norte en el mismo signo = el signo completo, con sus luces y sus sombras: es lo que se integra en la reversión.</div>
+
+  <hr class="separador">
+
+  <!-- PARTE 3 -->
+  <div class="section-label" style="margin-top:0">Parte 3 · Por qué lo «fijo» y la crisis</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">Astrología esotérica: lo fijo = atravesar la experiencia</div>
+      <div class="lente-subtitulo">Es una analogía (como el ciclo lunar y el menstrual)</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item"><strong>Cruz mutable:</strong> se ofrece repetir experiencias. <strong>Cruz fija:</strong> deja de repetirse porque se atraviesa la situación (la crisis, el conflicto, la incomodidad) y se extrae <strong>conciencia</strong>.</div>
+      <div class="lente-item">La crisis es una <strong>oportunidad iniciática</strong> de materialización. «Tomar forma» es incómodo, de ahí la crisis. Crisis = cambio, no catástrofe.</div>
+      <div class="lente-item">Para el alma la intensidad no se mide: la pérdida de un ser querido y cualquier otro impacto tienen el mismo peso. La intensidad solo existe para la personalidad.</div>
+      <div class="lente-item">Antiguamente se hablaba de las «crisis del discípulo» (retirarse del mundo). Hoy se integra cuerpo, mente, personalidad y alma viviendo en el mundo.</div>
+    </div>
+  </div>
+
+  <div class="section-label">Tema de cada casa fija</div>
+  <div class="comp-grid">
+    <div class="sol-bloque">
+      <div class="pl-header"><div class="pl-titulo">Casa 2 · 9 años</div><div class="pl-sub">Valores y recursos propios</div></div>
+      <div class="pl-body">
+        <div class="pl-fila"><div class="pl-key">Crisis</div><div class="pl-val">Cambia la <strong>escala de prioridades</strong>: cómo valoro las cosas y cómo me valoro. También la energía y el concepto de seguridad.</div></div>
+      </div>
+    </div>
+    <div class="urano-bloque">
+      <div class="pl-header"><div class="pl-titulo">Casa 5 · 27 años</div><div class="pl-sub">Identidad y seguridad en uno mismo</div></div>
+      <div class="pl-body">
+        <div class="pl-fila"><div class="pl-key">Crisis</div><div class="pl-val">Seguridad en quién soy.</div></div>
+      </div>
+    </div>
+    <div class="sol-bloque">
+      <div class="pl-header"><div class="pl-titulo">Casa 8 · 45 años</div><div class="pl-sub">Muerte, renacimiento, recursos compartidos</div></div>
+      <div class="pl-body">
+        <div class="pl-fila"><div class="pl-key">Crisis</div><div class="pl-val">Pérdida o pérdida de apego, inseguridad emocional; el desapego.</div></div>
+      </div>
+    </div>
+    <div class="urano-bloque">
+      <div class="pl-header"><div class="pl-titulo">Casa 11 · 63 años</div><div class="pl-sub">Comunidad, grupo, hermandad</div></div>
+      <div class="pl-body">
+        <div class="pl-fila"><div class="pl-key">Crisis</div><div class="pl-val">Conciencia grupal: entender la igualdad con el otro y la cooperación.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="frase-clave fc-morado">«Cuatro columnas fundadoras de cambio»: valores, identidad, muerte y comunidad.</div>
+
+  <hr class="separador">
+
+  <!-- PARTE 4 -->
+  <div class="section-label" style="margin-top:0">Parte 4 · Aplicación en la carta progresada (Astrosic)</div>
+  <div class="proto">
+    <div class="proto-paso"><div class="proto-num">1</div><div class="proto-txt"><strong>Persona A → tipo de gráfico «Progresiones secundarias» → Calcular.</strong> Hay dos pestañas: «Progresiones + natal» (superposición, como tránsitos de planetas progresados) y «Progresiones» (la carta progresada sola, con su ascendente).</div></div>
+    <div class="proto-paso"><div class="proto-num">2</div><div class="proto-txt"><strong>¿El Sol progresado está en una casa fija</strong> (sobre todo hacia la mitad de la casa)? Si sí, es un punto de crisis. El Sol dura ~12 meses por grado, así que la crisis puede ser larga.</div></div>
+    <div class="proto-paso"><div class="proto-num">3</div><div class="proto-txt"><strong>Luna progresada</strong> (el escenario, la casa donde se vive) y los aspectos entre Sol y Luna (cuadratura, etc.). La Luna es rápida (~1 mes por grado): sirve de anticipación, no de crisis.</div></div>
+    <div class="proto-paso"><div class="proto-num">4</div><div class="proto-txt"><strong>Luego la superposición:</strong> si el Sol progresado no está en casa fija, puede caer en casa fija en la natal (y al revés). Cuenta de ambas formas.</div></div>
+    <div class="proto-paso"><div class="proto-num">5</div><div class="proto-txt"><strong>Mirar el nodo:</strong> hacia dónde se dirige el Sol progresado (p. ej. al nodo sur) y qué revisión final implica.</div></div>
+  </div>
+
+  <div class="section-label">Ejemplos trabajados en clase</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Sol en la mitad de la casa 2, en Escorpio · Luna en Leo, casa 11</div>
+      <span class="badge b-clave">Crisis de valores</span>
+    </div>
+    <div class="concepto-def">
+      Escorpio pide <strong>soltar</strong> y la casa 2 es cómo manejo mis recursos (Tauro) y los compartidos (Escorpio). Se corrobora con la experiencia de la alumna: pasar de una vida muy cargada a una <strong>vida ligera</strong>, distinguir lo mío de las cargas de los demás.
+      <br>Sol cerca de Saturno y del nodo sur: revisión final cuando se acerque al nodo sur (en unos años). La Luna en casa 11 llegará al centro de la casa en ~9 meses: <strong>conciencia grupal</strong> (amistad, hermandad, cooperación), que requiere valores ordenados.
+      <br>El Sol progresado cae en la casa 3 natal (hay que comunicarlo); la Luna cae en casa 12 natal (cosas inconscientes, pruebas kármicas).
+    </div>
+  </div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Sol en la casa 7 (último grado de Escorpio) · AC progresado Géminis</div>
+      <span class="badge b-nuevo">Sin crisis ahora</span>
+    </div>
+    <div class="concepto-def">
+      La casa 7 no es fija, aunque el signo sea fijo: no hay crisis ahora. El Sol entra en la casa 8 en unos 22 años (un punto de crisis futuro: desapego). Cambio de signo del Sol progresado (Escorpio → Sagitario): idealismo, filosofar, expectativas; <strong>Júpiter</strong> (regente de Sagitario) pide objetivos a corto, medio y largo plazo.
+      <br><strong>Luna progresada a 5 meses del ascendente</strong> (12° → 17°): todo lo que pasa por el AC se nota mucho; pasa de «para dentro» a movimiento (Géminis, eje AC–DC).
+    </div>
+  </div>
+
+  <hr class="separador">
+
+  <div class="section-label" style="margin-top:0">⚓ Anclaje de la clase</div>
+  <div class="lente">
+    <div class="lente-header"><div class="lente-titulo">Resumen que se hizo al cierre de la clase</div></div>
+    <div class="lente-body"><div class="lente-item">El <strong>punto de la edad</strong> marca los momentos de crisis, que tienen que ver con la <strong>reversión de los nodos</strong> (a los 9, 27, 45 y 63 años).</div><div class="lente-item">Ahí hay un <strong>reajuste kármico</strong>: cosas que deben reajustarse cada 9 años, y se da en las <strong>casas fijas</strong>.</div><div class="lente-item">Es una <strong>oportunidad de materialización</strong>, que lleva a <strong>mayor conciencia</strong>.</div><div class="lente-item">En Astrosic se ve la carta progresada: se mira el <strong>Sol</strong> (y la <strong>Luna</strong> como escenario de la experiencia) y se comprueba si cae en una casa fija.</div></div>
+  </div>
+
+  <hr class="separador">
+
+  <div class="section-label" style="margin-top:0">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item"><div class="retener-num">1</div><div class="retener-body"><div class="retener-titulo">Crisis en las casas fijas</div><div class="retener-texto">2 (9 años), 5 (27), 8 (45) y 11 (63): valores, identidad, muerte y comunidad.</div></div></div>
+    <div class="retener-item"><div class="retener-num">2</div><div class="retener-body"><div class="retener-titulo">Coinciden con la reversión de los nodos</div><div class="retener-texto">Cada 9 años el eje nodal queda invertido: es un <span class="hl hl-a">reajuste kármico</span> de unos 3 años que trae conciencia al inconsciente del eje.</div></div></div>
+    <div class="retener-item"><div class="retener-num">3</div><div class="retener-body"><div class="retener-titulo">Retorno nodal a los 18 años</div><div class="retener-texto">El eje vuelve (a veces 18–19 años): templa y actualiza lo reajustado 9 años antes. Se comprueba con la efeméride.</div></div></div>
+    <div class="retener-item"><div class="retener-num">4</div><div class="retener-body"><div class="retener-titulo">Lo fijo atraviesa, no repite</div><div class="retener-texto">Cruz fija = atravesar la crisis para extraer conciencia; es una oportunidad de materialización. Crisis = cambio.</div></div></div>
+    <div class="retener-item"><div class="retener-num">5</div><div class="retener-body"><div class="retener-titulo">Sol y Luna progresados</div><div class="retener-texto">El Sol (~1 año por grado) marca la crisis; la Luna da el escenario y anticipa. Se mira si caen en casa fija, en la progresada y en la superposición.</div></div></div>
+    <div class="retener-item"><div class="retener-num">6</div><div class="retener-body"><div class="retener-titulo">Dos pestañas en Astrosic</div><div class="retener-texto">«Progresiones + natal» y «Progresiones»: la técnica completa está detallada en la clase 12.</div></div></div>
+    <div class="retener-item"><div class="retener-num">7</div><div class="retener-body"><div class="retener-titulo">Para el alma no hay intensidad</div><div class="retener-texto">La intensidad es de la personalidad; el alma solo busca experiencia y conciencia.</div></div></div>
+    <div class="retener-item"><div class="retener-num">8</div><div class="retener-body"><div class="retener-titulo">Siguiente paso</div><div class="retener-texto">Tarea: carta progresada de una compañera; después Trump, y el ascendente progresado.</div></div></div>
+  </div>
+
+</div>
+</body>
+</html>
