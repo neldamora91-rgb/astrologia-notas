@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C14 · Carta causal: la carta del alma</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9;
+      --text: #1a1a18; --text2: #4a4a46; --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+      --radius: 8px; --radius-lg: 12px;
+
+      --hl-amarillo:     #FFF4C2; --hl-amarillo-text: #7A5A00;
+      --hl-rojo:         #FAECE7; --hl-rojo-text:     #993C1D;
+      --hl-verde:        #EAF3DE; --hl-verde-text:    #3B6D11;
+      --hl-morado:       #EEEDFE; --hl-morado-text:   #534AB7;
+      --hl-azul:         #E6F1FB; --hl-azul-text:     #185FA5;
+
+      --sol:     #993C1D; --sol-bg:     #FAECE7; --sol-border:     #F0C4BA;
+      --luna:    #185FA5; --luna-bg:    #E6F1FB; --luna-border:    #B5D4F4;
+      --merc:    #854F0B; --merc-bg:    #FAEEDA; --merc-border:    #EDCF9A;
+      --sat:     #534AB7; --sat-bg:     #EEEDFE; --sat-border:     #AFA9EC;
+      --urano:   #1A7A8A; --urano-bg:   #E0F4F7; --urano-border:   #9AD5DF;
+      --pluton:  #993C1D; --pluton-bg:  #FAECE7; --pluton-border:  #F0C4BA;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2a;
+        --text: #e8e6de; --text2: #a8a6a0; --text3: #68665e;
+        --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18);
+        --hl-amarillo: #3a2e00; --hl-amarillo-text: #e8c84a;
+        --hl-rojo: #2e1a14;     --hl-rojo-text:     #e8907a;
+        --hl-verde: #1a2e10;    --hl-verde-text:    #8dcc5a;
+        --hl-morado: #1e1c3a;   --hl-morado-text:   #a9a3f0;
+        --hl-azul: #0e2038;     --hl-azul-text:     #7ab8f5;
+        --sol: #e8907a;   --sol-bg: #2e1a14;   --sol-border: #5a3326;
+        --merc: #e0b36a;  --merc-bg: #2e2414;  --merc-border: #5a4726;
+        --urano: #6fd0e0; --urano-bg: #0f2a30; --urano-border: #245a66;
+        --sat: #a9a3f0;   --sat-bg: #1e1c3a;   --sat-border: #3c3870;
+      }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; padding: 2rem 1rem; }
+    .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; }
+
+    /* Header */
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .curso-badge { font-size: 11px; font-weight: 500; background: #e6f1fb; color: #185FA5; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tipo-badge { font-size: 11px; font-weight: 500; background: #EEEDFE; color: #534AB7; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); }
+    .section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 1.75rem; }
+    .separador { border: none; border-top: 2px dashed var(--border); margin: 2rem 0; }
+
+    /* Highlights */
+    .hl { display: inline; padding: 1px 4px; border-radius: 3px; font-weight: 500; }
+    .hl-a  { background: var(--hl-amarillo); color: var(--hl-amarillo-text); }
+    .hl-r  { background: var(--hl-rojo);     color: var(--hl-rojo-text); }
+    .hl-v  { background: var(--hl-verde);    color: var(--hl-verde-text); }
+    .hl-m  { background: var(--hl-morado);   color: var(--hl-morado-text); }
+    .hl-az { background: var(--hl-azul);     color: var(--hl-azul-text); }
+
+    /* Frase clave */
+    .frase-clave { border-left: 3px solid var(--hl-amarillo-text); background: var(--hl-amarillo); padding: 10px 14px; border-radius: 0 var(--radius) var(--radius) 0; font-size: 13px; font-weight: 500; color: var(--hl-amarillo-text); line-height: 1.5; margin: 10px 0 4px; }
+    .frase-clave.fc-rojo   { border-left-color: #993C1D; background: var(--hl-rojo);   color: var(--hl-rojo-text); }
+    .frase-clave.fc-verde  { border-left-color: #3B6D11; background: var(--hl-verde);  color: var(--hl-verde-text); }
+    .frase-clave.fc-morado { border-left-color: #534AB7; background: var(--hl-morado); color: var(--hl-morado-text); }
+    .frase-clave.fc-azul   { border-left-color: #185FA5; background: var(--hl-azul);   color: var(--hl-azul-text); }
+
+    /* Lente */
+    .lente { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+    .lente-header { padding: 10px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .lente-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lente-subtitulo { font-size: 12px; color: var(--text2); }
+    .lente-body { padding: 12px 16px; display: flex; flex-direction: column; gap: 4px; }
+    .lente-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; }
+    .lente-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .lente-item strong { font-weight: 500; color: var(--text); }
+    .lente-footer { padding: 10px 16px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lente-footer strong { font-weight: 500; color: var(--text); }
+
+    /* Concepto */
+    .concepto-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .concepto-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .concepto-nombre { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; }
+    .badge { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
+    .b-clave { background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text2); }
+    .b-nuevo { background: #EEEDFE; color: #534AB7; }
+    .concepto-def { padding: 12px 14px; font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .concepto-def strong { font-weight: 500; color: var(--text); }
+
+    /* Pills */
+    .pill { display: inline-block; font-size: 11px; font-weight: 500; padding: 1px 7px; border-radius: 20px; margin-right: 3px; }
+    .pill-sol { background: var(--sol-bg); color: var(--sol); }
+    .pill-merc { background: var(--merc-bg); color: var(--merc); }
+    .pill-urano { background: var(--urano-bg); color: var(--urano); }
+    .pill-luna { background: var(--luna-bg); color: var(--luna); }
+    .pill-pluton { background: var(--pluton-bg); color: var(--pluton); }
+
+    /* Tarjetas de planeta */
+    .sol-bloque   { --X: var(--sol);   --X-bg: var(--sol-bg);   --X-border: var(--sol-border); }
+    .merc-bloque  { --X: var(--merc);  --X-bg: var(--merc-bg);  --X-border: var(--merc-border); }
+    .urano-bloque { --X: var(--urano); --X-bg: var(--urano-bg); --X-border: var(--urano-border); }
+    .sol-bloque, .merc-bloque, .urano-bloque { border: 1.5px solid var(--X-border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 10px; }
+    .pl-header { padding: 10px 16px; background: var(--X-bg); }
+    .pl-titulo { font-size: 14px; font-weight: 600; color: var(--X); }
+    .pl-sub { font-size: 12px; color: var(--X); margin-top: 2px; opacity: 0.85; }
+    .pl-body { border-top: 1px solid var(--X-border); }
+    .pl-fila { display: grid; grid-template-columns: 120px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .pl-fila:last-child { border-bottom: none; }
+    .pl-fila:nth-child(even) { background: var(--bg2); }
+    .pl-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .pl-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .pl-val strong { font-weight: 500; color: var(--text); }
+    .pl-footer { padding: 10px 16px; background: var(--X-bg); border-top: 1px solid var(--X-border); font-size: 12px; color: var(--X); line-height: 1.5; }
+
+    /* Grid comparativo */
+    .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 560px) { .comp-grid { grid-template-columns: 1fr; } .pl-fila { grid-template-columns: 1fr; gap: 2px; } }
+
+    /* Protocolo numerado */
+    .proto { display: flex; flex-direction: column; gap: 8px; }
+    .proto-paso { display: flex; gap: 12px; align-items: flex-start; }
+    .proto-num { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--sol); color: #ffffff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .proto-txt { font-size: 13px; color: var(--text2); line-height: 1.55; padding-top: 2px; }
+    .proto-txt strong { font-weight: 500; color: var(--text); }
+
+    /* Puntos a retener */
+    .retener-list { display: flex; flex-direction: column; gap: 8px; }
+    .retener-item { display: flex; gap: 0; align-items: stretch; border-radius: var(--radius); overflow: hidden; border: 0.5px solid var(--sat-border); }
+    .retener-num { font-size: 13px; font-weight: 700; color: #ffffff; background: #534AB7; min-width: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .retener-body { padding: 11px 14px; background: var(--bg); }
+    .retener-titulo { font-size: 13px; font-weight: 600; color: var(--sat); margin-bottom: 3px; }
+    .retener-texto { font-size: 12px; color: var(--text2); line-height: 1.6; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div class="curso-badge">Curso 5 · C14</div>
+      <div class="tipo-badge">Teoría + Práctica</div>
+    </div>
+    <div class="titulo">Carta causal: la carta del alma</div>
+    <div class="meta">23/09/2026 &nbsp;·&nbsp; Corrección AC y MC progresados &nbsp;·&nbsp; Carta causal &nbsp;·&nbsp; Método Huber &nbsp;·&nbsp; Astronex</div>
+  </div>
+
+  <!-- PARTE 1 · CORRECCIÓN DE LA TAREA -->
+  <div class="section-label" style="margin-top:0">Parte 1 · Corrección de la tarea: AC y MC progresados</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">Carta de una figura pública (13/12/1989, 8:36, Reading, Pensilvania)</div>
+      <div class="lente-subtitulo">Progresiones secundarias calculadas con la carta de nacimiento introducida a mano en la base de datos</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">Hay que localizar a la figura famosa en la base de datos de personajes o introducir los datos a mano; si solo se tienen coordenadas, se puede buscar la población.</div>
+      <div class="lente-item">En progresiones <strong>cada grado equivale a un año</strong> aproximado: por eso una diferencia de días entre cálculos da grados distintos (21°38' frente a 21°40').</div>
+    </div>
+    <div class="lente-footer">Lo importante de la corrección: <strong>unir el símbolo con la biografía</strong>. Se tarda más en explicarlo que en verlo.</div>
+  </div>
+
+  <div class="section-label">Ascendente progresado</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">AC progresado en Acuario (≈ 21°38'), decanato de Sagitario</div>
+      <span class="badge b-clave">Conjunción al nodo norte natal</span>
+    </div>
+    <div class="concepto-def">
+      Está en <span class="pill pill-urano">Acuario</span> en conjunción con su <strong>nodo norte natal</strong>, en la casa 2.
+      <br><strong>Lectura:</strong> autonomía e independencia en los propios recursos. La casa 2 es también el <strong>valor propio</strong>.
+      <br><strong>Biografía:</strong> logra recuperar los derechos de autor de toda su obra (canciones, videoclips). Encaja.
+    </div>
+  </div>
+
+  <div class="section-label">Medio cielo progresado</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">MC progresado en Sagitario (≈ 8°15'–8°17'), decanato de Aries</div>
+      <span class="badge b-clave">Cae en la casa 11 natal</span>
+    </div>
+    <div class="concepto-def">
+      <strong>Lectura:</strong> una carrera que necesita <span class="hl hl-az">expansión de su identidad</span> (Sagitario + decanato Aries).
+      <br><strong>Biografía:</strong> antes de recuperar los derechos regrabó todos sus discos de estudio y realizó una gira con un seguimiento multitudinario de gente de todas las edades. La casa 11 (grupos, seguidores) lo refleja.
+    </div>
+  </div>
+
+  <div class="section-label">Otros puntos mencionados</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Sol y Luna progresados</div>
+      <span class="badge b-nuevo">Lo que viene</span>
+    </div>
+    <div class="concepto-def">
+      <span class="pill pill-sol">Sol</span> progresado a 29° de Capricornio, cerca de su <span class="pill pill-merc">Venus</span> natal en el grado 1 de Acuario: en unos <strong>2 años</strong> tocará Venus.
+      <br><span class="pill pill-luna">Luna</span> progresada <strong>sobre Lilith</strong> en la casa 10 (Escorpio: recursos compartidos). Lilith muestra un vacío en cuanto a responsabilizarse de los recursos compartidos, ligado al tema del padre. La Luna trae la experiencia: lo que se ve ahora gana envergadura al acercarse el Sol a Venus.
+    </div>
+  </div>
+
+  <hr class="separador">
+
+  <!-- PARTE 2 · CARTA CAUSAL -->
+  <div class="section-label" style="margin-top:0">Parte 2 · Un tema nuevo: la carta causal</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">Lo que sostiene la carta natal, desde el punto de vista del alma</div>
+      <div class="lente-subtitulo">Causal = el origen o principio de donde nace nuestra experiencia de vida</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">No confundir con otros usos de «alma» en el curso, como el ascendente como propósito del alma. Esta carta habla del <strong>origen</strong> de la experiencia.</div>
+      <div class="lente-item">El <strong>Sol</strong> de la carta causal: el signo es la energía que sostiene el Sol natal como principio de conciencia.</div>
+      <div class="lente-item">La <strong>Luna</strong> de la carta causal: qué parte del alma inspira al cuerpo emocional para ampliar la conciencia en ese campo.</div>
+      <div class="lente-item">Se interpreta con un ejercicio de <span class="hl hl-a">comparación entre la carta causal y la natal</span>, no como una carta aislada. Se lee desde la «identidad alma» frente a la personalidad.</div>
+      <div class="lente-item">Solo se calcula en el programa <strong>Astronex</strong> (método Huber, el mismo con el que se trabajaron los planetas de la personalidad).</div>
+    </div>
+    <div class="lente-footer">El propósito intrínseco del alma es ayudar a desarrollar, en primera instancia, <strong>la personalidad</strong>. Son herramientas rápidas, que dan información según la pregunta que se quiere responder.</div>
+  </div>
+
+  <div class="section-label">Cómo se construye</div>
+  <div class="proto">
+    <div class="proto-paso"><div class="proto-num">1</div><div class="proto-txt"><strong>Mismo ascendente, mismas casas y misma rueda zodiacal.</strong> No cambian ni los signos ni los grados de las casas.</div></div>
+    <div class="proto-paso"><div class="proto-num">2</div><div class="proto-txt"><strong>Cada planeta se traslada a la casa que lleva el número de su signo natal:</strong> Sol en Libra, casa 7; Luna en Piscis, casa 12; Saturno en Acuario, casa 11.</div></div>
+    <div class="proto-paso"><div class="proto-num">3</div><div class="proto-txt"><strong>Se conserva el grado del signo.</strong> Se cuentan esos grados desde el inicio (la cúspide) de esa casa: Sol natal a 25° de Libra, a 25° de la casa 7 contados desde el descendente.</div></div>
+    <div class="proto-paso"><div class="proto-num">4</div><div class="proto-txt"><strong>El signo del planeta causal lo da la casa:</strong> el signo que cae en esa casa y esos grados. Es literal, con todo lo del signo.</div></div>
+  </div>
+  <div class="frase-clave fc-morado">Los planetas son los mismos, en el mismo grado del signo, pero en la casa del signo: por eso cambian de signo y de casa.</div>
+
+  <div class="section-label">Natal frente a causal</div>
+  <div class="comp-grid">
+    <div class="sol-bloque">
+      <div class="pl-header">
+        <div class="pl-titulo">Carta natal</div>
+        <div class="pl-sub">Personalidad · apariencia</div>
+      </div>
+      <div class="pl-body">
+        <div class="pl-fila"><div class="pl-key">Nivel</div><div class="pl-val">Predisposición de comportamiento, actitud y experiencia. Parte del <strong>inconsciente</strong>.</div></div>
+        <div class="pl-fila"><div class="pl-key">Aspectos</div><div class="pl-val">Los de nacimiento: a veces fuente de conflicto a lo largo de la vida.</div></div>
+      </div>
+    </div>
+    <div class="urano-bloque">
+      <div class="pl-header">
+        <div class="pl-titulo">Carta causal</div>
+        <div class="pl-sub">Identidad alma · nivel interno</div>
+      </div>
+      <div class="pl-body">
+        <div class="pl-fila"><div class="pl-key">Nivel</div><div class="pl-val">Es la parte <strong>consciente</strong>: activa y apoya los cambios que se pueden dar en la natal.</div></div>
+        <div class="pl-fila"><div class="pl-key">Aspectos</div><div class="pl-val">Pueden ser <strong>distintos a los natales</strong>: ahí está la información nueva.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="frase-clave fc-azul">La carta causal es el «yo soy» interno: a partir de un momento se activa y empieza a apoyar la carta natal.</div>
+
+  <div class="section-label">Cómo se lee: orden de trabajo</div>
+  <div class="proto">
+    <div class="proto-paso"><div class="proto-num">1</div><div class="proto-txt"><strong>Sol natal frente a Sol causal:</strong> qué energía del alma sostiene a la personalidad, sobre todo por signo y por casa.</div></div>
+    <div class="proto-paso"><div class="proto-num">2</div><div class="proto-txt"><strong>Luna y Saturno</strong>, los tres planetas de la personalidad como los más importantes. Luego el resto.</div></div>
+    <div class="proto-paso"><div class="proto-num">3</div><div class="proto-txt"><strong>Aspectos que difieren</strong> entre las dos cartas: los que aparecen o desaparecen en la causal.</div></div>
+    <div class="proto-paso"><div class="proto-num">4</div><div class="proto-txt"><strong>Casas:</strong> qué cambio de área supone (de la casa 10 a la 11, de la 6 a la 11).</div></div>
+    <div class="proto-paso"><div class="proto-num">5</div><div class="proto-txt"><strong>Confirmar con la vivencia:</strong> preguntar si resuena. No se lee de forma básica ni idealizada: es una carta de alma.</div></div>
+  </div>
+
+  <hr class="separador">
+
+  <!-- PARTE 3 · PRÁCTICA -->
+  <div class="section-label" style="margin-top:0">Parte 3 · Práctica con dos cartas de ejemplo</div>
+
+  <div class="sol-bloque">
+    <div class="pl-header">
+      <div class="pl-titulo">Ejemplo 1 · Sol en Libra natal → Sol causal en Piscis, casa 7</div>
+      <div class="pl-sub">La casa 7 es de Libra</div>
+    </div>
+    <div class="pl-body">
+      <div class="pl-fila"><div class="pl-key">Sol</div><div class="pl-val">La energía de <strong>Piscis</strong> sostiene y «magnetiza» el Sol natal. No actúa como decanato, pero se puede traducir como tal: Piscis dentro de Libra, relaciones de <strong>mayor fusión</strong> y más espirituales. En casa 2: <strong>valorar</strong> el vínculo desde ahí.</div></div>
+      <div class="pl-fila"><div class="pl-key">Aspectos</div><div class="pl-val">En la causal el Sol está con <strong>Mercurio</strong> y este con <span class="pill pill-urano">Urano</span> en Tauro (casa 9): revelación de valores relacionados con el conocimiento; fragmenta la mente abstracta para abrir nuevas formas de pensar y <strong>romper creencias</strong> para traer un valor nuevo (Tauro) a la identidad. Se confirma con el sextil natal a Urano en Sagitario (casa 4: romper creencias de las raíces familiares).</div></div>
+      <div class="pl-fila"><div class="pl-key">Cuadratura</div><div class="pl-val">La cuadratura Mercurio–Júpiter natal no aparece en la causal: en la natal pudo ser un conflicto con los referentes que educaron; en la causal se ve cómo se llega a otra forma de entender.</div></div>
+    </div>
+  </div>
+
+  <div class="sol-bloque">
+    <div class="pl-header">
+      <div class="pl-titulo">Ejemplo 1 · Luna en Acuario casa 6 → Luna causal en Cáncer, casa 11</div>
+      <div class="pl-sub">Grado 29, en el límite con Leo</div>
+    </div>
+    <div class="pl-body">
+      <div class="pl-fila"><div class="pl-key">Cómo se calcula</div><div class="pl-val">Si la Luna natal está a 18° del signo, se cuentan 18° desde la cúspide de la casa 11, y se llega al grado 29 de Cáncer.</div></div>
+      <div class="pl-fila"><div class="pl-key">Luna en Acuario</div><div class="pl-val">Cambia el sistema o el proceso rompiendo inercias («quitar un eslabón de la cadena»), a veces de forma brusca. Es algo más allá incluso del alma: un plan hacia la humanidad, <strong>sentimiento antes que emoción</strong>.</div></div>
+      <div class="pl-fila"><div class="pl-key">Luna en Cáncer</div><div class="pl-val">Nueva sensación de <strong>tribu</strong>, equipo o pertenencia a través del cambio; cuidado de las personas. Casa 6: entrega de los valores como servicio. Aporta la parte emocional: cambios que rompen inercias <strong>manteniendo el sentimiento</strong>.</div></div>
+      <div class="pl-fila"><div class="pl-key">Grado 29</div><div class="pl-val">Confiar en la <strong>pericia del alma</strong>: el alma todo lo sabe.</div></div>
+      <div class="pl-fila"><div class="pl-key">Aspectos</div><div class="pl-val"><strong>Sextil Neptuno:</strong> disuelve la <em>sobreprotección</em> y el pasado de Cáncer, dando mayor sensibilidad (leer y mirar desde el alma). <strong>Cuadratura al nodo norte en Escorpio</strong>, casa 2 (no existe en la natal): transformación de valores y superación de miedos. <strong>Trígono</strong> con la parte mental: coherencia entre pensamiento y lógica emocional, talento para explicar y enseñar.</div></div>
+    </div>
+    <div class="pl-footer">El nodo norte en la causal indica una dirección: «hacia allí tengo que ir y sumergirme».</div>
+  </div>
+
+  <div class="urano-bloque">
+    <div class="pl-header">
+      <div class="pl-titulo">Ejemplo 1 · Saturno en Escorpio casa 3 → Saturno causal en Aries, casa 8</div>
+      <div class="pl-sub">El «yo existo»</div>
+    </div>
+    <div class="pl-body">
+      <div class="pl-fila"><div class="pl-key">Lectura</div><div class="pl-val">Una energía Aries procedente de la casa 8 ayuda a Saturno: <strong>transforma la estructura del «yo existo»</strong> (cuerpo, forma de hacer, de presentarse, de autofirmarse). Se aplica a una estructura mental condicionada por miedos o experiencias intensas de la infancia.</div></div>
+      <div class="pl-fila"><div class="pl-key">Natal frente a causal</div><div class="pl-val">En la natal, las relaciones y los vínculos vienen condicionados por Saturno en Escorpio («espada de Damocles»). Con la causal activa, se transforma ese «yo soy» para vincularse desde la espiritualidad y con nuevos valores en el pensamiento.</div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Ejemplo 2 · Otra carta (Sol natal en Libra, Luna en Piscis, Saturno en Acuario)</div>
+  <div class="merc-bloque">
+    <div class="pl-header">
+      <div class="pl-titulo">Sol causal en Sagitario (casa 7), decanato de Sagitario</div>
+      <div class="pl-sub">Se cuenta desde el descendente</div>
+    </div>
+    <div class="pl-body">
+      <div class="pl-fila"><div class="pl-key">Sol</div><div class="pl-val">Apoya al Sol en Libra y le pide <strong>relacionarse desde la libertad y el conocimiento</strong>. Puede llevar a <strong>enseñar o guiar</strong> a otras personas, aunque no sea enseñanza formal. Se acompaña de un <em>stellium</em> con Mercurio y Marte en Sagitario.</div></div>
+      <div class="pl-fila"><div class="pl-key">Aspectos</div><div class="pl-val"><strong>Trígono a la Luna:</strong> buen entendimiento entre consciente y subconsciente. <strong>Sextil a Urano en Acuario, casa 10</strong>: un sextil es talento (cualidad venusina). El alma apunta a algo vocacional: innovar en grupos y aportar mayor conciencia a un colectivo, que <em>puede empezar siendo profesional</em> y debe acabar siendo vocación.</div></div>
+      <div class="pl-fila"><div class="pl-key">Cuadratura al Saturno causal</div><div class="pl-val">Saturno causal en Acuario/Piscis, casa 11, <strong>en frontera de signo</strong> (maneja las dos energías; la de Piscis es disolvente). Es esfuerzo o resistencia que se vive en lo profesional mientras no se vea la causal como propósito. El alma pone mucha energía para que eso se dé.</div></div>
+    </div>
+    <div class="pl-footer">Planeta en frontera de signo: se leen las dos energías a la vez.</div>
+  </div>
+
+  <div class="concepto-bloque" style="margin-top:10px">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Luna causal en Aries, casa 12 → apoyo a la Luna natal en Piscis</div>
+      <span class="badge b-nuevo">Luna iniciática</span>
+    </div>
+    <div class="concepto-def">
+      En la casa 12 se deshace lo que tiene que ver con la <strong>supervivencia y lo instintivo</strong> de una Luna en Aries, pero <strong>la energía no se va: cambia dónde se pone la atención</strong>, que pasa a un impulso hacia el mundo espiritual. Eso es una <span class="hl hl-m">iniciación</span>: aumentar el nivel de conciencia, iniciar un nuevo ciclo de conciencia, algo muy interno.
+      <br>El Saturno causal hace <strong>conjunción a la Luna natal</strong> en la casa 11. La sensibilidad de la Luna en Piscis recibe el impulso de Aries detrás de un ideal: es lo que pide compartir en un grupo o colectivo. La fuerza deja de ser para sobrevivir y es una fuerza <strong>para incrementar la sensibilidad</strong>.
+      <br>Síntomas del proceso: dudas y polarización emocional (buscar fusionarse con los demás y, a veces, necesitar desaparecer).
+    </div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">La figura «cuna»</div>
+      <span class="badge b-clave">Pide confianza</span>
+    </div>
+    <div class="concepto-def">
+      La figura cuadrangular se llama <strong>cuna</strong>. Con la cuna al revés, el bebé se cae: pide <span class="hl hl-a">una caída, un cambio de rumbo</span>, plegar las velas y dejarse fluir (como en un velero: al izar las velas se orienta la dirección; al bajarlas, se deja llevar por las corrientes).
+      <br><strong>Si dudo es porque aún no tengo que ver</strong>: confiar, no ir en contra y actuar cuando se presente la oportunidad. La espiritualidad no es llevar un hábito ni subir a la montaña, sino un cambio de actitud en la vida diaria, también en las empresas.
+    </div>
+  </div>
+
+  <hr class="separador">
+
+  <!-- PRÓXIMA CLASE -->
+  <div class="section-label" style="margin-top:0">Próximas clases</div>
+  <div class="lente">
+    <div class="lente-body">
+      <div class="lente-item">Una <strong>recapitulación</strong> con la carta de Ximena y después la <span class="hl hl-az">carta del dharma</span>.</div>
+      <div class="lente-item">Probablemente <strong>media clase de más prácticas de carta causal</strong> y luego la entrada en la carta del dharma.</div>
+    </div>
+  </div>
+
+  <!-- PUNTOS A RETENER -->
+  <hr class="separador">
+  <div class="section-label" style="margin-top:0">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item">
+      <div class="retener-num">1</div>
+      <div class="retener-body">
+        <div class="retener-titulo">Unir el símbolo con la biografía</div>
+        <div class="retener-texto">Al corregir progresiones (AC y MC), la lectura se confirma con hechos: el AC progresado sobre el nodo norte de la casa 2 coincidió con <span class="hl hl-a">recuperar los derechos de la obra</span>; el MC en la casa 11, con la gira multitudinaria.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">2</div>
+      <div class="retener-body">
+        <div class="retener-titulo">La carta causal es la carta del alma</div>
+        <div class="retener-texto">Informa de lo que <span class="hl hl-m">sostiene la carta natal</span> desde el alma; causal es el origen de la experiencia. Se lee comparándola con la natal.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">3</div>
+      <div class="retener-body">
+        <div class="retener-titulo">Misma rueda, planetas en la casa de su signo</div>
+        <div class="retener-texto">Mismo ascendente y mismas casas. Cada planeta va a <strong>la casa del número de su signo natal</strong> y conserva su grado, contado desde la cúspide de esa casa.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">4</div>
+      <div class="retener-body">
+        <div class="retener-titulo">Natal = inconsciente; causal = consciente</div>
+        <div class="retener-texto">La causal activa los cambios posibles en la natal. Sus aspectos <span class="hl hl-az">pueden ser distintos</span> y ahí está la información nueva.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">5</div>
+      <div class="retener-body">
+        <div class="retener-titulo">Orden de lectura: Sol, Luna, Saturno</div>
+        <div class="retener-texto">Primero los tres planetas de la personalidad, comparando natal y causal por signo, casa y aspectos. Luego el resto. Confirmar siempre con lo que la persona vive.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">6</div>
+      <div class="retener-body">
+        <div class="retener-titulo">Sol causal: la energía que sostiene la identidad</div>
+        <div class="retener-texto">Ejemplos: Piscis en la casa 7 aporta <strong>relaciones más fusionadas y espirituales</strong>; Sagitario en la casa 7, <strong>relacionarse desde la libertad y el conocimiento</strong> y guiar a otros.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">7</div>
+      <div class="retener-body">
+        <div class="retener-titulo">Luna causal: qué inspira al cuerpo emocional</div>
+        <div class="retener-texto">Luna en Cáncer: nueva sensación de <strong>tribu y pertenencia</strong> manteniendo el sentimiento; Luna en Aries en la 12: la energía cambia de objeto, de supervivencia a <span class="hl hl-m">iniciación espiritual</span>.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">8</div>
+      <div class="retener-body">
+        <div class="retener-titulo">El sextil es talento; el grado 29 es confianza</div>
+        <div class="retener-texto">Un sextil causal apunta a un potencial vocacional. Un planeta en el grado 29 invita a <strong>confiar en la pericia del alma</strong>. Un planeta en frontera de signo se lee con las dos energías.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
