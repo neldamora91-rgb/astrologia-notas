@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C1 · El corazón del Sol: cómo interpretarlo</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9;
+      --text: #1a1a18; --text2: #4a4a46; --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+      --radius: 8px; --radius-lg: 12px;
+
+      --hl-amarillo:     #FFF4C2; --hl-amarillo-text: #7A5A00;
+      --hl-rojo:         #FAECE7; --hl-rojo-text:     #993C1D;
+      --hl-verde:        #EAF3DE; --hl-verde-text:    #3B6D11;
+      --hl-morado:       #EEEDFE; --hl-morado-text:   #534AB7;
+      --hl-azul:         #E6F1FB; --hl-azul-text:     #185FA5;
+
+      --sol:     #993C1D; --sol-bg:     #FAECE7; --sol-border:     #F0C4BA;
+      --luna:    #185FA5; --luna-bg:    #E6F1FB; --luna-border:    #B5D4F4;
+      --merc:    #854F0B; --merc-bg:    #FAEEDA; --merc-border:    #EDCF9A;
+      --sat:     #534AB7; --sat-bg:     #EEEDFE; --sat-border:     #AFA9EC;
+      --urano:   #1A7A8A; --urano-bg:   #E0F4F7; --urano-border:   #9AD5DF;
+      --pluton:  #993C1D; --pluton-bg:  #FAECE7; --pluton-border:  #F0C4BA;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2a;
+        --text: #e8e6de; --text2: #a8a6a0; --text3: #68665e;
+        --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18);
+        --hl-amarillo: #3a2e00; --hl-amarillo-text: #e8c84a;
+        --hl-rojo: #2e1a14;     --hl-rojo-text:     #e8907a;
+        --hl-verde: #1a2e10;    --hl-verde-text:    #8dcc5a;
+        --hl-morado: #1e1c3a;   --hl-morado-text:   #a9a3f0;
+        --hl-azul: #0e2038;     --hl-azul-text:     #7ab8f5;
+        --sol: #e8907a;   --sol-bg: #2e1a14;   --sol-border: #5a3326;
+        --merc: #e0b36a;  --merc-bg: #2e2414;  --merc-border: #5a4726;
+        --urano: #6fd0e0; --urano-bg: #0f2a30; --urano-border: #245a66;
+        --sat: #a9a3f0;   --sat-bg: #1e1c3a;   --sat-border: #3c3870;
+      }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; padding: 2rem 1rem; }
+    .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; }
+
+    /* Header */
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .curso-badge { font-size: 11px; font-weight: 500; background: #e6f1fb; color: #185FA5; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tipo-badge { font-size: 11px; font-weight: 500; background: #EEEDFE; color: #534AB7; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); }
+    .section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 1.75rem; }
+    .separador { border: none; border-top: 2px dashed var(--border); margin: 2rem 0; }
+
+    /* Highlights */
+    .hl { display: inline; padding: 1px 4px; border-radius: 3px; font-weight: 500; }
+    .hl-a  { background: var(--hl-amarillo); color: var(--hl-amarillo-text); }
+    .hl-r  { background: var(--hl-rojo);     color: var(--hl-rojo-text); }
+    .hl-v  { background: var(--hl-verde);    color: var(--hl-verde-text); }
+    .hl-m  { background: var(--hl-morado);   color: var(--hl-morado-text); }
+    .hl-az { background: var(--hl-azul);     color: var(--hl-azul-text); }
+
+    /* Frase clave */
+    .frase-clave { border-left: 3px solid var(--hl-amarillo-text); background: var(--hl-amarillo); padding: 10px 14px; border-radius: 0 var(--radius) var(--radius) 0; font-size: 13px; font-weight: 500; color: var(--hl-amarillo-text); line-height: 1.5; margin: 10px 0 4px; }
+    .frase-clave.fc-rojo   { border-left-color: #993C1D; background: var(--hl-rojo);   color: var(--hl-rojo-text); }
+    .frase-clave.fc-verde  { border-left-color: #3B6D11; background: var(--hl-verde);  color: var(--hl-verde-text); }
+    .frase-clave.fc-morado { border-left-color: #534AB7; background: var(--hl-morado); color: var(--hl-morado-text); }
+    .frase-clave.fc-azul   { border-left-color: #185FA5; background: var(--hl-azul);   color: var(--hl-azul-text); }
+
+    /* Lente */
+    .lente { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+    .lente-header { padding: 10px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .lente-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lente-subtitulo { font-size: 12px; color: var(--text2); }
+    .lente-body { padding: 12px 16px; display: flex; flex-direction: column; gap: 4px; }
+    .lente-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; }
+    .lente-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .lente-item strong { font-weight: 500; color: var(--text); }
+    .lente-footer { padding: 10px 16px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lente-footer strong { font-weight: 500; color: var(--text); }
+
+    /* Concepto */
+    .concepto-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .concepto-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .concepto-nombre { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; }
+    .badge { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
+    .b-clave { background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text2); }
+    .b-nuevo { background: #EEEDFE; color: #534AB7; }
+    .concepto-def { padding: 12px 14px; font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .concepto-def strong { font-weight: 500; color: var(--text); }
+
+    /* Pills */
+    .pill { display: inline-block; font-size: 11px; font-weight: 500; padding: 1px 7px; border-radius: 20px; margin-right: 3px; }
+    .pill-sol { background: var(--sol-bg); color: var(--sol); }
+    .pill-merc { background: var(--merc-bg); color: var(--merc); }
+    .pill-urano { background: var(--urano-bg); color: var(--urano); }
+    .pill-luna { background: var(--luna-bg); color: var(--luna); }
+    .pill-pluton { background: var(--pluton-bg); color: var(--pluton); }
+
+    /* Tarjetas de planeta */
+    .sol-bloque   { --X: var(--sol);   --X-bg: var(--sol-bg);   --X-border: var(--sol-border); }
+    .merc-bloque  { --X: var(--merc);  --X-bg: var(--merc-bg);  --X-border: var(--merc-border); }
+    .urano-bloque { --X: var(--urano); --X-bg: var(--urano-bg); --X-border: var(--urano-border); }
+    .sol-bloque, .merc-bloque, .urano-bloque { border: 1.5px solid var(--X-border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 10px; }
+    .pl-header { padding: 10px 16px; background: var(--X-bg); }
+    .pl-titulo { font-size: 14px; font-weight: 600; color: var(--X); }
+    .pl-sub { font-size: 12px; color: var(--X); margin-top: 2px; opacity: 0.85; }
+    .pl-body { border-top: 1px solid var(--X-border); }
+    .pl-fila { display: grid; grid-template-columns: 120px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .pl-fila:last-child { border-bottom: none; }
+    .pl-fila:nth-child(even) { background: var(--bg2); }
+    .pl-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .pl-val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .pl-val strong { font-weight: 500; color: var(--text); }
+    .pl-footer { padding: 10px 16px; background: var(--X-bg); border-top: 1px solid var(--X-border); font-size: 12px; color: var(--X); line-height: 1.5; }
+
+    /* Grid comparativo */
+    .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 560px) { .comp-grid { grid-template-columns: 1fr; } .pl-fila { grid-template-columns: 1fr; gap: 2px; } }
+
+    /* Protocolo numerado */
+    .proto { display: flex; flex-direction: column; gap: 8px; }
+    .proto-paso { display: flex; gap: 12px; align-items: flex-start; }
+    .proto-num { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--sol); color: #ffffff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .proto-txt { font-size: 13px; color: var(--text2); line-height: 1.55; padding-top: 2px; }
+    .proto-txt strong { font-weight: 500; color: var(--text); }
+
+    /* Puntos a retener */
+    .retener-list { display: flex; flex-direction: column; gap: 8px; }
+    .retener-item { display: flex; gap: 0; align-items: stretch; border-radius: var(--radius); overflow: hidden; border: 0.5px solid var(--sat-border); }
+    .retener-num { font-size: 13px; font-weight: 700; color: #ffffff; background: #534AB7; min-width: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .retener-body { padding: 11px 14px; background: var(--bg); }
+    .retener-titulo { font-size: 13px; font-weight: 600; color: var(--sat); margin-bottom: 3px; }
+    .retener-texto { font-size: 12px; color: var(--text2); line-height: 1.6; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div class="curso-badge">Curso 5 · C1</div>
+      <div class="tipo-badge">Teoría + Práctica</div>
+    </div>
+    <div class="titulo">El corazón del Sol: cómo interpretarlo</div>
+    <div class="meta">27/05/2026 &nbsp;·&nbsp; Cúspides de casas &nbsp;·&nbsp; Sol de la personalidad &nbsp;·&nbsp; Corazón del Sol &nbsp;·&nbsp; Sol–Mercurio</div>
+  </div>
+
+  <!-- PARTE 1 · CÚSPIDES -->
+  <div class="section-label" style="margin-top:0">Parte 1 · ¿Dónde empieza una casa?</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">La carta como esfera vista desde su centro</div>
+      <div class="lente-subtitulo">Cúspide de la casa frente a signos que ocupan la casa</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">Como una esfera de la que solo vemos una cara, en la carta <strong>todo parte del centro</strong> y de ahí salen las cúspides de las casas: el <span class="hl hl-az">yo superior</span> se expande hacia la experiencia humana.</div>
+      <div class="lente-item"><strong>Casa 10</strong> = todo lo que hay dentro de esa casa. <strong>Cúspide de la casa 10</strong> = el punto donde empieza.</div>
+      <div class="lente-item">La cúspide es el <span class="hl hl-a">punto de mayor energía</span> de la casa: es la salida por donde el espíritu del centro se manifiesta en esa área de experiencia. Por eso un tránsito a una cúspide pesa tanto.</div>
+      <div class="lente-item">El <strong>signo de la cúspide</strong> marca la energía principal de la casa, aunque el signo siguiente ocupe muchos más grados.</div>
+      <div class="lente-item">El <strong>segundo signo</strong> solo se manifiesta con peso cuando hay <span class="hl hl-v">planetas</span> en él. Sin planetas, es un matiz mínimo.</div>
+    </div>
+    <div class="lente-footer"><strong>Los planetas son los mediadores</strong> de esa voluntad: cuentan cómo se vive la experiencia de la casa. A medida que la conciencia se desarrolla, se incorporan nuevos aspectos de lo que el ser humano puede experimentar a través de los 12 signos.</div>
+  </div>
+  <div class="frase-clave">La cúspide da la dirección; los planetas dan el matiz.</div>
+
+  <div class="section-label">Ejemplos trabajados</div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Casa 10 con cúspide en Capricornio y Saturno en Acuario</div>
+      <span class="badge b-clave">Cúspide + planeta</span>
+    </div>
+    <div class="concepto-def">
+      Aunque casi toda la casa sea Acuario, la vocación se vive desde <strong>Capricornio</strong> (responsabilidad, estructura, autoría, lo tradicional que se perpetúa). <span class="pill pill-urano">Acuario</span> entra porque hay un <strong>planeta</strong> ahí, no por los grados que ocupe: añade tecnología, lo social, la ingeniería como forma de completar el proyecto.
+      <br>Si ese planeta es <span class="hl hl-r">Saturno en cuadratura</span> con el Sol, la exposición de la casa 10 (el mediodía solar, donde más se nos ve) puede incomodar: dirigir sin ser la cara visible.
+    </div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Casa 6 con Libra en la cúspide y Escorpio dentro</div>
+      <span class="badge b-clave">Dos signos con planetas</span>
+    </div>
+    <div class="concepto-def">
+      Hay planetas en ambos signos, así que <strong>los dos se manifiestan</strong>: <span class="pill pill-sol">Sol</span> en Libra pide equilibrio en la vida diaria y la rutina; <span class="pill pill-merc">Mercurio</span> y Marte en Escorpio piden profundizar, usar el día a día para estudiar temas esotéricos.
+    </div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Casa 2 en Géminis con unos grados de Cáncer, sin planetas</div>
+      <span class="badge b-clave">Sin planetas</span>
+    </div>
+    <div class="concepto-def">
+      Predomina Géminis: los recursos se generan por la comunicación y la escritura. Cáncer queda como <span class="hl hl-az">matiz sutil</span> (por ejemplo, una escritura con rasgos maternales o emocionales). Sin planetas, no hace falta dar peso al segundo signo.
+    </div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Casa 11 con Acuario en la cúspide y Luna en Piscis</div>
+      <span class="badge b-clave">El planeta manda</span>
+    </div>
+    <div class="concepto-def">
+      La casa pide <strong>desapego</strong> (relaciones desapegadas), pero la <span class="pill pill-luna">Luna</span> en Piscis tiene otra necesidad y puede sufrir ese desapego. Por eso a veces la casa dice una cosa y la vivencia otra: <span class="hl hl-a">el planeta es el que dice cómo se vive la experiencia</span>.
+    </div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Casa 5 en Leo con Virgo interceptado</div>
+      <span class="badge b-nuevo">Cuidado con la pregunta</span>
+    </div>
+    <div class="concepto-def">
+      Importa cómo se formula la pregunta. <strong>«¿Dónde está Virgo?»</strong> → dentro de la casa 5 (interceptado). <strong>«¿Dónde está Leo?»</strong> → tiene la cúspide de la 5, pero también forma parte de la 4. Hay que atender a qué se pregunta realmente.
+    </div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Tránsitos: Plutón sobre una casa con cúspide en Capricornio</div>
+      <span class="badge b-clave">Tránsito</span>
+    </div>
+    <div class="concepto-def">
+      Los <strong>tránsitos son lo que más marca la diferencia</strong> cuando hay dos signos. Plutón pasa solo un tiempo breve por el tramo de Capricornio y mucho más por el de Acuario: la cúspide en Capricornio da la dirección, pero <span class="pill pill-pluton">Plutón</span> en Acuario mueve la casa con energía acuariana.
+      <br>En las casas <strong>4 y 10</strong> (los progenitores) esto transforma la huella recibida: se puede seguir el camino de la familia, pero <span class="hl hl-v">de otra manera</span>, desde uno mismo.
+    </div>
+  </div>
+
+  <hr class="separador">
+
+  <!-- PARTE 2 · SOL DE LA PERSONALIDAD vs CORAZÓN DEL SOL -->
+  <div class="section-label" style="margin-top:0">Parte 2 · Dos formas de leer el Sol</div>
+  <div class="comp-grid">
+    <div class="sol-bloque">
+      <div class="pl-header">
+        <div class="pl-titulo">Sol de la personalidad</div>
+        <div class="pl-sub">Lo que ya conocemos de los signos</div>
+      </div>
+      <div class="pl-body">
+        <div class="pl-fila"><div class="pl-key">Quién</div><div class="pl-val"><strong>Identidad y ego.</strong> Pensamiento egoico (mental, emocional, físico).</div></div>
+        <div class="pl-fila"><div class="pl-key">Cómo actúa</div><div class="pl-val">Reactivo. <strong>Juzga</strong> y personaliza: lo que molesta, hiere o incomoda.</div></div>
+        <div class="pl-fila"><div class="pl-key">Dualidad</div><div class="pl-val">Vive en opuestos (luz/sombra, día/noche, bueno/malo), ligada a la rotación de la Tierra.</div></div>
+        <div class="pl-fila"><div class="pl-key">Sombra</div><div class="pl-val">Inconsciente individual que forma parte del inconsciente colectivo; aparece como automatismos.</div></div>
+        <div class="pl-fila"><div class="pl-key">Experiencias</div><div class="pl-val">Llegan situaciones concretas para manifestar el Sol <strong>según cómo esté aspectado</strong> (equilibrio o desequilibrio, armonía o desarmonía).</div></div>
+      </div>
+    </div>
+    <div class="sol-bloque">
+      <div class="pl-header">
+        <div class="pl-titulo">Corazón del Sol</div>
+        <div class="pl-sub">Lo que ve el alma</div>
+      </div>
+      <div class="pl-body">
+        <div class="pl-fila"><div class="pl-key">Quién</div><div class="pl-val"><strong>El observador interno</strong>, el centro. Conciencia solar a través de los 12 signos.</div></div>
+        <div class="pl-fila"><div class="pl-key">Cómo actúa</div><div class="pl-val"><strong>Desidentificación.</strong> Observa sin juicio; lo que es, es.</div></div>
+        <div class="pl-fila"><div class="pl-key">Dualidad</div><div class="pl-val">No se sale de la dualidad: se <strong>observa</strong> y se acepta ambos polos.</div></div>
+        <div class="pl-fila"><div class="pl-key">Emoción</div><div class="pl-val">Ni buena ni mala: es una emoción. Baja la temperatura, aparece perspectiva.</div></div>
+        <div class="pl-fila"><div class="pl-key">Opción</div><div class="pl-val">Hay que conocer muy bien la dualidad para salir de ella; siempre existe <strong>otra opción</strong> de mirada.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="frase-clave fc-morado">Quien actúa en la situación y quien la observa no es la misma identidad: uno es el Sol de la personalidad, el otro es el corazón del Sol.</div>
+
+  <div class="section-label">Ejercicio de externalización</div>
+  <div class="proto">
+    <div class="proto-paso"><div class="proto-num">1</div><div class="proto-txt"><strong>Elegir algo propio que incomoda:</strong> una reacción, una parte oscura de la personalidad que salió en una relación.</div></div>
+    <div class="proto-paso"><div class="proto-num">2</div><div class="proto-txt"><strong>Sacarlo fuera:</strong> visualizar la situación como una escena externa (incluso con un gesto de las manos) y mirarla desde afuera.</div></div>
+    <div class="proto-paso"><div class="proto-num">3</div><div class="proto-txt"><strong>Notar qué cambia:</strong> distancia, falta de identificación, menos temperatura emocional, más perspectiva; sensación de volver al centro.</div></div>
+    <div class="proto-paso"><div class="proto-num">4</div><div class="proto-txt"><strong>Describirlo por escrito</strong> de forma humana, sin identificarse: pasar de «estoy furiosa» a describir la conducta y la sensación física.</div></div>
+  </div>
+  <div style="font-size:12px;color:var(--text2);margin-top:10px;line-height:1.7;">
+    También se puede aplicar al <span class="hl hl-m">pensamiento egoico</span>: observarlo como se observa la escena. Opinar también es juzgar. Es el ejercicio <strong>Sol–Mercurio</strong>: la identidad que observa a la identidad pensante.
+  </div>
+
+  <hr class="separador">
+
+  <!-- PARTE 3 · SOL EN LOS SIGNOS -->
+  <div class="section-label" style="margin-top:0">Parte 3 · El Sol en el signo, con ojos de observador</div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre"><span class="pill pill-sol">Sol</span> en Libra</div>
+      <span class="badge b-clave">Mundo externo</span>
+    </div>
+    <div class="concepto-def">
+      <strong>Personalidad:</strong> equilibrio y armonía, pero donde hay equilibrio puede haber desequilibrio; importancia de la apariencia; necesidad de un tú; mediación. Puede rechazar justo el vínculo, el otro lado.
+      <br><strong>Observador:</strong> Libra es <span class="hl hl-az">el mundo externo</span>, el «ahí fuera» (donde también están las relaciones y el trabajo): si el punto es el yo, todo lo demás es Libra. La balanza <span class="hl hl-m">sopesa sin emitir juicio</span> y acepta sea cual sea el peso: observa los opuestos, no los juzga.
+    </div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre"><span class="pill pill-sol">Sol</span> en Géminis</div>
+      <span class="badge b-clave">Mente</span>
+    </div>
+    <div class="concepto-def">
+      <strong>Personalidad:</strong> comunicación, información, pensamiento.
+      <br><strong>Observador:</strong> <span class="hl hl-az">mente</span>, sin juicio ni opuestos. Géminis es la dualidad en sí, así que su función es observar cómo procesa la mente: si se dispersa o salta entre intereses, <strong>así es</strong>. Sin opinión que juzgue.
+    </div>
+  </div>
+
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre"><span class="pill pill-sol">Sol</span> en Cáncer</div>
+      <span class="badge b-clave">Sentimiento</span>
+    </div>
+    <div class="concepto-def">
+      <strong>Personalidad:</strong> maternal, protector, emocional, familiar.
+      <br><strong>Observador:</strong> <span class="hl hl-az">sentimiento</span>, expresión emocional, útero como creación. Se descartó «expresión emocional» como palabra limpia porque su opuesto es la inexpresión; <strong>«sentimiento»</strong> funciona mejor.
+    </div>
+  </div>
+
+  <div class="urano-bloque">
+    <div class="pl-header">
+      <div class="pl-titulo">Sol en Acuario</div>
+      <div class="pl-sub">Perspectiva · pertenencia</div>
+    </div>
+    <div class="pl-body">
+      <div class="pl-fila"><div class="pl-key">Tema</div><div class="pl-val">Acuario es la <strong>perspectiva</strong> y el <strong>sentido de pertenencia</strong>: inclusión o exclusión.</div></div>
+      <div class="pl-fila"><div class="pl-key">Dos caras</div><div class="pl-val"><strong>Uraniana:</strong> de repente, necesidad de libertad. <strong>Saturnina:</strong> sentirse atrapado, en inercia, en máxima dependencia.</div></div>
+      <div class="pl-fila"><div class="pl-key">Observador</div><div class="pl-val">Observa el vaivén entre dependencia y libertad. Sol en exilio, descentraliza: «o me alejo o me acerco», e integra ambos.</div></div>
+      <div class="pl-fila"><div class="pl-key">Luna en Acuario</div><div class="pl-val">Su defensa es mantener la perspectiva para no sentir <strong>separatividad</strong>; detrás hay necesidad de pertenencia. Puede ser eco de ancestros excluidos (por ser diferentes, por irse, por no seguir la tradición).</div></div>
+      <div class="pl-fila"><div class="pl-key">Sistémico</div><div class="pl-val">Acuario es lo sistémico social, después de lo sistémico personal (Cáncer).</div></div>
+    </div>
+    <div class="pl-footer">En la casa 6, la necesidad de salida o independencia se vive en el día a día y en la rutina: salir del compromiso.</div>
+  </div>
+
+  <hr class="separador">
+
+  <!-- PRÁCTICA -->
+  <div class="section-label" style="margin-top:0">Práctica — cartas (lectura Sol/Mercurio)</div>
+
+  <div class="sol-bloque">
+    <div class="pl-header">
+      <div class="pl-titulo">Conjunción Sol–Mercurio en Libra, casa 2</div>
+      <div class="pl-sub">Con cuadraturas</div>
+    </div>
+    <div class="pl-body">
+      <div class="pl-fila"><div class="pl-key">Desde la personalidad</div><div class="pl-val">Mente equilibrada y diplomática; personalidad armónica. Las <strong>cuadraturas</strong> traen momentos de desequilibrio que afectan a la <strong>autoestima</strong> (casa 2). Equilibrio y armonía son sus recursos.</div></div>
+      <div class="pl-fila"><div class="pl-key">Desde el observador</div><div class="pl-val">No dar valor al equilibrio ni al desequilibrio: observar cuándo se está equilibrada y cuándo no, y <strong>aceptar ambos</strong>. Luz y oscuridad forman parte de lo mismo.</div></div>
+    </div>
+  </div>
+
+  <div class="merc-bloque">
+    <div class="pl-header">
+      <div class="pl-titulo">Sol en Libra con Mercurio en Escorpio, casa 6</div>
+      <div class="pl-sub">Mercurio muy activado por Marte</div>
+    </div>
+    <div class="pl-body">
+      <div class="pl-fila"><div class="pl-key">Lectura</div><div class="pl-val">Pensamiento profundo en el día a día (estudio, temas esotéricos). La función del Sol es <strong>observar sin juicio</strong> cómo la mente se nutre de ese conocimiento y a dónde la lleva, de forma consciente.</div></div>
+    </div>
+  </div>
+
+  <div class="urano-bloque">
+    <div class="pl-header">
+      <div class="pl-titulo">Sol en Géminis con Mercurio en Tauro, Mercurio prometeico</div>
+      <div class="pl-sub">Mercurio que se anticipa al Sol</div>
+    </div>
+    <div class="pl-body">
+      <div class="pl-fila"><div class="pl-key">Lectura</div><div class="pl-val">Mercurio en Tauro <strong>valora y da forma</strong> al pensamiento, lo estructura buscando seguridad. El Sol en Géminis observa <strong>cómo procesa la mente</strong> sin juzgar, incluida la dispersión y la dualidad (blanco/negro: ambos valen).</div></div>
+    </div>
+  </div>
+
+  <!-- PUNTOS A RETENER -->
+  <hr class="separador">
+  <div class="section-label" style="margin-top:0">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item">
+      <div class="retener-num">1</div>
+      <div class="retener-body">
+        <div class="retener-titulo">La cúspide da la dirección de la casa</div>
+        <div class="retener-texto">El signo de la cúspide es la <span class="hl hl-a">energía principal</span> de la casa, aunque el siguiente signo ocupe más grados. La cúspide es además el punto de mayor energía.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">2</div>
+      <div class="retener-body">
+        <div class="retener-titulo">El segundo signo se activa con planetas</div>
+        <div class="retener-texto">Sin planetas, es un matiz sutil. Con planetas en ambos signos, <span class="hl hl-v">se manifiestan los dos</span> en el área de experiencia de la casa.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">3</div>
+      <div class="retener-body">
+        <div class="retener-titulo">El planeta dice cómo se vive la experiencia</div>
+        <div class="retener-texto">La casa pone el área y la cúspide la dirección; el planeta (por ejemplo una Luna en Piscis en una casa 11 de Acuario) <span class="hl hl-a">puede vivirlo distinto</span> a lo que pide el signo.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">4</div>
+      <div class="retener-body">
+        <div class="retener-titulo">Los tránsitos acentúan el signo que más recorre la casa</div>
+        <div class="retener-texto">Un tránsito lento por la parte de otro signo (Plutón en Acuario sobre una casa 10 de Capricornio) <span class="hl hl-m">mueve la casa</span> con esa energía y transforma la huella de los progenitores.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">5</div>
+      <div class="retener-body">
+        <div class="retener-titulo">Dos identidades: personalidad y corazón del Sol</div>
+        <div class="retener-texto">El Sol de la personalidad reacciona y juzga en la dualidad; el <span class="hl hl-az">corazón del Sol</span> es el observador interno que se desidentifica y no juzga.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">6</div>
+      <div class="retener-body">
+        <div class="retener-titulo">Observar sin juicio es el ejercicio Sol–Mercurio</div>
+        <div class="retener-texto">Sacar la situación fuera, describirla sin identificarse y notar que baja la temperatura. <span class="hl hl-m">No se sale de la dualidad: se observa</span> y se acepta.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">7</div>
+      <div class="retener-body">
+        <div class="retener-titulo">Palabra del observador por signo</div>
+        <div class="retener-texto"><strong>Libra:</strong> mundo externo (sopesar sin juzgar). <strong>Géminis:</strong> mente. <strong>Cáncer:</strong> sentimiento. <strong>Acuario:</strong> perspectiva y pertenencia.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
