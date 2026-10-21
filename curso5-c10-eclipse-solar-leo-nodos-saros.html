@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C10 · Eclipse solar en Leo</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9;
+      --text: #1a1a18; --text2: #4a4a46; --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+      --radius: 8px; --radius-lg: 12px;
+
+      --hl-amarillo:     #FFF4C2; --hl-amarillo-text: #7A5A00;
+      --hl-rojo:         #FAECE7; --hl-rojo-text:     #993C1D;
+      --hl-verde:        #EAF3DE; --hl-verde-text:    #3B6D11;
+      --hl-morado:       #EEEDFE; --hl-morado-text:   #534AB7;
+      --hl-azul:         #E6F1FB; --hl-azul-text:     #185FA5;
+
+      --sol:     #993C1D; --sol-bg:     #FAECE7; --sol-border:     #F0C4BA;
+      --luna:    #185FA5; --luna-bg:    #E6F1FB; --luna-border:    #B5D4F4;
+      --merc:    #854F0B; --merc-bg:    #FAEEDA; --merc-border:    #EDCF9A;
+      --venus:   #185FA5; --venus-bg:   #E6F1FB; --venus-border:   #B5D4F4;
+      --marte:   #993C1D; --marte-bg:   #FAECE7; --marte-border:   #F0C4BA;
+      --sat:     #534AB7; --sat-bg:     #EEEDFE; --sat-border:     #AFA9EC;
+      --neptuno: #6B3CB5; --neptuno-bg: #F0E8FC; --neptuno-border: #C9A8EF;
+      --pluton:  #993C1D; --pluton-bg:  #FAECE7; --pluton-border:  #F0C4BA;
+      --verde:   #3B6D11; --verde-bg:   #EAF3DE; --verde-border:   #C0DD97;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2a;
+        --text: #e8e6de; --text2: #a8a6a0; --text3: #68665e;
+        --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18);
+        --hl-amarillo: #3a2e00; --hl-amarillo-text: #e8c84a;
+        --hl-rojo: #2e1a14;     --hl-rojo-text:     #e8907a;
+        --hl-verde: #1a2e10;    --hl-verde-text:    #8dcc5a;
+        --hl-morado: #1e1c3a;   --hl-morado-text:   #a9a3f0;
+        --hl-azul: #0e2038;     --hl-azul-text:     #7ab8f5;
+        --sol-bg: #2e1a14; --sol-border: #5a3326; --sol: #e8907a;
+        --merc-bg: #2e2210; --merc-border: #5a431c; --merc: #e0b06a;
+        --verde-bg: #1a2e10; --verde-border: #35561f; --verde: #8dcc5a;
+        --sat-bg: #1e1c3a; --sat-border: #3d3880; --sat: #a9a3f0;
+        --neptuno-bg: #231a38; --neptuno-border: #4a3578; --neptuno: #b895f0;
+      }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; padding: 2rem 1rem; }
+    .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; }
+
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .curso-badge { font-size: 11px; font-weight: 500; background: #e6f1fb; color: #185FA5; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tipo-badge { font-size: 11px; font-weight: 500; background: #EEEDFE; color: #534AB7; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); }
+    .section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 1.75rem; }
+    .separador { border: none; border-top: 2px dashed var(--border); margin: 2rem 0; }
+
+    .hl { display: inline; padding: 1px 4px; border-radius: 3px; font-weight: 500; }
+    .hl-a  { background: var(--hl-amarillo); color: var(--hl-amarillo-text); }
+    .hl-r  { background: var(--hl-rojo);     color: var(--hl-rojo-text); }
+    .hl-v  { background: var(--hl-verde);    color: var(--hl-verde-text); }
+    .hl-m  { background: var(--hl-morado);   color: var(--hl-morado-text); }
+    .hl-az { background: var(--hl-azul);     color: var(--hl-azul-text); }
+
+    .frase-clave { border-left: 3px solid var(--hl-amarillo-text); background: var(--hl-amarillo); padding: 10px 14px; border-radius: 0 var(--radius) var(--radius) 0; font-size: 13px; font-weight: 500; color: var(--hl-amarillo-text); line-height: 1.5; margin: 10px 0 4px; }
+    .frase-clave.fc-rojo   { border-left-color: #993C1D; background: #FAECE7; color: #993C1D; }
+    .frase-clave.fc-verde  { border-left-color: #3B6D11; background: #EAF3DE; color: #3B6D11; }
+    .frase-clave.fc-morado { border-left-color: #534AB7; background: #EEEDFE; color: #534AB7; }
+    .frase-clave.fc-azul   { border-left-color: #185FA5; background: #E6F1FB; color: #185FA5; }
+    @media (prefers-color-scheme: dark) {
+      .frase-clave.fc-rojo   { background: #2e1a14; color: #e8907a; border-left-color: #e8907a; }
+      .frase-clave.fc-verde  { background: #1a2e10; color: #8dcc5a; border-left-color: #8dcc5a; }
+      .frase-clave.fc-morado { background: #1e1c3a; color: #a9a3f0; border-left-color: #a9a3f0; }
+      .frase-clave.fc-azul   { background: #0e2038; color: #7ab8f5; border-left-color: #7ab8f5; }
+    }
+
+    .lente { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+    .lente-header { padding: 10px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .lente-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lente-subtitulo { font-size: 12px; color: var(--text2); }
+    .lente-body { padding: 12px 16px; display: flex; flex-direction: column; gap: 4px; }
+    .lente-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; }
+    .lente-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .lente-footer { padding: 10px 16px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lente-footer strong { font-weight: 500; color: var(--text); }
+
+    .concepto-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .concepto-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .concepto-nombre { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; }
+    .badge { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
+    .b-clave { background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text2); }
+    .b-nuevo { background: #EEEDFE; color: #534AB7; }
+    .concepto-def { padding: 12px 14px; font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .concepto-def strong { font-weight: 500; color: var(--text); }
+    .concepto-def p + p { margin-top: 8px; }
+
+    .pill { display: inline-block; font-size: 11px; font-weight: 500; padding: 1px 7px; border-radius: 20px; margin-right: 3px; }
+    .pill-sol { background: var(--sol-bg); color: var(--sol); }
+    .pill-luna { background: var(--luna-bg); color: var(--luna); }
+    .pill-merc { background: var(--merc-bg); color: var(--merc); }
+    .pill-marte { background: var(--marte-bg); color: var(--marte); }
+    .pill-venus { background: var(--venus-bg); color: var(--venus); }
+    .pill-nep { background: var(--neptuno-bg); color: var(--neptuno); }
+
+    /* Tarjetas de planeta */
+    .sol-bloque, .merc-bloque, .marte-bloque { border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 10px; }
+    .sol-bloque { border: 1.5px solid var(--sol-border); }
+    .merc-bloque { border: 1.5px solid var(--merc-border); }
+    .marte-bloque { border: 1.5px solid var(--marte-border); }
+    .sol-header { padding: 10px 16px; background: var(--sol-bg); }
+    .merc-header { padding: 10px 16px; background: var(--merc-bg); }
+    .marte-header { padding: 10px 16px; background: var(--marte-bg); }
+    .sol-titulo { font-size: 14px; font-weight: 600; color: var(--sol); }
+    .merc-titulo { font-size: 14px; font-weight: 600; color: var(--merc); }
+    .marte-titulo { font-size: 14px; font-weight: 600; color: var(--marte); }
+    .p-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+    .sol-body { border-top: 1px solid var(--sol-border); }
+    .merc-body { border-top: 1px solid var(--merc-border); }
+    .marte-body { border-top: 1px solid var(--marte-border); }
+    .fila { display: grid; grid-template-columns: 120px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .fila:last-child { border-bottom: none; }
+    .fila:nth-child(even) { background: var(--bg2); }
+    .key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .val strong { font-weight: 500; color: var(--text); }
+    .p-footer { padding: 10px 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; background: var(--bg2); }
+    @media (max-width: 520px) { .fila { grid-template-columns: 1fr; gap: 2px; } .page { padding: 1.25rem; } }
+
+    /* Protocolo / cronología */
+    .proto { display: flex; flex-direction: column; gap: 8px; }
+    .proto-item { display: flex; gap: 12px; align-items: flex-start; }
+    .proto-num { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--sat); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+    .proto-txt { font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .proto-txt strong { font-weight: 500; color: var(--text); }
+
+    /* Anclaje */
+    .anclaje { border: 1.5px solid var(--verde-border); border-radius: var(--radius-lg); overflow: hidden; }
+    .anclaje-header { padding: 10px 16px; background: var(--verde-bg); font-size: 14px; font-weight: 600; color: var(--verde); }
+    .anclaje-body { padding: 12px 16px; font-size: 13px; color: var(--text2); line-height: 1.7; }
+    .anclaje-body p + p { margin-top: 8px; }
+
+    /* Puntos a retener */
+    .retener-list { display: flex; flex-direction: column; gap: 8px; }
+    .retener-item { display: flex; gap: 0; align-items: stretch; border-radius: var(--radius); overflow: hidden; border: 0.5px solid var(--sat-border); }
+    .retener-num { font-size: 13px; font-weight: 700; color: #ffffff; background: var(--sat); min-width: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .retener-body { padding: 11px 14px; background: var(--bg); }
+    .retener-titulo { font-size: 13px; font-weight: 600; color: var(--sat); margin-bottom: 3px; }
+    .retener-texto { font-size: 12px; color: var(--text2); line-height: 1.6; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div class="curso-badge">Curso 5 · C10</div>
+      <div class="tipo-badge">Teoría + Práctica</div>
+    </div>
+    <div class="titulo">Eclipse solar en Leo · nodos y serie de Saros</div>
+    <div class="meta">05/08/26 &nbsp;·&nbsp; Eclipse solar total del 12/08/26 &nbsp;·&nbsp; Nodos lunares &nbsp;·&nbsp; Saros &nbsp;·&nbsp; Casas</div>
+  </div>
+
+  <!-- 1. QUÉ ES UN ECLIPSE -->
+  <div class="section-label">Qué hace distinto a un eclipse</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">Dos sistemas de relación y un cruce</div>
+      <div class="lente-subtitulo">Tierra–Luna (pasado) · Tierra–Sol (futuro, conciencia)</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">La <span class="hl hl-az">Luna alrededor de la Tierra</span> representa la relación entre la realidad presente y el <strong>subconsciente / preconsciente</strong>: un condicionamiento muy importante para la Tierra (por eso las lunas nuevas y llenas se han celebrado en todas las civilizaciones).</div>
+      <div class="lente-item">La <span class="hl hl-az">Tierra alrededor del Sol</span> representa la realidad y la <strong>conciencia hacia la que vamos</strong>.</div>
+      <div class="lente-item">Los <span class="hl hl-a">nodos lunares</span> se forman en el cruce de la eclíptica de la Luna con la de la Tierra alrededor del Sol. Todos los planetas tienen nodos, pero en clase se trabajan solo los lunares.</div>
+      <div class="lente-item"><span class="hl hl-r">Nodo sur</span>: entra en el espacio lunar → el pasado, lo que hay que soltar. <span class="hl hl-v">Nodo norte</span>: se mantiene en el espacio solar → la conciencia.</div>
+    </div>
+    <div class="lente-footer"><strong>Los nodos son un eslabón</strong> entre dos cadenas: concentran la información de la tríada Sol–Tierra–Luna. Un eclipse es cuando <strong>los tres cuerpos y los nodos se alinean</strong>.</div>
+  </div>
+
+  <div class="concepto-bloque" style="margin-top:12px">
+    <div class="concepto-header">
+      <div class="concepto-nombre">¿Cómo se ve el alineamiento astrológicamente?</div>
+      <span class="badge b-clave">Clave</span>
+    </div>
+    <div class="concepto-def">
+      <p>Un eclipse solar es una <strong>luna nueva</strong> (Sol y Luna juntos, misma longitud) con un <strong>nodo en conjunción</strong>. Es lo que lo diferencia de la luna nueva de cada mes.</p>
+      <p><span class="pill pill-sol">Sol</span><span class="pill pill-luna">Luna</span> a <strong>20° Leo</strong> · la Tierra, en el punto opuesto, a <strong>20° Acuario</strong> · <strong>nodo sur en Leo</strong> junto al eclipse y nodo norte en Acuario.</p>
+      <p>Cuanto <span class="hl hl-a">más cerca está el nodo del grado del eclipse, más intenso</span> es el eclipse.</p>
+    </div>
+  </div>
+
+  <!-- 2. SAROS -->
+  <hr class="separador">
+  <div class="section-label">Serie de Saros y ciclo de 18 años</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Serie de Saros 126</div>
+      <span class="badge b-nuevo">Nuevo</span>
+    </div>
+    <div class="concepto-def">
+      <p>Eclipses de la misma magnitud que se repiten <strong>en el mismo eje nodal cada ~18 años</strong>.</p>
+      <p>Esta serie tiene <strong>72 eclipses</strong>: empezó el 10/03/1179 y culmina el 03/05/2459. El del 12/08/2026 es el <strong>nº 48</strong>; el anterior fue el 01/08/2008 y el siguiente será el 23/08/2044, <span class="hl hl-az">el último eclipse total de la serie</span> (después serán parciales).</p>
+    </div>
+  </div>
+  <div class="frase-clave fc-morado">Para leer un eclipse, mirar qué pasó hace 18 años: el eje nodal vuelve y actualiza la información del eje kármico. A los 9 años (mitad del ciclo) llega la reversión, con sus reajustes y crisis.</div>
+  <div class="lente" style="margin-top:12px">
+    <div class="lente-body">
+      <div class="lente-item">Se habla del <strong>eje, no del grado</strong>: el eje nodal recorre un signo durante ~1,5 años. Se puede afinar con el grado, pero a grandes rasgos vale el eje.</div>
+      <div class="lente-item">Quien tiene en su carta el eje <span class="hl hl-a">nodo sur en Leo / nodo norte en Acuario</span> recibe aún más información de este eclipse.</div>
+    </div>
+  </div>
+
+  <!-- 3. EFECTOS -->
+  <hr class="separador">
+  <div class="section-label">Efectos del eclipse</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header"><div class="concepto-nombre">A nivel físico y colectivo</div></div>
+    <div class="concepto-def">
+      <p>Alteración térmica y de las corrientes atmosféricas, desorientación en animales y plantas (la noche llega "antes de tiempo").</p>
+      <p>En España la totalidad se vive hacia las 20:27–20:32, con la puesta de sol: <strong>día → noche → día → noche en una hora</strong>. Esa alternancia perturba la <span class="hl hl-m">dualidad</span> ligada a nuestra parte animal y a la personalidad.</p>
+      <p>La sombra cruza España de oeste a este, Islandia y el Ártico (posible lectura sobre el deshielo). El fuego de Leo —<em>Aries es la cerilla; Leo es el fuego ya encendido</em>— se relaciona con los incendios.</p>
+    </div>
+  </div>
+  <div class="concepto-bloque">
+    <div class="concepto-header"><div class="concepto-nombre">En la carta del eclipse</div></div>
+    <div class="concepto-def">
+      <p>La carta está levantada con el meridiano de Greenwich (tiempo universal): <strong>para la humanidad se leen sus casas</strong>; para un país concreto se relocaliza.</p>
+      <p>El eclipse cae en <span class="hl hl-a">casa 7</span> para todos: las relaciones son donde más se siente cómo se manifiesta el personaje. El eje Leo–Acuario está interceptado.</p>
+      <p>El nodo se mira <strong>verdadero</strong> (no medio) en un evento: está <span class="hl hl-r">estacionario</span>, y en la estación la concentración e intensidad son máximas: <span class="hl hl-r">máxima intervención del pasado en el presente</span> y de soltar aspectos del "yo soy" del personaje.</p>
+    </div>
+  </div>
+
+  <!-- 4. SOL ECLIPSADO -->
+  <div class="section-label">Sol eclipsado en Leo</div>
+  <div class="sol-bloque">
+    <div class="sol-header">
+      <div class="sol-titulo">☉ Sol en sombra · conciencia en sombra</div>
+      <div class="p-sub">El Sol ilumina la Luna, pero no la Tierra</div>
+    </div>
+    <div class="sol-body">
+      <div class="fila"><div class="key">Qué ocurre</div><div class="val">La conciencia de lo que es Leo —<strong>el yo soy</strong>— queda en sombra: <span class="hl hl-r">poca autoconciencia</span> en ese momento.</div></div>
+      <div class="fila"><div class="key">Qué emerge</div><div class="val">Asuntos de la <strong>Luna en Leo</strong>: búsqueda de reconocimiento, brillo, visibilidad y atención; el niño interno. Sin conciencia, puede salir de forma repentina y aparatosa… pero a la vez es una forma de liberarlo.</div></div>
+      <div class="fila"><div class="key">Inseguridad</div><div class="val">Puede aparecer inseguridad que lleva, a veces muy sutilmente, a <strong>buscar reconocimiento fuera</strong> sin darnos cuenta.</div></div>
+      <div class="fila"><div class="key">Poder</div><div class="val">Leo habla del <strong>poder</strong>: el que manda, el dictador. A nivel personal, cómo actúa nuestro personaje ante el poder.</div></div>
+    </div>
+    <div class="p-footer"><strong>Pregunta del eclipse:</strong> ¿qué se va a eclipsar <em>en mí</em>? El eclipse no es algo que pasa fuera, sino en nosotras.</div>
+  </div>
+  <div class="frase-clave fc-rojo">Liz Greene recomendaba no mirar un eclipse solar: ya hay falta de conciencia, y exponerse a él sería quedar "secuestrado". Lo recomendable es lo que pide una luna nueva: ir hacia dentro y sembrar.</div>
+  <div class="lente" style="margin-top:12px">
+    <div class="lente-body">
+      <div class="lente-item"><span class="hl hl-v">Recogerse y meditar</span> en lugar de salir a mirar; si se está trabajando, recogerse en ese momento.</div>
+      <div class="lente-item"><strong>Conectar con el cuerpo</strong> (la Luna es el cuerpo que somatiza las emociones): sentir qué hay. Quizá no hay nada y está bien.</div>
+      <div class="lente-item">No hace falta buscar conciencia ni interpretar nada en ese momento. Las respuestas llegan <strong>después</strong>, con el eclipse lunar.</div>
+    </div>
+  </div>
+
+  <!-- 5. CONFIGURACIÓN -->
+  <hr class="separador">
+  <div class="section-label">La configuración del eclipse</div>
+  <div class="merc-bloque">
+    <div class="merc-header">
+      <div class="merc-titulo">☿ Mercurio sustituye a Júpiter</div>
+      <div class="p-sub">Cambian los jugadores; cambia la tensión</div>
+    </div>
+    <div class="merc-body">
+      <div class="fila"><div class="key">Antes</div><div class="val">Júpiter formaba parte de la configuración que sostenía la tensión: una versión expansiva del poder, que ahora se desmantela y se templa.</div></div>
+      <div class="fila"><div class="key">Ahora</div><div class="val"><span class="pill pill-merc">Mercurio</span> con <strong>Plutón en oposición</strong> = <span class="hl hl-r">demagogia</span>. Con Mercurio en Leo cuesta que me escuchen, así que se busca llamar la atención de forma <strong>oculta</strong> a través de Plutón.</div></div>
+      <div class="fila"><div class="key">Titular</div><div class="val">El poder en sus funciones está en una <strong>manipulación sostenida</strong>, que no vemos porque estamos eclipsados.</div></div>
+      <div class="fila"><div class="key">A nivel personal</div><div class="val">Nosotras también podemos ser grandes demagogas por inseguridad, para obtener reconocimiento. Mirar el uso del poder <span class="hl hl-v">con cariño, sin juzgarse</span>; si se puede, sonriendo.</div></div>
+    </div>
+  </div>
+
+  <div class="marte-bloque">
+    <div class="marte-header">
+      <div class="marte-titulo">♂ T cuadrada: Neptuno · Venus · Marte (+ Lilith)</div>
+      <div class="p-sub">Efectos colaterales del eclipse</div>
+    </div>
+    <div class="marte-body">
+      <div class="fila"><div class="key">Venus – Neptuno</div><div class="val">Oposición: <span class="hl hl-r">idealización</span> en el eje Aries–Libra (yo–otro). Nos sentimos seducidas y quien seduce es el personaje. Cuidado con idealizar al otro ("pobrecito, ya me ocupo yo").</div></div>
+      <div class="fila"><div class="key">Valores y dinero</div><div class="val">El eje Venus–Neptuno toca los valores y lo financiero: cuidado con los <strong>recursos compartidos</strong> (casa 8, Venus en Libra).</div></div>
+      <div class="fila"><div class="key">Marte en Cáncer</div><div class="val">Marte entra en Cáncer el día del eclipse, donde está en <strong>caída</strong>: <span class="hl hl-r">desbordamiento emocional</span>, exageración dramática. Doble función: sin conciencia, emociones que se desbordan; con conciencia, <span class="hl hl-v">conducir esas emociones</span> y ver que fue una idealización, sin más drama.</div></div>
+      <div class="fila"><div class="key">Marte – Lilith</div><div class="val">Confrontación con la <strong>necesidad de libertad</strong> y vacío de sentido sobre cómo se organiza un sistema familiar. Se echa de menos la parte liviana de Sagitario.</div></div>
+      <div class="fila"><div class="key">Salida</div><div class="val">Lilith en Sagitario y casa 12 es una <span class="hl hl-v">puerta al yo espiritual</span>: si hay congoja emocional o familiar, siempre se puede entrar en esa dimensión, que da sentido.</div></div>
+    </div>
+  </div>
+
+  <!-- 6. DURACIÓN -->
+  <hr class="separador">
+  <div class="section-label">Cuánto dura el efecto</div>
+  <div class="proto">
+    <div class="proto-item"><div class="proto-num">1</div><div class="proto-txt"><strong>Por los minutos de duración:</strong> los minutos del eclipse equivalen a meses (5 min ≈ 5 meses). La profesora indica que casi nunca coincide y que aún lo está investigando.</div></div>
+    <div class="proto-item"><div class="proto-num">2</div><div class="proto-txt"><strong>Por el primer planeta que llega al grado del eclipse (20° Leo):</strong> ese punto queda en sombra y vulnerable; el primer planeta que llega <span class="hl hl-m">reactiva la luz solar</span> y termina el efecto.</div></div>
+    <div class="proto-item"><div class="proto-num">3</div><div class="proto-txt"><strong>Mercurio</strong> (a 14° Leo) llega al 20° entre el 19 y el 20 de agosto: efecto de <span class="hl hl-a">~18 días</span>. Si se considera estelio con el eclipse, se cuenta desde otro punto; si no, 18 días.</div></div>
+    <div class="proto-item"><div class="proto-num">4</div><div class="proto-txt"><strong>Marte</strong> llegaría al 20° de Leo el <strong>4 de noviembre</strong> (entra en Leo a finales de septiembre). Si se tomara este, el efecto se alargaría hasta entonces.</div></div>
+  </div>
+  <div class="frase-clave fc-azul">Mercurio es muy neutral: reactiva el eclipse según sus características. Trae noticias, verdad, documentos o citas para firmar; lo oculto sale a la luz. El 19–20 de agosto es buen día para asuntos mercuriales.</div>
+  <div class="frase-clave fc-verde">Después del eclipse, el grado 20 en la carta trae una situación culminante: abundancia, éxito, alegría, apertura del corazón, bondad, generosidad y humildad. Lo mejor de Leo.</div>
+
+  <!-- 7. PRÁCTICA -->
+  <hr class="separador">
+  <div class="section-label">Práctica — el eclipse en las casas</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header">
+      <div class="concepto-nombre">Método: "me pongo en su lugar"</div>
+      <span class="badge b-clave">Técnica</span>
+    </div>
+    <div class="concepto-def">
+      <p>Ubicar la casa donde cae el eclipse (Sol y Luna) y la opuesta (Tierra). Pensar que <strong>yo soy esa persona y estoy eclipsada ahí</strong>: no tengo conciencia de los asuntos de esa casa ahora; <span class="hl hl-v">luego, al despejarse, es el lugar de mayor abundancia y alegría</span>.</p>
+    </div>
+  </div>
+
+  <div class="sol-bloque">
+    <div class="sol-header"><div class="sol-titulo">Eclipse en casa 12 (Tierra en casa 6)</div><div class="p-sub">"El mejor eclipse que puede pasar"</div></div>
+    <div class="sol-body">
+      <div class="fila"><div class="key">Lectura</div><div class="val">La casa 12 es a lo que nos llama la luna nueva: interiorizar, sumergirse. La Tierra en 6 invita a la <strong>escucha del cuerpo</strong>.</div></div>
+      <div class="fila"><div class="key">Seguridad</div><div class="val">Puede que no se sienta tanta seguridad durante el eclipse, pero <strong>después</strong> se encontrará a través del mundo espiritual e interno: ahí queda la semilla.</div></div>
+      <div class="fila"><div class="key">Luna</div><div class="val">Si la Luna natal también está eclipsada, el <strong>sentido de pertenencia</strong> con amistades y lo social disminuye durante la temporada, y se favorece estar con una misma.</div></div>
+      <div class="fila"><div class="key">Personaje</div><div class="val">Vigilar al personaje que quiere ayudar y arreglar todo ante los asuntos financieros de otros: <strong>esperar a que el otro se pronuncie</strong> en lugar de asumir un papel.</div></div>
+    </div>
+  </div>
+
+  <div class="sol-bloque">
+    <div class="sol-header"><div class="sol-titulo">Eclipse en la cúspide de casa 8 (Tierra en la cúspide de casa 2)</div><div class="p-sub">Recursos compartidos</div></div>
+    <div class="sol-body">
+      <div class="fila"><div class="key">Lectura</div><div class="val">El Sol en Leo en la cúspide de 8: <span class="hl hl-r">no tengo conciencia del valor que el otro da a los recursos compartidos</span>. Hay algo ahí que no se ve con claridad.</div></div>
+      <div class="fila"><div class="key">Después</div><div class="val">Al despejarse es lo contrario: se entiende tanto el valor del otro que ambos tienen <strong>la misma mirada</strong> y todo crece. La casa 2 (Tierra) valora con mayor conciencia.</div></div>
+      <div class="fila"><div class="key">Consejo</div><div class="val">No hay que ser consciente ahora: <strong>"el eclipse nos está diciendo que es hora de dormir"</strong>. Soltar. Lo que se viva ha de crecer en corazón, humildad y bondad; si no, hay riesgo de conflicto.</div></div>
+    </div>
+  </div>
+
+  <div class="sol-bloque">
+    <div class="sol-header"><div class="sol-titulo">Eclipse en casa 4</div><div class="p-sub">Con Quirón en Leo</div></div>
+    <div class="sol-body">
+      <div class="fila"><div class="key">Significado</div><div class="val">Familia, pasado, entorno cercano, uno de los padres y el <strong>hogar interno</strong>. Las tres casas de agua hablan siempre de algo muy interno.</div></div>
+      <div class="fila"><div class="key">Lectura</div><div class="val">El eclipse no permite de momento ser consciente de los <strong>patrones familiares</strong>, pero <span class="hl hl-a">Quirón en Leo</span> actúa como termómetro: es una oportunidad para ese Quirón. Se revelará después, y suele tener que ver con el <strong>reconocimiento</strong>.</div></div>
+      <div class="fila"><div class="key">Pregunta</div><div class="val">¿Quién soy en el sistema familiar? ¿Qué es el reconocimiento? Aparece lo dual de Leo en casa 4.</div></div>
+      <div class="fila"><div class="key">Quirón</div><div class="val">El mundo interior se enriquece mucho con este eclipse al darse cuenta de estos patrones.</div></div>
+    </div>
+  </div>
+
+  <!-- 8. ANCLAJE -->
+  <hr class="separador">
+  <div class="section-label">Anclaje de la clase</div>
+  <div class="anclaje">
+    <div class="anclaje-header">Anclaje del eclipse</div>
+    <div class="anclaje-body">
+      <p>En un eclipse solar se produce <strong>una baja en la propia conciencia de lo que nos está pasando</strong>. Pero saberlo, soltarlo y dejarlo fluir puede ser un momento de <span class="hl hl-v">evolución y crecimiento</span>.</p>
+      <p>Y, sobre todo: <span class="hl hl-a">no mirarlo</span>. Quedarse en casa reflexionando, meditando o haciendo cualquier otra cosa.</p>
+    </div>
+  </div>
+
+  <!-- PUNTOS A RETENER -->
+  <hr class="separador">
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item">
+      <div class="retener-num">1</div>
+      <div class="retener-body">
+        <div class="retener-titulo">Eclipse = alineamiento de Tierra, Sol, Luna y nodos</div>
+        <div class="retener-texto">Astrológicamente es una <span class="hl hl-a">luna nueva con un nodo en conjunción</span>: Sol y Luna a 20° Leo, Tierra a 20° Acuario, nodo sur en Leo.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">2</div>
+      <div class="retener-body">
+        <div class="retener-titulo">Nodo sur: soltar el pasado; nodo norte: conciencia</div>
+        <div class="retener-texto">Los nodos concentran la información de los sistemas lunar y solar. Con el nodo <span class="hl hl-r">estacionario</span>, la intensidad y la intervención del pasado son máximas.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">3</div>
+      <div class="retener-body">
+        <div class="retener-titulo">Saros y 18 años</div>
+        <div class="retener-texto">El eje nodal se repite cada ~18 años: <span class="hl hl-m">mirar qué pasó hace 18 años</span>. Este es el eclipse nº 48 de la serie 126; el último total será en 2044.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">4</div>
+      <div class="retener-body">
+        <div class="retener-titulo">Sol eclipsado en Leo = conciencia en sombra</div>
+        <div class="retener-texto">Sale lo de la Luna en Leo: reconocimiento, brillo, niño interno, inseguridad y uso del poder. Pregunta: <strong>¿qué se eclipsa en mí?</strong></div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">5</div>
+      <div class="retener-body">
+        <div class="retener-titulo">Qué hacer: recogerse, sentir el cuerpo, no mirarlo</div>
+        <div class="retener-texto">Hacer lo que pide una luna nueva: ir hacia dentro y sembrar. Las respuestas llegan <span class="hl hl-v">después</span>, con el eclipse lunar.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">6</div>
+      <div class="retener-body">
+        <div class="retener-titulo">Mercurio–Plutón: demagogia; Venus–Neptuno–Marte: idealización y desborde</div>
+        <div class="retener-texto">Mercurio sustituye a Júpiter. Marte en caída en Cáncer da desbordes emocionales; Lilith en casa 12 ofrece la puerta espiritual.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">7</div>
+      <div class="retener-body">
+        <div class="retener-titulo">El efecto dura hasta que un planeta llega al grado 20 de Leo</div>
+        <div class="retener-texto">Mercurio (19–20 de agosto, ~18 días) reactiva la luz solar; Marte llegaría el 4 de noviembre. Después, <span class="hl hl-v">culminación en el grado 20</span>: abundancia, alegría y la mejor parte de Leo.</div>
+      </div>
+    </div>
+    <div class="retener-item">
+      <div class="retener-num">8</div>
+      <div class="retener-body">
+        <div class="retener-titulo">Método de las casas: "me pongo en su lugar"</div>
+        <div class="retener-texto">Casa del eclipse = lo que no veo ahora; casa de la Tierra = lo que valoraré con más conciencia <strong>después</strong>.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
