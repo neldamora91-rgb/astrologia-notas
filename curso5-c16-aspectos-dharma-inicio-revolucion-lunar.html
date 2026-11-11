@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C16 · Aspectos, dharma y revolución lunar</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9;
+      --text: #1a1a18; --text2: #4a4a46; --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+      --radius: 8px; --radius-lg: 12px;
+
+      --hl-amarillo:     #FFF4C2; --hl-amarillo-text: #7A5A00;
+      --hl-rojo:         #FAECE7; --hl-rojo-text:     #993C1D;
+      --hl-verde:        #EAF3DE; --hl-verde-text:    #3B6D11;
+      --hl-morado:       #EEEDFE; --hl-morado-text:   #534AB7;
+      --hl-azul:         #E6F1FB; --hl-azul-text:     #185FA5;
+
+      --sol:     #993C1D; --sol-bg:     #FAECE7; --sol-border:     #F0C4BA;
+      --luna:    #185FA5; --luna-bg:    #E6F1FB; --luna-border:    #B5D4F4;
+      --venus:   #185FA5; --venus-bg:   #E6F1FB; --venus-border:   #B5D4F4;
+      --marte:   #993C1D; --marte-bg:   #FAECE7; --marte-border:   #F0C4BA;
+      --sat:     #534AB7; --sat-bg:     #EEEDFE; --sat-border:     #AFA9EC;
+      --pluton:  #993C1D; --pluton-bg:  #FAECE7; --pluton-border:  #F0C4BA;
+      --verde:   #3B6D11; --verde-bg:   #EAF3DE; --verde-border:   #C0DD97;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2a;
+        --text: #e8e6de; --text2: #a8a6a0; --text3: #68665e;
+        --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18);
+        --hl-amarillo: #3a2e00; --hl-amarillo-text: #e8c84a;
+        --hl-rojo: #2e1a14;     --hl-rojo-text:     #e8907a;
+        --hl-verde: #1a2e10;    --hl-verde-text:    #8dcc5a;
+        --hl-morado: #1e1c3a;   --hl-morado-text:   #a9a3f0;
+        --hl-azul: #0e2038;     --hl-azul-text:     #7ab8f5;
+        --sol-bg: #2e1a14; --sol-border: #5a3326; --sol: #e8907a;
+        --luna-bg: #0e2038; --luna-border: #24507f; --luna: #7ab8f5;
+        --venus-bg: #0e2038; --venus-border: #24507f; --venus: #7ab8f5;
+        --marte-bg: #2e1a14; --marte-border: #5a3326; --marte: #e8907a;
+        --verde-bg: #1a2e10; --verde-border: #35561f; --verde: #8dcc5a;
+        --sat-bg: #1e1c3a; --sat-border: #3d3880; --sat: #a9a3f0;
+      }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; padding: 2rem 1rem; }
+    .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 2rem; }
+
+    .header { border-bottom: 0.5px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.75rem; }
+    .header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .curso-badge { font-size: 11px; font-weight: 500; background: #e6f1fb; color: #185FA5; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tipo-badge { font-size: 11px; font-weight: 500; background: #EEEDFE; color: #534AB7; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .titulo { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .meta { font-size: 13px; color: var(--text3); }
+    .section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 1.75rem; }
+    .separador { border: none; border-top: 2px dashed var(--border); margin: 2rem 0; }
+
+    .hl { display: inline; padding: 1px 4px; border-radius: 3px; font-weight: 500; }
+    .hl-a  { background: var(--hl-amarillo); color: var(--hl-amarillo-text); }
+    .hl-r  { background: var(--hl-rojo);     color: var(--hl-rojo-text); }
+    .hl-v  { background: var(--hl-verde);    color: var(--hl-verde-text); }
+    .hl-m  { background: var(--hl-morado);   color: var(--hl-morado-text); }
+    .hl-az { background: var(--hl-azul);     color: var(--hl-azul-text); }
+
+    .frase-clave { border-left: 3px solid var(--hl-amarillo-text); background: var(--hl-amarillo); padding: 10px 14px; border-radius: 0 var(--radius) var(--radius) 0; font-size: 13px; font-weight: 500; color: var(--hl-amarillo-text); line-height: 1.5; margin: 10px 0 4px; }
+    .frase-clave.fc-rojo   { border-left-color: #993C1D; background: #FAECE7; color: #993C1D; }
+    .frase-clave.fc-verde  { border-left-color: #3B6D11; background: #EAF3DE; color: #3B6D11; }
+    .frase-clave.fc-morado { border-left-color: #534AB7; background: #EEEDFE; color: #534AB7; }
+    .frase-clave.fc-azul   { border-left-color: #185FA5; background: #E6F1FB; color: #185FA5; }
+    @media (prefers-color-scheme: dark) {
+      .frase-clave.fc-rojo   { background: #2e1a14; color: #e8907a; border-left-color: #e8907a; }
+      .frase-clave.fc-verde  { background: #1a2e10; color: #8dcc5a; border-left-color: #8dcc5a; }
+      .frase-clave.fc-morado { background: #1e1c3a; color: #a9a3f0; border-left-color: #a9a3f0; }
+      .frase-clave.fc-azul   { background: #0e2038; color: #7ab8f5; border-left-color: #7ab8f5; }
+    }
+
+    .lente { border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
+    .lente-header { padding: 10px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+    .lente-titulo { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lente-subtitulo { font-size: 12px; color: var(--text2); }
+    .lente-body { padding: 12px 16px; display: flex; flex-direction: column; gap: 4px; }
+    .lente-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding-left: 12px; position: relative; }
+    .lente-item::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .lente-footer { padding: 10px 16px; background: var(--bg2); border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .lente-footer strong { font-weight: 500; color: var(--text); }
+
+    .concepto-bloque { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 8px; }
+    .concepto-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .concepto-nombre { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; }
+    .badge { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
+    .b-clave { background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text2); }
+    .b-nuevo { background: #EEEDFE; color: #534AB7; }
+    .concepto-def { padding: 12px 14px; font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .concepto-def strong { font-weight: 500; color: var(--text); }
+    .concepto-def p + p { margin-top: 8px; }
+
+    .pill { display: inline-block; font-size: 11px; font-weight: 500; padding: 1px 7px; border-radius: 20px; margin-right: 3px; }
+    .pill-sol { background: var(--sol-bg); color: var(--sol); }
+    .pill-luna { background: var(--luna-bg); color: var(--luna); }
+    .pill-venus { background: var(--venus-bg); color: var(--venus); }
+    .pill-marte { background: var(--marte-bg); color: var(--marte); }
+
+    /* Tarjetas de planeta */
+    .luna-bloque, .sol-bloque, .marte-bloque { border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 10px; }
+    .luna-bloque { border: 1.5px solid var(--luna-border); }
+    .sol-bloque { border: 1.5px solid var(--sol-border); }
+    .marte-bloque { border: 1.5px solid var(--marte-border); }
+    .luna-header { padding: 10px 16px; background: var(--luna-bg); }
+    .sol-header { padding: 10px 16px; background: var(--sol-bg); }
+    .marte-header { padding: 10px 16px; background: var(--marte-bg); }
+    .luna-titulo { font-size: 14px; font-weight: 600; color: var(--luna); }
+    .sol-titulo { font-size: 14px; font-weight: 600; color: var(--sol); }
+    .marte-titulo { font-size: 14px; font-weight: 600; color: var(--marte); }
+    .p-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+    .luna-body { border-top: 1px solid var(--luna-border); }
+    .sol-body { border-top: 1px solid var(--sol-border); }
+    .marte-body { border-top: 1px solid var(--marte-border); }
+    .fila { display: grid; grid-template-columns: 120px 1fr; gap: 8px; padding: 9px 14px; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .fila:last-child { border-bottom: none; }
+    .fila:nth-child(even) { background: var(--bg2); }
+    .key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding-top: 2px; }
+    .val { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .val strong { font-weight: 500; color: var(--text); }
+    .p-footer { padding: 10px 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5; background: var(--bg2); }
+    @media (max-width: 520px) { .fila { grid-template-columns: 1fr; gap: 2px; } .page { padding: 1.25rem; } }
+
+    /* Protocolo */
+    .proto { display: flex; flex-direction: column; gap: 8px; }
+    .proto-item { display: flex; gap: 12px; align-items: flex-start; }
+    .proto-num { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--luna); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+    .proto-num.cero { background: var(--text3); }
+    .proto-txt { font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .proto-txt strong { font-weight: 500; color: var(--text); }
+
+    /* Anclaje */
+    .anclaje { border: 1.5px solid var(--verde-border); border-radius: var(--radius-lg); overflow: hidden; }
+    .anclaje-header { padding: 10px 16px; background: var(--verde-bg); font-size: 14px; font-weight: 600; color: var(--verde); }
+    .anclaje-body { padding: 12px 16px; font-size: 13px; color: var(--text2); line-height: 1.7; }
+    .anclaje-body p + p { margin-top: 8px; }
+
+    /* Puntos a retener */
+    .retener-list { display: flex; flex-direction: column; gap: 8px; }
+    .retener-item { display: flex; gap: 0; align-items: stretch; border-radius: var(--radius); overflow: hidden; border: 0.5px solid var(--sat-border); }
+    .retener-num { font-size: 13px; font-weight: 700; color: #ffffff; background: var(--sat); min-width: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .retener-body { padding: 11px 14px; background: var(--bg); }
+    .retener-titulo { font-size: 13px; font-weight: 600; color: var(--sat); margin-bottom: 3px; }
+    .retener-texto { font-size: 12px; color: var(--text2); line-height: 1.6; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div class="curso-badge">Curso 5 · C16</div>
+      <div class="tipo-badge">Material + Práctica</div>
+    </div>
+    <div class="titulo">Material de aspectos · dharma · inicio de la revolución lunar</div>
+    <div class="meta">21/10/26 &nbsp;·&nbsp; Guía de aspectos &nbsp;·&nbsp; Carta causal, natal y dharma &nbsp;·&nbsp; Revolución lunar</div>
+  </div>
+
+  <!-- 1. MATERIAL DE ASPECTOS -->
+  <div class="section-label">Material — tabla y guía de aspectos</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">Tabla de aspectos entre planetas (Excel)</div>
+      <div class="lente-subtitulo">315 combinaciones · herramienta de consulta</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item">Cada fila: <strong>planeta + segundo planeta + aspecto + dinámica + tipo de interpretación</strong>. Las combinaciones no se duplican ni se incluyen aspectos de un planeta consigo mismo.</div>
+      <div class="lente-item">Conforme se baja en la lista hay menos filas: Plutón ya aparece en todas partes, por eso no hay fila de Plutón como primer planeta; el Sol, en cambio, está con todos.</div>
+      <div class="lente-item">Segunda pestaña: <strong>guía de lectura</strong> con orbes orientativos, notas de método y la misma tabla a nivel de <em>personalidad y sombra</em>.</div>
+    </div>
+  </div>
+
+  <div class="concepto-bloque" style="margin-top:12px">
+    <div class="concepto-header"><div class="concepto-nombre">Dinámica de cada aspecto</div><span class="badge b-clave">Clave</span></div>
+    <div class="concepto-def">
+      <p><span class="pill pill-sol">☌ Conjunción</span> fusión o intensificación.</p>
+      <p><span class="pill pill-marte">□ Cuadratura</span> fricción y acción.</p>
+      <p><span class="pill pill-luna">☍ Oposición</span> polaridad y proyección.</p>
+      <p><span class="pill pill-venus">⚹ Sextil</span> oportunidad activa o de materialización.</p>
+      <p><span class="pill pill-venus">△ Trígono</span> fluidez y talento.</p>
+      <p><strong>Semisextil:</strong> ajuste sutil; es neutral y no ejecuta, es una <em>captación</em> de tipo mercurial. <strong>Quincuncio (150°):</strong> reajuste e integración.</p>
+    </div>
+  </div>
+
+  <div class="luna-bloque">
+    <div class="luna-header"><div class="luna-titulo">Notas de método para interpretar</div><div class="p-sub">Qué tener presente antes de leer un aspecto</div></div>
+    <div class="luna-body">
+      <div class="fila"><div class="key">Orbes</div><div class="val">Son <strong>orientativos</strong> y varían según la escuela.</div></div>
+      <div class="fila"><div class="key">No es destino</div><div class="val">Un aspecto no determina hechos: signos, casas, dignidades y contexto modifican su expresión. Conjunción, sextil o trígono <strong>no son siempre buenos</strong>; cuadratura u oposición <strong>no son siempre malos</strong>.</div></div>
+      <div class="fila"><div class="key">Planetas lentos</div><div class="val">Sus aspectos pueden ser <strong>generacionales</strong>. En una natal conviene priorizar la <span class="hl hl-az">casa</span> (donde se vive la experiencia) y los <span class="hl hl-az">contactos con planetas personales</span> (Plutón con Luna o Mercurio, Urano con Sol…). Los grandes ciclos planetarios entre sí rigen situaciones mundiales (se verán más adelante).</div></div>
+      <div class="fila"><div class="key">Personalidad</div><div class="val">Hablamos de necesidades, mecanismos de defensa y manifestaciones posibles. <strong>No hay determinismo</strong>: la persona conserva su libre albedrío, por eso es clave el <span class="hl hl-a">testimonio del consultante</span> para dirigir la interpretación.</div></div>
+      <div class="fila"><div class="key">Integración</div><div class="val">El potencial evolutivo de un aspecto es una <strong>tarea de integración</strong>. Ejemplo: una cuadratura entre mi forma de pensar y de sentir pide integrarlas. <span class="hl hl-v">Nada se desperdicia, nada se descarta</span>.</div></div>
+    </div>
+  </div>
+
+  <!-- 2. REPASO DHARMA -->
+  <hr class="separador">
+  <div class="section-label">Repaso — causal, natal y dharma</div>
+  <div class="lente">
+    <div class="lente-header">
+      <div class="lente-titulo">Triple movimiento de la evolución</div>
+      <div class="lente-subtitulo">La carta natal queda "dentro" de la causal y "dentro" de la del dharma</div>
+    </div>
+    <div class="lente-body">
+      <div class="lente-item"><span class="hl hl-az">Causal</span>: el propósito del alma, lo que da origen a la natal.</div>
+      <div class="lente-item"><span class="hl hl-az">Natal</span>: mi apariencia, la experiencia que vivo con mi personalidad.</div>
+      <div class="lente-item"><span class="hl hl-az">Dharma</span>: el efecto de mis experiencias; el <strong>legado</strong> que dejo y también lo que <strong>dejo atrás</strong>.</div>
+    </div>
+    <div class="lente-footer"><strong>Idea:</strong> la causal apoya a la natal y el dharma es la consecuencia. Puede servir también como aviso: <em>"cuidado, tu camino va por aquí y te estás yendo por allá"</em>, como una llamada a reaccionar.</div>
+  </div>
+
+  <div class="concepto-bloque" style="margin-top:12px">
+    <div class="concepto-header"><div class="concepto-nombre">Técnica: causal frente a dharma</div><span class="badge b-clave">Técnica</span></div>
+    <div class="concepto-def">
+      <p><strong>Causal:</strong> miro el <em>signo</em> del planeta y lo coloco en la casa que le corresponde a ese signo (Sol en Libra → casa 7).</p>
+      <p><strong>Dharma:</strong> miro la <em>casa</em> donde está el planeta y lo coloco en el signo de esa casa (planeta en casa 2 → Tauro; en casa 6 → Virgo).</p>
+      <p>Se mira siempre empezando por el <strong>Sol</strong>.</p>
+    </div>
+  </div>
+  <div class="frase-clave fc-rojo">Ojo con el gráfico del material: explica el movimiento de la causal pero la técnica que se usa en él es la del dharma. Es un error de edición que no se rectificó.</div>
+
+  <!-- 3. PRÁCTICA -->
+  <hr class="separador">
+  <div class="section-label">Práctica — leer la carta del dharma con una carta de ejemplo</div>
+  <div class="sol-bloque">
+    <div class="sol-header"><div class="sol-titulo">☉ Sol, Marte y Mercurio en Virgo (dharma, casa 5)</div><div class="p-sub">Y en la natal: Venus y Júpiter en Virgo sobre un eje nodal</div></div>
+    <div class="sol-body">
+      <div class="fila"><div class="key">Línea nodal</div><div class="val">Los planetas sobre la línea que vincula con la carta de la sombra son <strong>kármicos</strong>: indican repetición, algo que viene de antiguo (por ejemplo, un perfeccionismo).</div></div>
+      <div class="fila"><div class="key">Virgo</div><div class="val">Lleva a ser uno mismo y a <strong>tomar conciencia del cuerpo-personalidad</strong> (físico, emocional y mental). De ahí puede surgir una <span class="hl hl-v">metodología propia</span>. Con el Sol en Virgo la energía de este signo queda muy enfatizada.</div></div>
+      <div class="fila"><div class="key">Casa 5</div><div class="val">Expresión personal, creatividad. Para hablar de "legado" hay que buscar la definición de casa adecuada: <strong>creatividad y expresión propia</strong>, no limitarse a los hijos. El perfeccionismo repetido puede transformarse en una nueva forma de crear.</div></div>
+      <div class="fila"><div class="key">Sol + Marte + Mercurio</div><div class="val">Coherencia entre lo que pienso (Mercurio), cómo lo quiero hacer (Marte) y quién soy (Sol): autoexpresión personal.</div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Aspectos que se leen en el ejemplo</div>
+  <div class="luna-bloque">
+    <div class="luna-header"><div class="luna-titulo">Cómo se relacionan los planetas</div><div class="p-sub">La relación con otros planetas da más información; el aspecto dice si es fácil o requiere trabajo</div></div>
+    <div class="luna-body">
+      <div class="fila"><div class="key">☉ △ ☽ Acuario en casa 10</div><div class="val">Luna en Acuario = lo que nutre es el <strong>colectivo, la humanidad, la contribución al grupo</strong>. Cerca del Medio Cielo (Capricornio): <span class="hl hl-a">vocación</span>, emprender o trabajar de forma autónoma. Es un trígono: fluye. Creatividad y metodología unidas a una dirección profesional colectiva.</div></div>
+      <div class="fila"><div class="key">☉ □ ♆ Sagitario</div><div class="val">Cuadratura de Virgo a Sagitario: Neptuno trae <strong>ideal, imagen e ilusión</strong> y puede confundir el "yo soy". Fricción entre el ideal (cómo le doy forma) y lo concreto. Lo que confunde a nivel personal son los <span class="hl hl-r">sistemas de creencias</span> ("no sé si voy a poder, no sé si valgo"). Tarea de integración: dejar creencias antiguas y sacar algo nuevo, <em>a su manera</em>.</div></div>
+      <div class="fila"><div class="key">☽ ⚺ ♄ Capricornio</div><div class="val">Semisextil (ajuste sutil, captación): Saturno en su signo da <strong>capacidad de dirigir, emprender y llevar a cabo</strong>. En casa 8: transformar eso en algo posible.</div></div>
+      <div class="fila"><div class="key">♀ y ♃ en Leo, casa 4 ☍ ☽</div><div class="val">Venus y Júpiter en Leo = <strong>hogar interno expansivo y brillante</strong>, con reconocimiento propio y confianza: abrir el corazón. En la lectura del dharma la oposición no es tensión sino un <span class="hl hl-v">camino</span>: la Luna en Acuario será visible y reconocida si uno se reconoce primero. Una oposición puede leerse también como una conjunción separada, desde la unidad.</div></div>
+      <div class="fila"><div class="key">♇ Libra casa 6 △ ☽</div><div class="val">El efecto transformador que se recibe en las relaciones se vuelve <strong>capacidad de transformar a otros</strong>. Libra (distinto de Escorpio) en casa 6 = servicio / ámbito laboral: transformación de los vínculos y de las <span class="hl hl-m">creencias</span> colectivas (por ejemplo, "hay que trabajar para tener dinero"), con Urano en la casa 7. Plutón directo: efectos de transformación.</div></div>
+      <div class="fila"><div class="key">Luna en Piscis (natal)</div><div class="val">Sensibilidad y comprensión de las emociones ajenas; la personalidad funciona desde esa sensibilidad y su perfeccionismo, con capacidades <strong>saboteadas por creencias</strong> (falta Lilit para completar la lectura).</div></div>
+    </div>
+    <div class="p-footer"><strong>Sinastría de cartas:</strong> es posible superponer la natal y la del dharma (por ejemplo, ver qué planeta cae sobre la Luna de la otra carta).</div>
+  </div>
+
+  <!-- 4. REVOLUCIÓN LUNAR -->
+  <hr class="separador">
+  <div class="section-label">Inicio de la revolución lunar</div>
+  <div class="concepto-bloque">
+    <div class="concepto-header"><div class="concepto-nombre">Qué es</div><span class="badge b-nuevo">Nuevo</span></div>
+    <div class="concepto-def">
+      <p>Estudia el <strong>contexto del mes</strong> a nivel de <span class="hl hl-az">necesidades, emociones y familia</span> (la Luna). Nuestras emociones del mes se relacionan con cosas del pasado a las que venimos a traer luz mes a mes.</p>
+      <p>Sol, Luna y Tierra forman un engranaje: la Luna nos da día a día un "mensaje subliminal" de la conciencia solar. Las fases (<strong>luna nueva, cuarto creciente, luna llena, cuarto menguante</strong>) son los momentos más intensos del mes, como las cardinalidades: ascendente, casa 4, casa 7 y Medio Cielo. Cada luna nueva sería simbólicamente un ascendente: algo se gesta y va a nacer.</p>
+      <p>La revolución lunar es el momento en que la Luna del mes <strong>coincide en el mismo grado y minuto que la Luna natal</strong>.</p>
+    </div>
+  </div>
+
+  <div class="section-label">Cómo localizarla en la efeméride</div>
+  <div class="proto">
+    <div class="proto-item"><div class="proto-num cero">1</div><div class="proto-txt">Anotar el <strong>grado exacto de la Luna natal</strong> (signo, grado y minuto).</div></div>
+    <div class="proto-item"><div class="proto-num cero">2</div><div class="proto-txt">En la efeméride, ir al mes y buscar en la <strong>fila de la Luna</strong> el signo y el grado. La Luna recorre todos los signos en un mes y varios grados cada día, así que cae <strong>entre dos días</strong>: se toma el día en que a lo largo de la jornada alcanza el grado.</div></div>
+    <div class="proto-item"><div class="proto-num cero">3</div><div class="proto-txt">Usar la fila de <strong>0 horas</strong> (meridiano de Greenwich: longitud cero, sin huso horario).</div></div>
+    <div class="proto-item"><div class="proto-num cero">4</div><div class="proto-txt">Ese día se levanta la carta: tenemos la carta de la <strong>revolución lunar</strong>.</div></div>
+  </div>
+  <div class="frase-clave fc-azul">La Luna en tránsito llega a la misma posición de la Luna natal: es una conjunción lunar. En astrología espiritual estos días se usan para <strong>meditaciones</strong>; también cuando la Luna llega al grado del <strong>Sol</strong> (meditar la conciencia del "yo soy", integrando situaciones emocionales) o del <strong>Ascendente</strong> (propósito del alma). Luna con Luna es "meterse en el barro": sentir qué estoy sintiendo.</div>
+
+  <div class="section-label">Protocolo de lectura (primer esquema)</div>
+  <div class="proto">
+    <div class="proto-item"><div class="proto-num">1</div><div class="proto-txt"><strong>Casa de la Luna</strong> en la revolución (normalmente cambia respecto a la natal): el lugar donde vivo mi experiencia de tomar conciencia de mi mundo emocional, mis necesidades y los condicionantes familiares o del pasado.</div></div>
+    <div class="proto-item"><div class="proto-num">2</div><div class="proto-txt"><strong>Aspectos de la Luna</strong>: desafíos o facilidades. Los planetas implicados pueden indicar <span class="hl hl-m">miembros de la familia</span> o ampliar el significado del aspecto.</div></div>
+    <div class="proto-item"><div class="proto-num">3</div><div class="proto-txt"><strong>Dónde está el signo de Cáncer</strong>, por ser el regente de la Luna.</div></div>
+    <div class="proto-item"><div class="proto-num">4</div><div class="proto-txt"><strong>Planetas en Cáncer</strong>: ayudan a explicar el escenario.</div></div>
+    <div class="proto-item"><div class="proto-num">5</div><div class="proto-txt"><strong>Dignidades y debilidades</strong>: por ejemplo, Marte en Cáncer está en caída; a nivel emocional la energía en esa casa no apoyará mucho (de momento se mira como personalidad; la debilidad puede usarse en beneficio del alma).</div></div>
+    <div class="proto-item"><div class="proto-num">6</div><div class="proto-txt"><strong>Sinastría con la carta natal</strong>: al superponerlas las dos lunas coinciden pero caen en casas distintas, lo que aporta más información.</div></div>
+    <div class="proto-item"><div class="proto-num">7</div><div class="proto-txt"><strong>Sol y Ascendente</strong>: el Sol de ese mes está en el mismo signo para todos (p. ej. Libra) y <span class="hl hl-a">ilumina la conciencia de ese signo en la casa donde caiga</span> (Libra: vínculos y relaciones en equilibrio y armonía). El Ascendente es el <span class="hl hl-v">propósito del alma de ese mes</span>.</div></div>
+  </div>
+
+  <div class="lente" style="margin-top:14px">
+    <div class="lente-header"><div class="lente-titulo">Cosas a tener en cuenta</div></div>
+    <div class="lente-body">
+      <div class="lente-item">Todo son <strong>tránsitos</strong> repartidos alrededor de un punto fijo: el grado de la Luna. Todo (casas, aspectos…) habla del <strong>mundo emocional</strong> como gran titular.</div>
+      <div class="lente-item">Es <strong>terapéutico</strong> porque permite ver la situación actual; es un mes, no una revolución solar. Muy útil en lo lunar y femenino (ciclo menstrual).</div>
+      <div class="lente-item">El día exacto la Luna "es como una luna nueva": lo ideal es empezar a tenerla en cuenta <strong>dos días después</strong>, cuando el engranaje ya se ha puesto en marcha y se cotejan interior y exterior.</div>
+      <div class="lente-item">Un Ascendente en Escorpio, por ejemplo, indicaría un mes para <strong>soltar</strong> algo que creo que me da seguridad emocional (un caso de celos: el alma pide soltar el sentido de seguridad y los celos desaparecerían).</div>
+    </div>
+  </div>
+
+  <!-- ANCLAJE -->
+  <hr class="separador">
+  <div class="section-label">Anclaje de la clase</div>
+  <div class="anclaje">
+    <div class="anclaje-header">Anclaje: causal, natal y dharma + revolución lunar</div>
+    <div class="anclaje-body">
+      <p>Explícalo con tus palabras, como a alguien que no conoce la técnica: la <strong>causal</strong> es el propósito del alma que da origen a la natal; la <strong>natal</strong> es la experiencia con la personalidad; el <strong>dharma</strong> es el efecto de esas experiencias, el legado o lo que dejo atrás. Se leen <span class="hl hl-a">en conjunto</span>, fijándonos en el Sol, la Luna y los aspectos entre ellos.</p>
+      <p>Y la <strong>revolución lunar</strong>: cuando la Luna del mes vuelve a su grado natal levanto la carta y leo el contexto emocional del mes: casa de la Luna, aspectos, Cáncer, dignidades, Sol (conciencia del mes) y Ascendente (propósito del alma del mes).</p>
+    </div>
+  </div>
+
+  <!-- TAREA -->
+  <div class="section-label">Para la próxima clase</div>
+  <div class="lente">
+    <div class="lente-body">
+      <div class="lente-item">Cerrar el tema del dharma con un <strong>ejemplo propio</strong>: elegir una carta (propia o de alguien cercano), poner las tres cartas (causal, natal y dharma) y traer <strong>unos cuatro rasgos</strong> en una exposición de ~5 minutos: cómo apoya el alma, qué legado aparece, etc.</div>
+      <div class="lente-item">Se mira sobre todo a los <strong>planetas de la personalidad</strong>; los demás sirven de contexto. Unas interpretaciones llevan 20 minutos y otras 5. Las dudas se resuelven en clase.</div>
+      <div class="lente-item">Continuar con la <strong>revolución lunar</strong> en la carta, añadiendo paso a paso la Luna, los aspectos, Cáncer y sus planetas.</div>
+    </div>
+  </div>
+
+  <!-- PUNTOS A RETENER -->
+  <hr class="separador">
+  <div class="section-label">Puntos a retener</div>
+  <div class="retener-list">
+    <div class="retener-item"><div class="retener-num">1</div><div class="retener-body"><div class="retener-titulo">Cada aspecto tiene una dinámica</div><div class="retener-texto">Conjunción = fusión; cuadratura = fricción y acción; oposición = polaridad; sextil = oportunidad; trígono = fluidez; semisextil = ajuste sutil; quincuncio = reajuste.</div></div></div>
+    <div class="retener-item"><div class="retener-num">2</div><div class="retener-body"><div class="retener-titulo">No hay determinismo</div><div class="retener-texto">Signos, casas, dignidades y contexto modifican el aspecto; el <span class="hl hl-a">testimonio del consultante</span> dirige la lectura. Cada aspecto es una tarea de integración.</div></div></div>
+    <div class="retener-item"><div class="retener-num">3</div><div class="retener-body"><div class="retener-titulo">Causal, natal y dharma forman un triple movimiento</div><div class="retener-texto">Causal = propósito del alma; natal = experiencia; dharma = efecto, <span class="hl hl-v">legado o lo que se deja atrás</span>.</div></div></div>
+    <div class="retener-item"><div class="retener-num">4</div><div class="retener-body"><div class="retener-titulo">Técnica del dharma</div><div class="retener-texto">Se toma la <strong>casa</strong> donde está el planeta y se pasa al <strong>signo</strong> de esa casa; la causal hace el camino inverso (signo → casa).</div></div></div>
+    <div class="retener-item"><div class="retener-num">5</div><div class="retener-body"><div class="retener-titulo">Planetas en el eje nodal = kármicos</div><div class="retener-texto">Indican repetición antigua; pueden dar lugar a una <span class="hl hl-m">metodología propia</span> (Virgo).</div></div></div>
+    <div class="retener-item"><div class="retener-num">6</div><div class="retener-body"><div class="retener-titulo">Leer por signos ayuda mucho</div><div class="retener-texto">Cuadratura Virgo–Sagitario: cómo dar forma concreta a un ideal; lo que confunde son los <span class="hl hl-r">sistemas de creencias</span>.</div></div></div>
+    <div class="retener-item"><div class="retener-num">7</div><div class="retener-body"><div class="retener-titulo">Revolución lunar = contexto emocional del mes</div><div class="retener-texto">La Luna vuelve a su grado y minuto natal. Se busca en la efeméride (a 0 h), se levanta la carta y se empieza a tener en cuenta <strong>dos días después</strong>.</div></div></div>
+    <div class="retener-item"><div class="retener-num">8</div><div class="retener-body"><div class="retener-titulo">Sol = conciencia del mes · Ascendente = propósito del alma</div><div class="retener-texto">Casa, aspectos, Cáncer, planetas en Cáncer, dignidades y sinastría completan el protocolo.</div></div></div>
+  </div>
+
+</div>
+</body>
+</html>
